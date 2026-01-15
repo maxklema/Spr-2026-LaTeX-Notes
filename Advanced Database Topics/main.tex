@@ -1,0 +1,373 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr} % Headings
+\usepackage{listings} % Code
+\usepackage{parskip} % Spacing for Paragraphs
+\usepackage{mdframed} % Asides
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+% Asides
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+
+\renewcommand{\headrulewidth}{.2mm} % header line width
+
+\rhead{\today}
+\lhead{\textbf{Maxwell Klema}}
+\cfoot{\thepage}
+
+
+\title{Advanced Database Topics}
+\date{Spring 2026, Purdue University Fort Wayne}
+\author{Maxwell Klema | Professor Jin Soung Yoo}
+
+\lstset{
+    frame=single, % Adds a single line frame around the code
+}
+
+\begin{document}
+
+\maketitle
+\pagestyle{fancy}
+
+\vspace{11pt}
+\section{Lecture 1 - Fundamental Concepts of Database Management}
+\vspace{11pt}
+
+\subsection{Applications of Database Technology}
+\vspace{11pt}
+
+\textbf{Data in the Real World}
+\vspace{11pt}
+
+Data is everywhere, appearing in various forms and sizes. This includes:
+\begin{itemize}
+    \item Traditional data: Traditional numeric and alphanumeric data in an application
+    \item Text data: Documents, emails, and social media posts
+    \item Multimedia data: images, audio, and video files
+    \item Spatial, temporal data: Geographical, location-based, and time-related information
+    \item Volatile data: High-frequency, real-time data
+    \item Big Data: large and complex data sets.
+\end{itemize}
+
+These data types require effective storage and management using suitable data management techniques.
+
+\vspace{11pt}
+\textbf{Applications of Database Technology}
+\vspace{11pt}
+
+There are many applications of Database Technology. They can include, but are not limited to: Traditional Business Applications (Structured numeric and alphanumeric data - inventory, payroll, accounting systems), Multimedia Applications (Storage and retrieval of images, audio, and video - e.g,. YouTube, Spotify), Geographical Information Systems (GIS) (Management and analysis of spatial and located-based data - Google Maps), Financial Applications (High-volume, rapidly changing data with strict consistency requirements - like investment banking systems), Sensor-Based Applications (Continuous data streams from sensors - e.g., environmental monitoring, automated shutdown systems), Biometric Applications (Management of biological identifiers - fingerprints, facial or retina scans), Wearable and IoT Applications (Personal and real-time activity data - Fitbit, Apple Watch), Big Data Applications (Large-scale data collection and analytics - retailer point-of-sale and transaction systems).
+
+\vspace{11pt}
+\subsection{Key Definitions}
+\vspace{11pt}
+
+A Database is a collection of related data organized to support a specific business process or problem domain. A database is designed for a target group of users and the applications that access the data.
+
+A Database Management System (DBMS) is a software system used to define, create, store, manipulate, and maintain a database. A DBMS is composed of multiple software modules, each supporting different database functions.
+
+A Database System is the combination of a database and its DBMS, which often includes database programs/tools and users.
+
+\vspace{11pt}
+\subsection{File vs. Database Approach to Data Management}
+\vspace{11pt}
+
+
+\vspace{11pt}
+\textbf{File-based Approach to Data Management}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{1.jpg}    
+\end{center}
+
+In a file-based approach to data management, each application maintains its own data files, even when storing the same data. An application may access one or multiple files, and data files store only raw data, without metadata or structured definitions.
+
+Data definitions and descriptions are embedded separately within each application, and, as a result, as the number of applications grows, this approach leads to major data management problems.
+
+Here are Seven Problems related to the File-based Approach
+\begin{itemize}
+    \item Data Redundancy - The same information is stored multiple times across different files.
+    \item Data Inconsistency - Duplicate data may become inconsistent when updates are not synchronized.
+    \item Strong Application-Data Dependence - Data structure changes require modifications to application programs.
+    \item Duplicate Access Logic - Each application defines its own queries and access procedures. Similar procedures are repeatedly implemented across applications.
+    \item Poor Maintainability - Systems are difficult to update, manage, and scale over time.
+    \item Limited Concurrency Control - Hard to support safe simultaneous access by multiple users.
+    \item Difficult Integration - Integrating applications across departments or organizations is challenging.
+\end{itemize}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{2.jpg}  
+\end{center}
+\vspace{11pt}
+
+Note: Raw data and Catalog data (metadata, permissions, users, etc.) are a part of the DBMS.
+
+All data is stored and managed centrally by a DBMS, and applications interact directly with the DBMS, not with individual files. The DBMS retrieves and delivers data in response to application requests. 
+
+The DBMS can manage two types of data: Raw data (actual stored data) and Metadata (data definitions and descriptions). Metadata is centrally managed by the DBMS, rather than embedded in applications (Key difference from the file-based approach)
+
+\vspace{11pt}
+\textbf{Advantages of Database Approach}
+\vspace{11pt}
+
+A database approach is more efficient and reliable than the file-based approach, as there is improved performance, data consistency, and easier maintenance.
+
+There is also increased data independence, where applications are independent of data storage and data definitions. This leads to loose coupling, where applications and data are loosely coupled, making systems easier to modify and extend.
+
+Additionally, with many DBMSs, there are high-level Database Languages provided, such as Structured Query Language (SQL), which is a standardized way to query and manipulate data. With SQL, users specify what they need, not how to retrieve it. SQL queries are executed by the DBMS, hiding low-level retrieval details, leading to transparent execution.
+
+\vspace{11pt}
+\textbf{Query Examples}
+\vspace{11pt}
+
+In a file-based Approach:
+
+\vspace{11pt}
+\begin{lstlisting}[language=SQL]
+Procedure FindCustomer;
+begin
+    open file Customer.txt;
+    Read(Customer)
+    While not EOF(Customer)
+        If Customer.name='Bart then
+            display(Customer);
+        EndIf
+        Read(Customer);
+    EndWhile;
+End;
+\end{lstlisting}
+\vspace{11pt}
+
+In a Database Approach (SQL):
+\vspace{11pt}
+\begin{lstlisting}[language=SQL]
+SELECT *
+FROM Customer
+WHERE name = 'Bart'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsection{Elements of a Database System}
+\vspace{11pt}
+
+There are many elements of a Database System:
+\begin{itemize}
+    \item Database Model vs. Database Instances: Distinction between database structure and its current contents.
+    \item Data Model: Concepts and rules used to describe data, relationships, and constraints.
+    \item Three Layer Architecture: Separation of user views, logical structure, and physical storage.
+    \item System Catalog: Metadata repository describing database structure and constraints.
+    \item Database Users: Different user roles interacting with the database system.
+    \item Database Languages: Languages used to define, query, and manipulate data.
+\end{itemize}
+
+\vspace{11pt}
+\textbf{What is the Difference between a Database Schema and a Database State (Instance)?}
+\vspace{11pt}
+
+A Database Schema (or Model) describes the structure of the database, defines data items, data types, relationships, constraints, and storage details, is defined during database design and changes infrequently, and is stored in the DBMS catalog.
+
+For example, in a Database Schema, it may have a structure such as:
+
+Student(number, name, address, email)
+
+Course (number, name)
+
+Building (number, address)
+
+\vspace{11pt}
+Meanwhile, a Database State (Instance) represents the actual data stored in the database at a specific point in time. This is also called a database instance, and it changes frequently as data is inserted, updated, and deleted.
+
+For example, database states (or instances) may be shown as tables with current tuples for STUDENT, COURSE, and BUILDING.
+
+\vspace{11pt}
+\begin{aside}
+The schema remains relatively stable, while the database state changes over time as records are added, updated, or removed.
+\end{aside}
+\vspace{11pt}
+
+\vspace{11pt}
+\textbf{Data Model}
+\vspace{11pt}
+
+A database system uses multiple levels of data models - conceptual, logical, and physical, each describing the data from a different perspective. A well-designed data model is the foundation of a successful database application. A data model provides a clear and precise description of data items, relationships among data, and constraints on the data.
+
+Types of Data Models include Conceptual data models, Logical data models, Internal (Physical) data models, and External data models.
+
+\vspace{11pt}
+\textbf{Conceptual Data Model}
+\vspace{11pt}
+
+A conceptual data model provides a high-level representation of data items, their characteristics, and relationships. It serves as a communication tool between information architects and business users. It is implementation-independent and focused on business concepts. It is also user-friendly and aligned with how business users view the data.
+
+Conceptual data models are developed through close collaboration between information architects and business users. They are commonly represented using Enhanced Entity-Relationship (EER) models and Object-oriented models.
+
+\vspace{11pt}
+\textbf{Logical Data Model}
+\vspace{11pt}
+
+A logical data model refines the conceptual data model based on the chosen implementation environment. It maps conceptual concepts to a specific logical data framework, while remaining understandable to business users, while also closer to actual data structures.
+
+A logical data model depends on the database paradigm used, such as Relational, Hierarchical, Object-oriented, Extended relational (object-relational), XML-based, and NoSQL. Logical data models serve as an intermediate step that can be mapped to the internal (physical) data model.
+
+\vspace{11pt}
+\textbf{Physical Data Model (Internal Data Models)}
+\vspace{11pt}
+
+A physical data model describes the physical storage details of the database. Specifically, it specifies where the data is stored, how the data is formatted on disk, and which indexes and access paths are used.
+
+Physical data models focus on performance and storage efficiency. It is highly specific to the DBMS and underlying storage system.
+
+\vspace{11pt}
+\textbf{External Data Model}
+\vspace{11pt}
+
+An external data model consists of user-specific views, each representing a subset of the logical data model. A view shows only the data relevant to a particular application or user group (irrelevant data is hidden, simplifying data accesses).
+
+Views are designed to meet the specific needs of applications or user groups. A single view may be used by one or more applications, while supporting access control and data security.
+
+Some examples of views include a student registration application, which accesses a view with student data, while a capacity planning application accesses a view with building data.
+
+
+\vspace{11pt}
+\subsection{Three Layer Architecture for Database Model}
+\vspace{11pt}
+
+The three-layer architecture is a fundamental architecture for database systems and defines how different levels of data models interact with each other.
+
+The architecture consists of three layers: External Layer (user-specific views), Conceptual (Logical) Layer (overall logical structure of the database, and the Internal Layer (physical storage details). Changes in one layer should have minimal impact on the other layers. This architecture creates modularity and improves efficiency, maintainability, performance, and security.
+
+\vspace{11pt}
+\textbf{Conceptual / Logical Layer}
+\vspace{11pt}
+
+Includes conceptual and logical data models. The logical/conceptual layer also describes data items, their characteristics, types, and relationships with each other. This layer is independent of physical DBMS implementation details.
+
+\vspace{11pt}
+\textbf{External Layer}
+\vspace{11pt}
+
+The external layer consists of external data models, or views, which provide controlled access to selected portions of the logical data model. Views are tailored to specific applications or user groups.
+
+\vspace{11pt}
+\textbf{Internal Layer}
+\vspace{11pt}
+
+The internal layer contains the internal (physical) data model. It defines how data is physically stored and organized, while also focusing on storage structures and access methods.
+
+\vspace{11pt}
+\textbf{Putting the Three-Layers Together}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{3.jpg}    
+\end{center}
+\vspace{11pt}
+
+This figure shows the three-layer database architecture. The mappings between layers enable logical and physical data independence, meaning changes at one level have minimal impact on the others.
+
+\vspace{11pt}
+\textbf{Example in a Procurement Business Process}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{4.jpg}    
+\end{center}
+\vspace{11pt}
+
+This architecture allows each department to work with relevant data while sharing a consistent underlying database structure.
+
+\vspace{11pt}
+\textbf{Catalog (System Catalog \ Data Dictionary)}
+\vspace{11pt}
+
+The system catalog is a core component of a DBMS. The catalog stores metadata, or data definitions, about the database. Metadata contains definitions of views (external data models), logical data models, and internal (physical) data models. The system catalog ensures consistency and synchronization across different data models. The system catalog is used by the DBMS to manage, access, and validate data.
+
+\vspace{11pt}
+\textbf{Database Users}
+\vspace{11pt}
+
+There are many types of database users, each with unique roles.
+
+The information architect designs the conceptual data model and works closely with business users to capture and model data requirements.
+
+The database designer translated the conceptual model into logical and internal data models. They prepare the database design for implementations.
+
+The database administrator (DBA) is responsible for database implementation and operation. They set up the database infrastructure, while continuously monitoring performance, including response time, throughput, and storage usage.
+
+The application developer develops database applications using general-purpose programming languages. They implement application logic and interacts with the DBMS through APIs or embedded SQL.
+
+Lastly, business users use the database applications to perform specific business tasks. They interact with the database indirectly through applications, not through the DBMS itself.
+
+\vspace{11pt}
+\textbf{Database Languages}
+\vspace{11pt}
+
+Every DBMS provides one or more database languages.
+
+A Data Definition Language (DDL) is used to define database structures. It specifies external, logical, and internal data models, and is typically used by DBAs and application developers.
+
+A Data Manipulation Language (DML) is used to retrieve, insert, delete, and modify data. It can be executed interactively or embedded in a programming language.
+
+Meanwhile, Structured Query Language (SQL) provides a standard language for relational databases. It provides both DDL and DML capabilities.
+
+\vspace{11pt}
+\subsection{Advantages of Database Systems and Database Management}
+\vspace{11pt}
+
+\vspace{11pt}
+\textbf{Data Independence}
+\vspace{11pt}
+
+Data independence is the ability to change data definitions with minimal impact on applications.
+
+In physical data independence, applications, views, and the logical data model remain unchanged. Changes are made only to the internal (physical) data model. Examples include file organization, indexing, and storage location.
+
+In logical data independence, applications are minimally affected by changes to the conceptual or logical data model. Changes at the conceptual/logical layer have little impact on external views.
+
+\vspace{11pt}
+\textbf{Database Modeling}
+\vspace{11pt}
+
+A data model explicitly represents data items, their characteristics, and relationships. A data model may also specify integrity rules and supported operations. Common types of data models include: Hierarchical models, (Enhanced) Entity-Relationship (EER) models, relational models, and object-oriented models.
+
+A conceptual data model captures business data requirements. It is developed in collaboration with business users. The conceptual model is then translated into logical and internal data models. Clear documentation of assumptions and limitations is essential.
+
+\vspace{11pt}
+\textbf{Managing Diverse Data Types}
+\vspace{11pt}
+
+There are three general categories of data:
+\begin{itemize}
+    \item Structured Data: Well-defined schema and data types. Examples include student records (ID, name, address, email).
+    \item Semi-Structured Data: Partial or flexible structure. Examples include JSON documents, resumes, and web data.
+    \item Unstructured Data: No fixed schema. Examples include text documents, images, and videos.
+\end{itemize}
+
+Modern DBMSs can store, manage, and query all three types.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
