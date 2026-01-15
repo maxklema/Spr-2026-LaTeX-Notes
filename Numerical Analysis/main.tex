@@ -1,0 +1,299 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr} % Headings
+\usepackage{listings} % Code
+\usepackage{parskip} % Spacing for Paragraphs
+\usepackage{mdframed} % Asides
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+% Asides
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+
+\renewcommand{\headrulewidth}{.2mm} % header line width
+
+\rhead{\today}
+\lhead{\textbf{Maxwell Klema}}
+\cfoot{\thepage}
+
+
+\title{Numerical Analysis}
+\date{Spring 2026, Purdue University Fort Wayne}
+\author{Maxwell Klema | Professor Mehrdad Hajiarbabi}
+
+\lstset{
+    frame=single, % Adds a single line frame around the code
+}
+
+\begin{document}
+
+\maketitle
+\pagestyle{fancy}
+
+\section{Lecture 1 - Important Ideas from Calculus I}
+
+\vspace{11pt}
+\subsection{Continuity}
+In this section, we will see that the mathematical definition of continuity corresponds closely with the meaning of the word continuity in every day language.
+
+\vspace{11pt}
+\textbf{Continuity:} A continuous process is one that takes place gradually - without interruption or abrupt change.
+
+A function $f$ is continuous at a number $a$ if:
+
+\begin{displaymath}
+\lim_{x \to a} f(x) = f(a) 
+\end{displaymath}
+
+\vspace{11pt}
+\begin{aside}
+Notice that Definition 1 implicitly requires three things if $f$ is continuous at $a$:
+
+\begin{itemize}
+\item $f(a)$ is defined - that is, $a$ is in the domain of $f$.
+\item $\lim_{x \to a} f(x)$ exists.
+\item $\lim_{x \to a} f(x) = f(a)$
+\end{itemize}
+
+\end{aside}
+\vspace{11pt}
+
+The definition states that $f$ is continuous at $a$ is $f(x)$ approaches $f(a)$ as $x$ approaches $a$. Thus, a continuous function $f$ has the property that a small change in $x$ produces only a small change in $f(x)$. In fact, the change in $f(x)$ can be kept as small as we please by keeping the change in $x$ sufficiently small.
+
+If $f$ is defined near a-that is, $f$ is defined on an open interval containing $a$, except perhaps at $a$-we say that $f$ is discontinuous at $a$ (or $f$ has a discontinuity at $a$) if $f$ is not continuous at $a$.
+
+\vspace{11pt}
+\begin{aside}
+Geometrically, you can think of a function that is continuous at every number in an interval as a function whose graph as no break in it. The graph can be drawn without removing your pen from the paper.
+\end{aside}
+\vspace{11pt}
+
+\textbf{Example 1:} The figure shows the graph of a function $f$. At which numbers if $f$ is discontinuous? Why?
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{1.png}    
+\end{center}
+\vspace{11pt}
+
+It looks like there is a discontinuity when $a = 1$ because the graph is broken there. The official reason that $f$ is discontinuous at 1 is that $f(1)$ is not defined there.
+
+The graph also has a break when $a = 3$. However, the reason for discontinuity is different. Here, $f(3)$ is defined, but $\lim_{x \to 3}f(x)$ does not exist (because the left and right limits are different). So, $f$ is discontinuous at 3.
+
+What about $a = 5$? Here, $f(5)$ is defined and $\lim_{x \to 5}f(x)$ exists (because the left and right limits are the same). However,  $\lim_{x \to 5}f(x) \neq f(5)$. Therefore, $f$ is discontinuous at 5.
+
+Now, let's see how to detect discontinuities when a function is defined by a formula.
+
+\vspace{11pt}
+Where are each of the following functions discontinuous?
+
+\textbf{Example a:}
+\vspace{11pt}
+\begin{center}
+\begin{displaymath}
+    f(x) = \frac{x^2 -x - 2}{x-2}
+\end{displaymath}
+\vspace{11pt}
+
+Notice that $f(2)$ is not defined. So, $f$ is discontinuous at 2. Later, we will see why $f$ is continuous at all other numbers.
+
+\end{center}
+\vspace{11pt}
+
+\textbf{Example b:}
+\vspace{11pt}
+\begin{center}
+    \[
+f(x) =
+\begin{cases}
+    \frac{1}{x^2}, &x \neq 0 \\
+    1, & x = 0
+\end{cases}
+\]
+\vspace{11pt}
+
+Here, $f(0) = 1$ is defined. However, $\lim_{x \to 0}f(x) = \lim_{x \to 0} \frac{1}{x^2}$ does not exist. Therefore, $f$ is discontinuous at 0.
+
+\end{center}
+
+\vspace{11pt}
+\textbf{Example c:}
+\vspace{11pt}
+\begin{center}
+    \[
+f(x) =
+\begin{cases}
+    \frac{x^2-x-2}{x-2}, &x \neq 2 \\
+    1, & x = 2
+\end{cases}
+\]
+\vspace{11pt}
+
+Here, $f(2) = 1$ is defined. Additionally,
+
+\begin{displaymath}
+    \lim_{x \to 2}f(x) = \lim_{x \to 2}\frac{x^2 - x - 2}{x - 2} = \lim_{x \to 2}\frac{(x-2)(x+1)}{x - 2} = \lim_{x \to 2}(x+1) = 3
+\end{displaymath}
+
+However, $\lim_{x \to 2}f(x) \neq f(2)$. Therefore, $f$ is not continuous at 2.
+
+\end{center}
+\vspace{11pt}
+
+This kind of discontinuity illustrated in parts (a) and (c) is called removable. We could remove the discontinuity by redefining $f$ at just the single number 2. The function $g(x) = x + 1$ is continuous.
+
+\vspace{11pt}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{2.png}    
+\end{center}
+\vspace{11pt}
+
+
+The discontinuity in part (b) is called an infinite discontinuty
+
+\vspace{11pt}
+\begin{center}
+\includegraphics[width=0.5\textwidth]{3.png}    
+\end{center}
+\vspace{11pt}
+
+A function $f$ is continuous on an interval if it is continuous at every number in the interval. If $f$ is defined only on one side of an endpoint of the interval, we understand 'continuous at the endpoint' to mean 'continuous from the right' or 'continuous from the left.'
+
+\vspace{11pt}
+\vspace{11pt}
+\vspace{11pt}
+\vspace{11pt}
+\textbf{Example 3:} Show that the function $f(x) = 1 - \sqrt{1 - x^2}$ is continuous on the interval [-1, 1].
+\vspace{11pt}
+
+If -1 < a < 1, then using the Limit Laws, we have:
+
+\vspace{11pt}
+\begin{center}
+    $\lim_{x \to a} =  \lim_{x \to a}(1 - \sqrt{1 - x^2})$
+
+    $= 1 - \lim_{x \to a}\sqrt{1-x^2}$
+
+    $=1-\sqrt{\lim_{x\to a}(1-x^2)}$
+
+    $=1-\sqrt{1-a^2}$
+
+    $=f(a)$
+\end{center}
+\vspace{11pt}
+Thus, by Definition 1, $f$ is continuous at $a$ if -1 < a < 1. Similar calculations show that $\lim_{x \to -1^+}f(x) = 1= f(-1)$ and $\lim_{x \to 1^{-1}}f(x) = 1 = f(1)$. So, $f$ is continuous from the right at -1 and continuous from the left at 1. Therefore, according to Definition 3, $f$ is continuous on [-1, 1].
+
+The graph of $f$ is sketched in the figure. It is the lower half of the circle $x^2 + (y-1)^2 = 1$.
+
+\vspace{11pt}
+\vspace{11pt}
+\begin{center}
+\includegraphics[width=0.35\textwidth]{4.png}    
+\end{center}
+\vspace{11pt}
+
+Instead of always using Definitions 1, 2, and 3 to verify the continuity of a function, as we did in Example 4, it is often convenient to use the next theorem. It shows how to build up complicated continuous functions from simple ones.
+
+If f and g are continuous at $a$, a $c$ is a constant, then the following functions are also continuous at $a$:
+
+\begin{itemize}
+    \item $f + g$
+    \item $f - g$
+    \item $cf$
+    \item $fg$
+    \item $\frac{f}{g}$ if $g(a) \neq 0$
+\end{itemize}
+
+\vspace{11pt}
+The following types of functions are continuous at every number in their domains
+\begin{itemize}
+    \item Polynomials
+    \item Rational functions
+    \item Root functions
+    \item Trigonometric functions
+    \item Inverse trigonometric functions
+    \item Exponential functions
+    \item Logarithmic functions
+\end{itemize}
+\vspace{11pt}
+
+An important property of continuous functions is expressed by the following theorem. Its proof is found in more advanced books on calculus.
+
+\vspace{11pt}
+\subsection{Intermediate Value Theorem}
+Suppose that $f$ is continuous on the closed interval $[a,b]$ and let $N$ be any number between $f(a)$ and $f(b)$, where $f(a) \neq f(b)$. Then, there exists a number $c$ in $(a,b)$ such that $f(c) = N$.
+
+The theorem states that a continuous function takes on every intermediate value between the function values $f(a)$ and $f(b)$.
+
+The theorem is illustrated by the figure. Note that the value $N$ can be taken on once [as in ($a$)] or more than once [as in ($b$)].
+
+\vspace{11pt}
+\vspace{11pt}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{5.png}    
+\end{center}
+\vspace{11pt}
+
+If we think of a continuous function as a function whose graph has no hole or break, then it is easy to believe that the theorem is true.
+
+In geometric terms, it states that, if any horizontal line $y = N$ is given between $y = f(a)$ and $f(b)$ as in the figure, then the graph of $f$ can't jump over the line. It must intersect $y = N$ somewhere.
+
+\vspace{11pt}
+\begin{aside}
+    It is important that the function in the theorem is continuous. The theorem is not true in general for discontinuous functions.
+\end{aside}
+\vspace{11pt}
+
+One use of the theorem is in locating roots of equations - as in the following example.
+
+\textbf{Example 10}: Show that there is a root of the equation $4x^3 - 6x^2+3x-2 = 0$ between 1 and 2.
+
+\vspace{11pt}
+\begin{center}
+Let $f(x) = 4x^3 - 6x^2+3x-2$
+
+We are looking for a solution of the given equation - that is, a number c between 1 and 2 such that $f(c) = 0$.
+
+Therefore, we take $a = 1, b=2,$ and $N=0$ in the theorem.
+
+We have $f(1) = 4 - 6 + 3 -2=-1 < 0$ and $f(2) = 32-24+6-2=12 > 0$
+
+Thus, $f(1) < 0<f(2)$-that is, $N=0$ is a number between $f(1)$ and $f(2)$. Now, $f$ is continuous since it is a polynomial. So, the theorem states that there is such a number $c$ between 1 and 2 such that $f(c) = 0$. In other words, the equation $ 4x^3 - 6x^2+3x-2 = 0$ has at least one root in the interval $(1,2)$.
+
+In fact, we can locate a root more precisely by using the theorem again. Without showing the work, we can see that a root lies in the interval $(1.22, 1.33)$
+\end{center}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsection{Rolle's Theorem}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\end{document}
