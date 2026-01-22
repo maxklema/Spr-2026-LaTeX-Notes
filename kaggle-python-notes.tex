@@ -1,0 +1,2301 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage{mdframed}
+\usepackage{caption}
+\usepackage{hyperref}
+
+
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+  
+\renewcommand{\headrulewidth}{.2mm} % header line width
+
+\rhead{\today}
+\lhead{\textbf{Maxwell Klema}}
+\cfoot{\thepage}
+
+
+\title{Python: Introductory Notes}
+\author{Maxwell Klema}
+\date{January 2026}
+
+\lstset{
+    frame=single, % Adds a single line frame around the code
+}
+
+\begin{document}
+
+\maketitle
+\pagestyle{fancy}
+
+\section{Introduction}
+These notes cover key Python skills needed to start using the language in data science contexts.
+
+\vspace{11pt}
+\section{Hello, Python!}
+Python was named for British comedy troupe Monty Python, so we will make our first Python program a homage to their skit about Spam.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+spam_amount = 0
+print(spam_amount)
+
+# Ordering Spam, egg, Spam, Spam, bacon and Spam 
+# (4 more servings of Spam)
+spam_amount = spam_amount + 4
+
+if spam_amount > 0:
+    print("But I don't want ANY spam!")
+
+viking_song = "Spam " * spam_amount
+print(viking_song)
+\end{lstlisting}
+
+\vspace{11pt}
+Let's review the code from top to bottom.
+\vspace{11pt}
+
+\begin{lstlisting}[language=Python, breaklines=true]
+spam_amount = 0
+\end{lstlisting}
+
+\vspace{11pt}
+
+\textbf{Variable assignment}: Here, we create a variable called \texttt{spam\_amount} and assign it to the value of 0 using =, which is called the assignment operator.
+
+Note: If you have programmed in certain other languages (like Java or C++), you might be noticing some things Python doesn't require us to do here:
+
+\begin{itemize}
+    \item We don't need to "decare" \texttt{spam\_amount} before assigning it.
+    \item We don't need to tell Python what type of value \texttt{spam\_amount} is going to refer to. In fact, we can even go on to reassign \texttt{spam\_amount} to refer to a different sort of thing like a string or a boolean.
+\end{itemize}
+
+\vspace{11pt}
+
+\begin{lstlisting}[language=Python, breaklines=true]
+print(spam_amount) # => 0
+\end{lstlisting}
+\vspace{11pt}
+\textbf{Function calls}: \texttt{print} is a Python function that displays the value passed to it on the screen. We call functions by putting parentheses after their name, and putting the inputs (or arguments) to the function in those parentheses.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Ordering Spam, egg, Spam, Spam, bacon and Spam 
+# (4 more servings of Spam)
+spam_amount = spam_amount + 4
+\end{lstlisting}
+\vspace{11pt}
+The first line above is a \textbf{comment}. In Python, comments begin with a \texttt{\#} symbol.\\
+\\
+Next, we see an example of reassignment. Reassgining the value of an existing variable looks just the same as creating a variable - it still uses the \texttt{=} assignment operator.
+\\
+In this case, the value we are assigning to \texttt{spam\_amount} involves some simple arithmetic on its previous value. When it encounters this line, Python evaluates the expression on the right-hand-side (RHS) of the \texttt{=} (0+4=4), and then assigns that value to the variable on the left-hand-side (LHS).
+\\
+\begin{lstlisting}[language=Python, breaklines=true]
+if spam_amount > 0:
+    print("But I don't want ANY spam!")
+
+viking_song = "Spam Spam Spam"
+print(viking_song)
+\end{lstlisting}
+
+We won't talk much about "conditions" until later, but, even if you've never coded before, you can problem guess what this does. Python is prized for its readability and simplicity.
+
+Note how we indicated which code belongs to the \texttt{if}. \texttt{"But I don't want ANY Spam!"} is only supposed to be printed if \texttt{spam\_amount} is positive. But the later code (like \texttt{print\((viking\_song)\)}) should be executed no matter what. How do we (and Python) know that?
+
+The colon (\texttt{:}) at the end of the \texttt{if} line indicates that a new code block is starting. Subsequent lines which are indented are part of that code block. Note, other languages may use \texttt{\{ curly braces \}} to mark the beginning and end of code blocks. Python's use of meaningful whitespace can be surprising to programmers who are accustomed to other languages, but in practice it can lead to more consistent and readable code than languages that do not enforce indentation of code blocks.
+
+The later lines dealing with \texttt{viking\_song} are not indented with an extra 4 spaces, so they
+re not a part of the \texttt{if}'s code block. We will see more examples of indented code blocks later when we define functions and using loops.
+
+This code snippet is also our first sighting of a \textbf{string} in Python:
+\\
+\begin{lstlisting}[language=Python, breaklines=true]
+"But I don't want ANY spam!"
+\end{lstlisting}
+\vspace{11pt}
+Strings can be marked either by double or single quotation marks. (But because this particular string contains a single-quote character, we might confuse Python by trying to surround it with single-quotes, unless we're careful.)
+\\
+\begin{lstlisting}[language=Python, breaklines=true]
+viking_song = "Spam " * spam_amount
+print(viking_song)
+# Output => "Spam Spam Spam Spam"
+\end{lstlisting}
+\vspace{11pt}
+The \texttt{*} operator can be used to multiply two numbers (\texttt{3*3} evaluates to 9), but we can also multiply a string by a number, to get a version that's been repeated that many times. Python offers a number of cheecky little time-saving tricks like this where operators like \texttt{*} and \texttt{+} have a different meaning depending on what kind of thing they are applied to. (The technical term for this is \textbf{operator overloading}.)
+\\
+\subsection{Numbers and arithmetic in Python}
+We've already seen an example of a variable containing a number above:
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+spam_amount = 0
+\end{lstlisting}
+\vspace{11pt}
+"Number" is a fine informal name for the king of thing, but if we wanted to be more technical, we could ask Python how it would describe the type of thing that \texttt{spam\_amount} is.
+\\
+\begin{lstlisting}[language=Python, breaklines=true]
+type(spam_amount) # => int
+\end{lstlisting}
+\vspace{11pt}
+It's an \texttt{int} - short for integer. There's another sort of number we commonly encounter in Python.
+\\
+\begin{lstlisting}[language=Python, breaklines=true]
+type(19.95) # => float
+\end{lstlisting}
+\vspace{11pt}
+A \texttt{float} is a number with a decimal place - very useful for representing things like weights or proportions.
+
+\texttt{type()} is the second built-in function we've seen (after \texttt{print()}), and it's another good one to remember. It's very useful to be able to ask Python "what kind of thing is this?".
+
+A natural thing to want to do with numbers is perform arithmetic. We've seen the \texttt{+} operator for addition, and the \texttt{*} operator for multiplication. Python also has us covered for the rest of the basic buttons on your calculator.
+\vspace{11pt}
+\begin{center}
+   \begin{tabular}{ |c|c|c|}
+    \hline
+    Operator & Name & Description \\
+    \hline
+    a + b & Addition & Sum of a and b \\
+    \hline
+    a - b & Subtraction & Difference of a and b \\
+    \hline
+    a * b & Multiplication & Product of a and b \\
+    \hline
+    a / b & True division & Quotient of a and b \\
+    \hline
+    a // b & Floor division & Quotient of a and b, removing fractional parts \\
+    \hline
+    a \% b & Modulus & Integer remainder after division of a by b \\
+    \hline
+    a ** b & Exponentiation & a raised to the power of b \\
+    \hline
+    -a & Negation & The negative of a \\
+    \hline
+    \end{tabular}
+\end{center}
+\vspace{11pt}
+One interesting observation here is that, whereas your calculator probably just has one button for division, Python can do two kinds. "True division" is basically what your calculator does.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(5 / 2) # => 2.5
+print(6 / 2) # => 3.0
+\end{lstlisting}
+\vspace{11pt}
+It always gives us a \texttt{float}.
+
+The \texttt{//} operator gives us a result that's rounded down to the next integer.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(5 // 2) # => 2
+print(6 // 2) # => 3
+\end{lstlisting}
+\vspace{11pt}
+
+\subsubsection{Order of Operations}
+The arithmetic we learned in primary school has conventions about the order in which operations are evaluated. Some remember these mnemonic such as PEMDAS - \textbf{P}arentheses, \textbf{E}xponents, \textbf{M}ultiplication/\textbf{D}ivision, \textbf{A}ddition/\textbf{S}ubtraction.
+
+Python follows similar rules about which calculation to perform first. They're mostly pretty intuitive.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+8 - 3 + 2 # => 7
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+-3 + 4 * 2 # => 5
+\end{lstlisting}
+\vspace{11pt}
+Sometimes, the default order of operations isn't what we want.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+hat_height_cm = 25
+my_height_cm = 190
+# How tall am I, in meters, when wearing my hat?
+total_height_meters = hat_height_cm + my_height_cm / 100
+print("Height in meters =", total_height_meters, "?")
+\end{lstlisting}
+\vspace{11pt}
+Parentheses are useful here. You can add them to force Python to evaluate sub-expressions in whatever order you want.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+total_height_meters = (hat_height_cm + my_height_cm) / 100
+print("Height in meters =", total_height_meters)
+# => Height in meters = 2.15
+\end{lstlisting}
+\vspace{11pt}
+
+\subsubsection{Builtin Functions for Working with Numbers}
+\texttt{min} and \texttt{max} return the minimum and maximum of their arguments, respectively.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(min(1, 2, 3)) # => 1
+print(max(1, 2, 3)) # => 3
+\end{lstlisting}
+\vspace{11pt}
+\texttt{abs} returns the absolute value of an argument.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(abs(32)) # => 32
+print(abs(-32)) # => 32
+\end{lstlisting}
+\vspace{11pt}
+In addition to being the names of Python's two main numerical types, \texttt{int} and \texttt{float} can also be called as functions which convert their arguments to the corresponding type:
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(float(10)) # => 10.0
+print(int(3.33)) # => 3
+# They can even be called on strings!
+print(int('807') + 1) # => 808
+\end{lstlisting}
+\vspace{11pt}
+
+\section{Functions and Getting Help}
+You've already seen and used functions such as \texttt{print} and \texttt{abs}. But Python has many more functions, and defining your own is a big part of Python.
+
+In this section, you will learn more about using and defining functions.
+\\
+\subsection{Getting Help}
+You saw the \texttt{abs} function in the previous tutorial, but what if you've forgotten what it does?
+
+The \texttt{help()} function is possibly the most important Python function you can learn. If you can remember how to use \texttt{help()}, you hold the key to understanding most other functions.
+
+Here is an example:
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(round)
+
+# Output:
+'''
+Help on built-in function round in module builtins:
+
+round(number, ndigits=None)
+    Round a number to a given precision in decimal digits.
+    
+    The return value is an integer if ndigits is omitted or None.  
+    Otherwise, the return value has the same type as the number.  
+    ndigits may be negative.
+'''
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{help()} displays two things:
+\begin{itemize}
+    \item The header of that function \texttt{round(number, nDigits=None)}. In this case, this tells us that \texttt{round()} takes an argument we can describe as \texttt{number}. Additionally, we can optionally give a separate argument which could be described as \texttt{ndigits}.
+    \item A brief English description of what the function does.
+\end{itemize}
+\vspace{11pt}
+
+\textbf{Common pitfall}: When you're looking up a function, remember to pass in the name of the function itself, and not the result of calling that function.
+
+What happens if we invoke help on a call to the function \texttt{round()}? 
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(round(-2.01))
+\end{lstlisting}
+\vspace{11pt}
+Python evaluates an expression like this from the inside out. First, it calculates the value of \texttt{round(-2.01)}, then it provides help on the output of that expression.
+
+(And it turns out to have a lot of say about integers! After we talk later about objects, methods, and attributes in Python, the help output above will make more sense.)
+
+\texttt{round} is a very simple function with a short docstring. \texttt{help} shines even more when dealing with more complex, configurable functions like \texttt{print}. Don't worry if the following output looks inscrutable... for now, just see if you can pick anything new out from this help.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(print)
+# Output
+'''
+Help on built-in function print in module builtins:
+
+print(...)
+    print(value, ..., sep=' ', end='\n', file=sys.stdout, flush=False)
+    
+    Prints the values to a stream, or to sys.stdout by default.
+    Optional keyword arguments:
+    file:  a file-like object (stream); defaults to the current 
+    sys.stdout.
+    sep:   string inserted between values, default a space.
+    end:   string appended after the last value, default a newline.
+    flush: whether to forcibly flush the stream.
+'''
+\end{lstlisting}
+\vspace{11pt}
+If you were looking for it, you might learn that print can take an argument called \texttt{sep}, and that this describes what we put between all the other arguments when we print them.
+\\
+\subsection{Defining functions}
+Builtin functions are great, but we can only get so far with them before we need t start defining our own functions. Below is a simple example.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def least_difference(a, b, c):
+    diff1 = abs(a - b)
+    diff2 = abs(b - c)
+    diff3 = abs(a - c)
+    return min(diff1, diff2, diff3)
+\end{lstlisting}
+\vspace{11pt}
+This creates a function called \texttt{least\_difference}, which takes three arguments, \texttt{a}, \texttt{b}, and \texttt{c}.
+
+Functions start with a header introduced by the \texttt{def} keyword. The indented block of code following the \texttt{:} is run when the function is called.
+
+\texttt{return} is another keyword uniquely associated with functions. When Python encounters a \texttt{return} statement, the function exits immediately, and passes the value on the RHS to the calling context.
+
+Is it clear what \texttt{least\_difference()} does from the source code? If we're not sure, we can always try it out on a few examples:
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(
+    least_difference(1, 10, 100),
+    least_difference(1, 10, 10),
+    least_difference(5, 6, 7),
+    # Python allows trailing commas in argument lists.
+)
+# Output => 9 0 1
+\end{lstlisting}
+\vspace{11pt}
+Or maybe the \texttt{help()} function can tell us something about it.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(least_difference)
+# Output:
+'''
+Help on function least_difference in module __main__:
+
+least_difference(a, b, c)
+'''
+\end{lstlisting}
+\vspace{11pt}
+Python is not smart enough to read my code and turn it into a nice English description. However, when I write a function, I can provide a description in what's called a \textbf{docstring}.
+\\
+\subsubsection{Docstrings}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def least_difference(a, b, c):
+    """Return the smallest difference between any two numbers
+    among a, b and c.
+    
+    >>> least_difference(1, 5, -5)
+    4
+    """
+    diff1 = abs(a - b)
+    diff2 = abs(b - c)
+    diff3 = abs(a - c)
+    return min(diff1, diff2, diff3)
+\end{lstlisting}
+\vspace{11pt}
+The docstring is a triple-quoted string (which may span multiple lines) that comes immediately after the header of a function. When we call \texttt{help} on a function, it shows the docstring.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(least_difference)
+# Output:
+'''
+Help on function least_difference in module __main__:
+
+least_difference(a, b, c)
+    Return the smallest difference between any two numbers
+    among a, b and c.
+    
+    >>> least_difference(1, 5, -5)
+    4
+'''
+\end{lstlisting}
+\vspace{11pt}
+\begin{aside}
+\textbf{Aside}: The last two lines of the docstring are an example function call and result. (The \texttt{>>>} is a reference to the command prompt used in Python interactive shells.) Python does not run the example call - it's just there for the benefit of the reader. The convention of including 1 or more example calls in a function's docstring is far more from universally observed, but it can be very effective at helping someone understand your function.
+\end{aside}
+\vspace{11pt}
+Good programmers use docstrings unless they expect to throw away the code soon after it's used (which is rare). So, you should start writing docstrings, too!
+\\
+\subsection{Functions that don't return}
+What would happen if we didn't include the \texttt{return} keyword in our function?
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def least_difference(a, b, c):
+    """Return the smallest difference between any two numbers
+    among a, b and c.
+    """
+    diff1 = abs(a - b)
+    diff2 = abs(b - c)
+    diff3 = abs(a - c)
+    min(diff1, diff2, diff3)
+    
+print(
+    least_difference(1, 10, 100),
+    least_difference(1, 10, 10),
+    least_difference(5, 6, 7),
+)
+
+# Output -> None None None
+\end{lstlisting}
+\vspace{11pt}
+Python allows us to define such functions. The result fo calling them is the special value \texttt{None}. (This is similar to the concept of "null" in other languages.)
+
+Without a \texttt{return} statement, \texttt{least\_difference} is completely pointless, but a function with side effects may do something useful without returning anything. We've already seen two examples of this: \texttt{print()} and \texttt{help()} don't return anything. We only call them for their side effects (putting some text on the screen). Other examples of useful side effects include writing to a file, or modifying an input.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+mystery = print()
+print(mystery)
+
+# Output => None
+\end{lstlisting}
+\vspace{11pt}
+\subsection{Default Arguments}
+When we called \texttt{help(print)}, we saw that the \texttt{print} function has several optional arguments. For example, we can specify a value for \texttt{sep} to put some special string in between our printed arguments.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(1, 2, 3, sep=' < ')
+# Output => 1 < 2 < 3
+\end{lstlisting}
+\vspace{11pt}
+But if we don't specify a value, \texttt{sep} is treated as having a default value of \texttt{' '} (a single space).
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(1, 2, 3)
+# Output => 1 2 3
+\end{lstlisting}
+\vspace{11pt}
+Adding optional arguments with default values to the functions we define turns out to be pretty easy.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def greet(who="Colin"):
+    print("Hello,", who)
+    
+greet()
+greet(who="Kaggle")
+# (In this case, we don't need to specify the name of the argument, 
+because it's unambiguous.)
+
+greet("world")
+
+# Output:
+'''
+Hello, Colin
+Hello, Kaggle
+Hello, World
+'''
+\end{lstlisting}
+\vspace{11pt}
+
+\subsection{Functions Applied to Functions}
+Here's something that's powerful, though it can feel very abstract at first. You can supply functions as arguments to other functions. Some example may make this clearer.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def mult_by_five(x):
+    return 5 * x
+
+def call(fn, arg):
+    """Call fn on arg"""
+    return fn(arg)
+
+def squared_call(fn, arg):
+    """Call fn on the result of calling fn on arg"""
+    return fn(fn(arg))
+
+print(
+    call(mult_by_five, 1),
+    squared_call(mult_by_five, 1), 
+    sep='\n', # '\n' is the newline character - it starts a new line
+)
+
+# Output => 
+5
+25
+\end{lstlisting}
+\vspace{11pt}
+Functions that operate on other functions are called "higher-order functions." You probably won't write your own for a little while. But there are higher-order functions built into Python that you might fund useful to call.
+
+Here's an interesting eample using the \texttt{max} function.
+
+By default, \texttt{max} returns the largest of its arguments. But, if we pass in a function using the optional \texttt{key} argument, it returns the argument \texttt{x} that maximizes \texttt{key(x)} (aka the 'argmax').
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def mod_5(x):
+    """Return the remainder of x after dividing by 5"""
+    return x % 5
+
+print(
+    'Which number is biggest?',
+    max(100, 51, 14),
+    'Which number is the biggest modulo 5?',
+    max(100, 51, 14, key=mod_5),
+    sep='\n',
+)
+
+# Output =>
+Which number is biggest?
+100
+Which number is the biggest modulo 5?
+14
+\end{lstlisting}
+\vspace{11pt}
+\newpage
+\section{Booleans and Conditionals}
+\vspace{11pt}
+\subsection{Booleans}
+\vspace{11pt}
+
+Python has a type of variable called \texttt{bool}. It has two possible values: \texttt{True} and \texttt{False}.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x = True
+print(x) # => True
+print(type(x)) # => <class, 'bool'>
+\end{lstlisting}
+\vspace{11pt}
+
+Rather than putting True or False directly in our code, we usually get boolean values from boolean operators. These are operators that answer yes/no questions. We will go through some of these operators below.
+
+\vspace{11pt}
+\subsubsection{Comparison Operators}
+
+\vspace{11pt}
+\begin{center}
+    \begin{tabular}{ |c|c|c|c| }
+    \hline
+    Operation & Description & Operation & Description \\
+    \hline
+    a == b & a equal to b & a != b & a not equal to b \\
+    \hline
+    a < b & a less than b & a > b & a greater than b \\
+    \hline
+    a $\leq$ b & a less than or equal to b & a $\geq$ b & a greater or equal to b \\
+    \hline
+    \end{tabular}
+\end{center}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def can_run_for_president(age):
+    """Can someone of the given age run for president in the US?"""
+    # The US Constitution says you must be at least 35 years old
+    return age >= 35
+
+print("Can a 19-year-old run for president?", can_run_for_president(19))
+print("Can a 45-year-old run for president?", can_run_for_president(45))
+
+# False
+# True
+\end{lstlisting}
+\vspace{11pt}
+
+Comparisons frequently work like you'd hope:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+3.0 == 3 # => True
+\end{lstlisting}
+\vspace{11pt}
+
+But sometime they can be tricky
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+'3' == 3 # => False (Python is strongly typed)
+\end{lstlisting}
+\vspace{11pt}
+
+Comparison operators can be combined with the arithmetic operators we've already seen to expression a virtually limitless range of metathetical tests. For example, we can check if a number is odd by checking that the modulus with 2 returns 1.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def is_odd(n):
+    return (n % 2) == 1
+
+print("Is 100 odd?", is_odd(100)) # => False
+print("Is -1 odd?", is odd(1)) # => True
+\end{lstlisting}
+\vspace{11pt}
+
+Remember to use \texttt{==} instead of \texttt{=} when making comparisons. If you write \texttt{n == 2} you are asking about the value of n. When you write \texttt{n = 2} you are changing the value of n.
+
+\vspace{11pt}
+\subsubsection{Combining Boolean Values}
+\vspace{11pt}
+
+You can combine boolean values using the standard concepts of "and", "or", and "not". In fact, the words to do this are: \texttt{and}, \texttt{or}, and \texttt{not}. With these, we can make our \texttt{can\_run\_for\_president} more accurate.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def can_run_for_president(age, is_natural_born_citizen):
+    return is_natural_born_citizen and (age >= 35)
+
+print(can_run_for_president(19, True)) # => False
+print(can_run_for_president(55, False)) # => False
+print(can_run_for_president(55, True)) # => True
+\end{lstlisting}
+\vspace{11pt}
+
+Can you guess the value of this expression?
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+True or True and False # => True (and has precendence over or)
+\end{lstlisting}
+\vspace{11pt}
+
+To answer this, you'd need to figure out the order of operations. For example, \texttt{and} is evaluated before \texttt{or}. That is why the first expression above is \texttt{true}. If we evaluated from left to right, we would have calculated \texttt{True or True} first (which is \texttt{True}), and then taken the \texttt{and} of that result with \texttt{False}, giving a final value of \texttt{False}.
+
+You could try to memorize the order of precedence, but a safer bet is to just use liberal parentheses. Not only does this help prevent bugs, it makes your intentions clearer to anyone who reads your code.
+
+For example, consider the following expression:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+prepared_for_weather = have_umbrella or rain_level < 5 and have_hood or not rain_level > 0 and is_workday
+\end{lstlisting}
+\vspace{11pt}
+
+I am trying to say that I am safe from today's weather...
+\begin{itemize}
+    \item if I have an umbrella
+    \item of if the rain isn't too heavy and I have a hood
+    \item otherwise, I am still fine unless its raining and it's a workday
+\end{itemize}
+
+But not only is the Python code hard to read, it has a bug. We can address both problems by adding some parentheses:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+prepared_for_weather = have_umbrella or (rain_level < 5 and have_hood) or not (rain_level > 0 and is_workday)
+\end{lstlisting}
+\vspace{11pt}
+
+You can add even more parentheses if you think it helps readability:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+prepared_for_weather = have_umbrella or ((rain_level < 5) and have_hood) or (not (rain_level > 0 and is_workday))
+\end{lstlisting}
+\vspace{11pt}
+
+We can also split it over multiple lines to emphasize the 3-part structure described above:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+prepared_for_weather = (
+    have_umbrella 
+    or ((rain_level < 5) and have_hood) 
+    or (not (rain_level > 0 and is_workday))
+)
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsection{Conditionals}
+\vspace{11pt}
+
+Booleans are most useful when combined with conditional statements, using the keywords \texttt{if}, \texttt{elif}, and \texttt{else}.
+
+Conditional statements, often referred to as if-then statements, let you control what piees of code are run based on the value of some Boolean condition. Here is an example:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def inspect(x):
+    if x == 0:
+        print(x, "is zero")
+    elif x > 0:
+        print(x, "is positive")
+    elif x < 0:
+        print(x, "is negative")
+    else:
+        print(x, "is unlike anything I've ever seen...")
+
+inspect(0) # => 0 is zero
+inspect(-15) # => -15 is negative
+\end{lstlisting}
+\vspace{11pt}
+
+The \texttt{if} and \texttt{else} keywords are often used in other languages; its more unique keyword is \texttt{elif}, a contraction of "else if". In these conditional clauses \texttt{elif} and \texttt{else} blocks are optional; additionally, you can include as many \texttt{elif} statements as you would like.
+
+Note especially the use of colons (\texttt{:}) and whitespace to denote separate blocks of code. This is similar to what happens when we define a function - the function header ends with \texttt{:}, and the following line is indented with 4 spaces. All subsequent indented lines belong to the body of the function, until we encounter an unidentified line, ending the function definition.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def f(x):
+    if x > 0:
+        print("Only printed when x is positive; x =", x)
+        print("Also only printed when x is positive; x =", x)
+    print("Always printed, regardless of x's value; x =", x)
+
+f(1) # => Only printed when x is positive; x = 1. Also only printed when x is positive; x = 1. Always printed, regardless of x's value; x = 1.
+f(0) #=> Always printed, regardless of x's value; x =1.
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsubsection{Boolean Conversion}
+\vspace{11pt}
+
+We have seen \texttt{int()}, which turns things into ints, and \texttt{float()}, which turns things into floats, so you might not be surprised to hear that Python has a \texttt{bool()} function that turns things into bools.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(bool(1)) # all numbers are treated as true, except 0
+print(bool(0))
+print(bool("asf")) # all strings are treated as true, except the empty string ""
+print(bool(""))
+# Generally empty sequences (strings, lists, and other types we've yet to see like lists and tuples)
+# are "falsey" and the rest are "truthy"
+
+# => True
+# => False
+# => True
+# => False
+\end{lstlisting}
+\vspace{11pt}
+
+We can use non-boolean objects in \texttt{if} conditions and other places where a boolean would be expected. Python will implicitly treat them as their corresponding boolean value:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+if 0:
+    print(0)
+elif "spam"
+    print("spam")
+
+# => spam
+\end{lstlisting}
+\vspace{11pt}
+
+\newpage
+\section{Lists}
+\vspace{11pt}
+\subsection{Lists}
+\vspace{11pt}
+
+Lists in Python represent ordered sequence of values. Here is an example of how to create them:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+primes = [2, 3, 5, 7]
+\end{lstlisting}
+\vspace{11pt}
+
+We can put other types of things in lists:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+\end{lstlisting}
+\vspace{11pt}
+
+We can even make a list of lists:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+hands = [
+    ['J', 'Q', 'K'],
+    ['2', '2', '2'],
+    ['6', 'A', 'K'], # (Comma after the last element is optional)
+]
+# (I could also have written this on one line, but it can get hard to read)
+hands = [['J', 'Q', 'K'], ['2', '2', '2'], ['6', 'A', 'K']]
+\end{lstlisting}
+\vspace{11pt}
+
+A list can contain a mix of different types of variables:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+my_favourite_things = [32, 'raindrops on roses', help]
+# (Yes, Python's help function is *definitely* one of my favourite things)
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsubsection{Indexing}
+\vspace{11pt}
+
+You can access individual list elements with square brackets.
+
+Which planet is closest to the sun? Python uses \textit{zero-based indexing}, so the first element has index 0.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[0] # => 'Mercury'
+\end{lstlisting}
+\vspace{11pt}
+
+What's the next closest planet?
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[1] # => 'Venus'
+\end{lstlisting}
+\vspace{11pt}
+
+Which planet is \textit{furthest from the sun}?
+
+Elements at the end of the list can be accessed with negative numbers, starting from -1:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[-1] # => 'Neptune'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[-2] # => 'Uranus'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsubsection{Slicing}
+\vspace{11pt}
+
+What are the first three planets? We can answer this question using \textit{slicing}.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[0:3] => ['Mercury', 'Venus', 'Earth']
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{\texttt{planets[0:3]} is our way of asking for the elements of planets starting from index 0 and continuing up but not including index 3.}
+
+The starting and ending indices are both optional. If I leave out the start index, \textbf{it's assume to be 0}. So, I could rewrite the expression above as:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[:3] => ['Mercury', 'Venus', 'Earth']
+\end{lstlisting}
+\vspace{11pt}
+
+If I leave out the end index, it's assume to be the length of the list:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[3:] => ['Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+\end{lstlisting}
+\vspace{11pt}
+
+i.e. the expression above means "give me all the planets from index 3 onward".
+
+We can also use negative indices when slicing:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# All the planets except the first and last
+planets[1:-1] => ['Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus']
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# The last 3 planets
+planets[-3:] => ['Saturn', 'Uranus', 'Neptune']
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsubsection{Changing Lists}
+\vspace{11pt}
+
+Lists are "mutable", meaning they can be modified "in place". One way to modify a list is to assign to an index or slice expression.
+
+For example, let's say we want to rename Mars:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[3] = 'Malacandra'
+planets => ['Mercury',
+ 'Venus',
+ 'Earth',
+ 'Malacandra',
+ 'Jupiter',
+ 'Saturn',
+ 'Uranus',
+ 'Neptune']
+\end{lstlisting}
+\vspace{11pt}
+
+That is quite a mouthful. Let's compensate by shortening the names of the first 3 planets.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets[:3] = ['Mur', 'Vee', 'Ur']
+print(planets) => ['Mur', 'Vee', 'Ur', 'Malacandra', 'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+# That was silly. Let's give them back their old names
+planets[:4] = ['Mercury', 'Venus', 'Earth', 'Mars',]
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\subsubsection{List Functions}
+\vspace{11pt}
+
+Python has several useful functions for working with lists
+
+\texttt{len} gives the length of a list
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+len(plantets) => 8
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{sorted} returns a sorted version of a list:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# The planets sorted in alphabetical order
+sorted(planets) => ['Earth', 'Jupiter', 'Mars', 'Mercury', 'Neptune', 'Saturn', 'Uranus', 'Venus']
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{sum} adds all elements of a list:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+primes = [2, 3, 5, 7]
+sum(primes) => 17
+\end{lstlisting}
+\vspace{11pt}
+
+We have previously used the \texttt{min} and \texttt{max} to get the minimum or maximum of several arguments. But we can also pass in a single list argument.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+max(primes) => 7
+\end{lstlisting}
+\vspace{11pt}
+
+\newpage
+\subsubsection{Interlude: Objects}
+\vspace{11pt}
+
+The term "object" has been used a lot so far - you may have even read that everything in Python is an object. But, what does that mean?
+
+In short, objects carry some things around with them. You access that stuff using Python's dot syntax.
+
+For example, numbers in Python carry around an associated variable called \texttt{imag} representing their imaginary part. (You'll probably never need t use this unless you're doing some really weird math.)
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x = 12
+# x is a real number, so its imaginary part is 0.
+print(x.imag) => 0
+# Here's how to make a complex number, in case you've ever been curious:
+c = 12 + 3j
+print(c.imag) => 3.0
+\end{lstlisting}
+\vspace{11pt}
+
+The things an object carries around can also include functions. A function attached to an object is called a \textbf{method}. (Non-function things attached to an object, such as \texttt{imag}, are called \textbf{attributes}).
+
+For example, numbers have a method called \texttt{bit\_length}. Again, we access it using dot syntax:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x.bit_length => <function int.bit_length()>
+\end{lstlisting}
+\vspace{11pt}
+
+To actually call it, we add parentheses:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x.bit_length() => 4
+\end{lstlisting}
+\vspace{11pt}
+
+\begin{aside}
+    You have actually been calling methods already if you've been doing the exercises. In the exercise notebooks \texttt{q1}, \texttt{q2}, \texttt{q3}, etc. are all objects which have the methods called \texttt{check}, \texttt{hint}, and \texttt{solution}.
+\end{aside}
+\vspace{11pt}
+
+In the same way that we can pass functions to the help function (e.g. \texttt{help(max)}), we can also pass in methods:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(x.bit_length) =>
+
+Help on built-in function bit_length:
+
+bit_length() method of builtins.int instance
+    Number of bits necessary to represent self in binary.
+    
+    >>> bin(37)
+    '0b100101'
+    >>> (37).bit_length()
+    6
+\end{lstlisting}
+\vspace{11pt}
+
+The examples above are utterly obscure. None of the types of objects we have looked at so far (numbers, functions, boolean have attributes or methods you are likely ever to use.
+
+\vspace{11pt}
+\subsubsection{List Methods}
+\vspace{11pt}
+
+\texttt{list.append} modifies a list by adding an item to the end
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Pluto is a planet darn it!
+planets.append('Pluto')
+\end{lstlisting}
+\vspace{11pt}
+
+Why does the cell above have no output? Let's check the documentation by calling \texttt{help(planets.append)}.
+
+\vspace{11pt}
+\begin{aside}
+    \texttt{append} is a method carried around by all objects of type list, not just \texttt{planets}, so we also could have called \texttt{help(list.planets)}. However, if we try to call \texttt{help(append)}, Python will complain that no variable exists called "append". The "append" name only exists within lists - it does not exist as a standalone name like builtin functions such as \texttt{len} or \texttt{max}.
+\end{aside}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(planets.append) =>
+
+Help on built-in function append:
+
+append(object, /) method of builtins.list instance
+Append object to the end of the list.
+\end{lstlisting}
+\vspace{11pt}
+
+The \texttt{-> None} part is telling us that \texttt{list.append} does not return anything. But if we check the values of \texttt{planets}, we can see that the method call modified the value of \texttt{planets}:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets =>
+
+['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune', 'Pluto']
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{list.pop} removes and returns the last element of a list:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets.pop() => 'Pluto'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets =>
+
+['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Searching lists}
+\vspace{11pt}
+Where does Earth fall in the order of planets? We can get its index using the \texttt{list.index} method.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets.index('Earth') => 2
+\end{lstlisting}
+\vspace{11pt}
+
+It comes third (i.e. at index 2 - 0 indexing!)
+
+At what index does Pluto occur?
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets.index('Pluto') => ValueError! Pluto is not in list
+\end{lstlisting}
+\vspace{11pt}
+
+To avoid unpleasant surprises like this, we can use the \texttt{in} operator to determine whether a list a list contains a certain value:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Is Earth a planet?
+"Earth" in planets => True
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Is Calbefraques a planet?
+"Calbefraques" in planets => False
+\end{lstlisting}
+\vspace{11pt}
+
+There are a few more interesting list methods we have not covered. If you want to learn about all the methods and attributes attached to a particular object, we can call \texttt{help()} on the object itself. For example, \texttt{help(planets)} will tell us about all the list methods.
+
+\vspace{11pt}
+\subsubsection{Tuples}
+\vspace{11pt}
+
+Tuples are almost exactly the same as lists. They differ in just two ways.
+
+\textbf{1}: The syntax for creating them uses parentheses instead of square brackets.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+t = (1, 2, 3)
+or
+t = 1, 2, 3 # equivalent to above
+t => (1, 2, 3)
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{2}: They cannot be modified (they are \textit{immutable}).
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+t[0] = 100 -> TypeError! 'tuple' object does not support item assignment
+\end{lstlisting}
+\vspace{11pt}
+
+Tuples are often used for functions that have multiple return values. For example, the \texttt{as\_integer\_ratio()} method of float objects returns a numerator and a denominator in the form of a tuple:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x = 0.125
+x.as_integer_ratio() => (1,8)
+\end{lstlisting}
+\vspace{11pt}
+
+These multiple return values can be individually assigned as follows:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+numerator, denominator = x.as_integer_ratio()
+print(numerator / denominator) => 0.125
+\end{lstlisting}
+\vspace{11pt}
+
+Finally, we have some insight into the classic Stupid Python Trick for swapping two variables.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+a = 1
+b = 0
+a, b = b, a
+print(a,b) => 0 1
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\section{Loops}
+\vspace{11pt}
+
+\subsection{Loops}
+\vspace{11pt}
+
+Loops are a way to repeatedly execute some code. Here's an example:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planets = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+for planet in planets:
+    print(planet, end=' ') # print all on same line
+
+# => Mercury Venus Earth Mars Jupiter Saturn Uranus Neptune 
+\end{lstlisting}
+\vspace{11pt}
+
+The \texttt{for} loop specifies:
+\begin{itemize}
+    \item the variable name to use (in this case, \texttt{planet})
+    \item the set of values to loop over (in this case, \texttt{planets})
+\end{itemize}
+\vspace{11pt}
+
+You use the word "\texttt{in}" to link them together. The object to the right of the "\texttt{in}" can be any object that supports iteration. Basically, if it can be thought of as a group of things, you can probably loop over it. In addition to lists, we can iterate over the elements of a tuple:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+multiplicands = (2, 2, 2, 3, 3, 5)
+product = 1
+for mult in multiplicands:
+    product = product * mult
+product => 360
+\end{lstlisting}
+\vspace{11pt}
+
+You can even loop through each character in a string:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+s = 'steganograpHy is the practicE of conceaLing a file, message, image, or video within another fiLe, message, image, Or video.'
+msg = ''
+# print all the uppercase letters in s, one at a time
+for char in s:
+    if char.isupper():
+        print(char, end='')      
+
+# => 'HELLO'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\textbf{range()}
+\vspace{11pt}
+
+\texttt{range()} is a function that returns a sequence of numbers. It turns out to be very useful for writing loops.
+
+For example, if we want to repeat some action 5 times:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+for i in range(5):
+    print("Doing important work. i = ", i)
+
+# => 
+Doing important work. i = 0
+Doing important work. i = 1
+Doing important work. i = 2
+Doing important work. i = 3
+Doing important work. i = 4
+\end{lstlisting}
+
+\vspace{11pt}
+\textbf{\texttt{while} loops}
+\vspace{11pt}
+
+The other type of loop in Python is a \texttt{while}, which iterates until some condition is met:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+i = 0
+while i < 10:
+    print(i, end=' ')
+    i += 1 # increase the value of i by 1
+
+# => 0 1 2 3 4 5 6 7 8 9 
+\end{lstlisting}
+\vspace{11pt}
+
+The argument of the \texttt{while} loop is evaluated as a boolean statement, and the loop is executed until the statement evaluates to False.
+
+\vspace{11pt}
+\subsection{List Comprehensions}
+\vspace{11pt}
+
+List comprehensions are one of Python's most beloved and unique features. The easiest way to understand them is probably to just look at a few examples:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+sqaures = [n**2 for n in range(10)]
+squares => [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+\end{lstlisting}
+\vspace{11pt}
+
+Here is how we would do the same thing without a list comprehension:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+squares = []
+for n in range(10):
+    sqaures.append(n**2)
+sqaures => [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+\end{lstlisting}
+\vspace{11pt}
+
+We can also add an \texttt{if} condition:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+short_planets = [planet for planet in planets if len(planet) < 6]
+short_planets => ['Venus', 'Earth', 'Mars']
+\end{lstlisting}
+\vspace{11pt}
+
+\begin{aside}
+    If you are familiar with SQL, you might think of this as being like a "WHERE" clause)
+\end{aside}
+\vspace{11pt}
+
+Here is an example of filtering with an \texttt{if} condition and applying some transformation to the loop variable:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# str.upper() returns an all-caps version of a string
+loud_short_planets = [planet.upper() + '!' for planet in planets if len(planet) < 6]
+loud_short_planets => ['VENUS!', 'EARTH!', 'MARS!']
+\end{lstlisting}
+\vspace{11pt}
+
+Programmers usually write these on a single line, but yo might find the structure clearer when it's split up over three lines:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+[
+    planet.upper() + '!' 
+    for planet in planets 
+    if len(planet) < 6
+] 
+# => ['VENUS!', 'EARTH!', 'MARS!']
+\end{lstlisting}
+\vspace{11pt}
+
+\begin{aside}
+    Continuing the SQL analogy, you could think of these three lines as SELECT, FROM, and WHERE
+\end{aside}
+\vspace{11pt}
+
+The expression on the left does not technically have to involve the loop variable (though it'd be pretty unusual not to). What do you think the expression below will evaluate to?
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+[32 for planet in planets]
+=> [32, 32, 32, 32, 32, 32, 32, 32]
+\end{lstlisting}
+\vspace{11pt}
+
+List comprehensions combined with functions like \texttt{min}, \texttt{max}, and \texttt{sum} can lead to impressive one-line solutions for problems that would otherwise require several lines of code.
+
+For example, compare the following two cells of code that do the same thing:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def count_negatives(nums):
+    """Return the number of negative numbers in the given list.
+    
+    >>> count_negatives([5, -1, -2, 0, 3])
+    2
+    """
+    n_negative = 0
+    for num in nums:
+        if num < 0:
+            n_negative = n_negative + 1
+    return n_negative
+\end{lstlisting}
+\vspace{11pt}
+
+Here is a solution using a list comprehension:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def count_negatives(nums):
+    return len([num for num in nums if num < 0])
+\end{lstlisting}
+\vspace{11pt}
+
+Much better, right? Well, if all we care about is minimizing the length of our code, this third solution is better still.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def count_negatives(nums):
+    # Reminder: in the "booleans and conditionals" exercises, we learned about a quirk of 
+    # Python where it calculates something like True + True + False + True to be equal to 3.
+    return sum([num < 0 for num in nums])
+\end{lstlisting}
+\vspace{11pt}
+
+Which of these solutions is the "best" is entirely subjective. Solving a problem with less code is always nice, but it's worth keeping in mind the following lines from \textit{The Zen of Python}:
+
+\vspace{11pt}
+\begin{aside}
+    Readability counts
+    \\
+    Explicit is better than implicit
+\end{aside}
+\vspace{11pt}
+
+So, use these tools to make compact, readable programs. But when you have to choose, favor code that is easy for others to understand.
+
+\vspace{11pt}
+\section{Strings and Dictionaries}
+\vspace{11pt}
+
+\subsection{Strings}
+\vspace{11pt}
+
+One place where the Python language really shines is in the manipulation of strings. This section will cover some of Python's built-in string methods and formatting operations.
+
+Such string manipulation patterns come up often in the context of data science work.
+
+\vspace{11pt}
+\subsubsection{String Syntax}
+\vspace{11pt}
+
+You've already seen plenty of strings in examples during previous lessons, but just to recap, strings in Python can be defined using either single or double quotations. They are functionally equivalent.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+x = 'Pluto is a planet'
+y = "Pluto is a planet"
+x == y
+# => True
+\end{lstlisting}
+\vspace{11pt}
+
+Double quotes are convenient if your string contains a single quote character (e.g., representing an apostrophe).
+
+Similarly, it's easy to create a string that contains double-quotes if you wrap it in single quotes.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+print("Pluto's a planet!")
+print('My dog is named "Pluto"')
+
+# => Pluto's a planet!
+# => My dog is named "Pluto"
+\end{lstlisting}
+\vspace{11pt}
+
+If we try to put a single quote character inside a single-quoted string, Python gets confused:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+'Pluto's a planet!' # => SyntaxError: invalid syntax
+\end{lstlisting}
+\vspace{11pt}
+
+We can fix this by "escaping" the single quote with a backslash.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+'Pluto\'s a planet!' # => Pluto's a planet!
+\end{lstlisting}
+\vspace{11pt}
+
+The table below summarizes some important uses of the backslash character.
+
+\vspace{11pt}
+\begin{center}
+   \begin{tabular}{ |c|c|c|c|}
+    \hline
+    What you type.. & What you get & Example & print(example)\\
+    \hline
+    \lstinline|\'| & ' & \lstinline|'What\'s up?'| & What's up? \\
+    \hline
+    \lstinline|\"| & " & \lstinline|"That's \"cool\""| & That's "cool" \\
+    \hline
+    \lstinline|\\| & \lstinline|\| & \lstinline|"Look, a mountain: /\\"| & \lstinline|Look, a mountain: /\| \\
+    \hline
+    \lstinline|\n| &  & \lstinline|"1\n2 3"| & 1 (new space)
+2 3 \\
+    \hline
+    \end{tabular}
+\end{center}
+\vspace{11pt}
+
+The last sequence, \texttt{\n}, represents the newline character. It causes Python to start a new line.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+hello = "hello\nworld"
+print(hello)
+
+# => hello
+# => world
+\end{lstlisting}
+\vspace{11pt}
+
+In addition, Python's triple quote syntax for strings lets us include newlines literally (i.e., by just hitting 'Enter' on our keyboard, rather than using the special \lstinline|\n| sequence). We've already seen this in the docstrings we use to document our functions, but we can use them anywhere we want to define a string.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+triplequoted_hello = """hello
+world"""
+print(triplequoted_hello)
+triplequoted_hello == hello
+
+# => hello
+# => world
+# => 
+# => True
+\end{lstlisting}
+\vspace{11pt}
+
+The \texttt{print()} function automatically adds a newline character unless we specify a value for the keyword argument \texttt{end} other than the default value of \lstinline|'\n'|
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print("hello")
+print("world")
+print("hello", end='')
+print("pluto", end='')
+
+# => hello
+# => world
+# => hellopluto
+\end{lstlisting}
+\vspace{11pt}
+
+\subsubsection{Strings are sequences}
+\vspace{11pt}
+
+Strings can be thought of as sequences of characters. Almost everything we've seen that we can do to a list, we can also do to a string.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Indexing
+planet = 'Pluto'
+planet[0]
+
+# => 'P'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Slicing
+planet[-3:]
+
+# => 'uto'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# How long is this string?
+len(planet)
+
+# => 5
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Yes, we can even loop over them
+[char+'! ' for char in planet]
+
+# => ['P! ', 'l! ', 'u! ', 't! ', 'o! ']
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{But a major way in which they differ from lists is that they are immutable}. We can't modify them.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+planet[0] = 'B'
+# planet.append doesn't work either
+
+# => TypeError: 'str' object does not support item assignment.
+\end{lstlisting}
+\vspace{11pt}
+
+\subsubsection{String Methods}
+\vspace{11pt}
+
+Like \texttt{list}, the type \texttt{str} has lots of very useful methods. Below are just a few examples.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# ALL CAPS
+claim = "Pluto is a planet!"
+claim.upper()
+
+# => 'PLUTO IS A PLANET!'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# all lowercase
+claim.lower()
+
+# => 'pluto is a planet!'
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Searching for the first index of a substring
+claim.index('plan')
+
+# => 11
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+claim.startswith(planet)
+
+# => True
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# false because of missing exclamation mark
+claim.endswith('planet')
+
+# => False
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Going between strings and lists: \texttt{.split()} and \texttt{.join()}}
+\vspace{11pt}
+
+\texttt{str.split()} turns a string into a list of smaller strings, breaking on whitespace by default. This is super useful for taking you from one big string to a list of words.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+words = claim.split()
+words
+
+# => ['Pluto', 'is', 'a', 'planet!']
+\end{lstlisting}
+\vspace{11pt}
+
+Occasionally, you'll want to split on something other than whitespace:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+datestr = '1956-01-31'
+year, month, day = datestr.split('-')
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{str.join()} takes us in the other direction, sewing a list of strings up into one long string, using the string it was called on as a separator.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+'/'.join([month, day, year])
+# => 01/31/1956
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+# Yes, we can put Unicode characters right in our string literals :)
+' <clap> '.join([word.upper() for word in words])
+
+# => 'PLUTO <clap> IS <clap> A <clap> PLANET!'
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Building strings with \texttt{.format()}}
+\vspace{11pt}
+
+Python lets us concatenate strings with the \texttt{+} operator.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+planet + ', we miss you.'
+
+# => 'Plutp, we miss you.'
+\end{lstlisting}
+\vspace{11pt}
+
+If we want to throw in any non-string objects, we have to be careful to call \texttt{str()} on them first.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+position = 9
+planet + ", you'll always be the " + position + "th planet to me."
+
+# => TypeError: can only concatenate str (not "int") to str
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+planet + ", you'll always be the " + str(position) + "th planet to me."
+
+# => "Pluto, you'll always be the 9th planet to me."
+\end{lstlisting}
+\vspace{11pt}
+
+This is getting hard to read and annoying to type. \texttt{str.format()} to the rescue.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+"{}, you'll always be the {}th planet to me.".format(planet, position)
+
+# => "Pluto, you'll always be the 9th planet to me."
+\end{lstlisting}
+\vspace{11pt}
+
+So much cleaner! We call \texttt{.format} on a "format string", where the Python variables we want to insert are represented with \texttt{\{\}} placeholders.
+
+Notice how we didn't even have to call str() to convert \texttt{position} from an int.
+
+If that was all that \texttt{format()} did, it would still be incredibly useful. But as it turns out, it can do a lot more. Here's just a taste:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+pluto_mass = 1.303 * 10**22
+earth_mass = 5.9722 * 10**24
+population = 52910390
+#         2 decimal points   3 decimal points, format as percent     separate with commas
+"{} weighs about {:.2} kilograms ({:.3%} of Earth's mass). It is home to {:,} Plutonians.".format(
+    planet, pluto_mass, pluto_mass / earth_mass, population,
+)
+
+# => "Pluto weighs about 1.3e+22 kilograms (0.218% of Earth's mass). It is home to 52,910,390 Plutonians."
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+# Referring to format() arguments by index, starting from 0
+s = """Pluto's a {0}.
+No, it's a {1}.
+{0}!
+{1}!""".format('planet', 'dwarf planet')
+print(s)
+
+# => Pluto's a planet
+# => No, it's a dwarf planet.
+# => planet!
+# => dwarf planet!
+\end{lstlisting}
+\vspace{11pt}
+
+You could probably write a short book just on \texttt{str.format}.
+
+\vspace{11pt}
+\subsection{Dictionaries}
+\vspace{11pt}
+
+Dictionaries are a built-in Python data structure for mapping keys to values.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+numbers = {'one':1, 'two':2, 'three':3}
+\end{lstlisting}
+\vspace{11pt}
+
+In this case '\texttt{one}', '\texttt{two}', '\texttt{three}' are the keys, and 1, 2 and 3 are their corresponding values.
+
+Values are accessed via square bracket syntax similar to indexing into lists and strings.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+numbers['one']
+# => 1
+\end{lstlisting}
+\vspace{11pt}
+
+We can use the same syntax to add another key, value pair:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+numbers['eleven'] = 11
+numbers
+
+# => {'one': 1, 'two': 2, 'three': 3, 'eleven': 11}
+\end{lstlisting}
+\vspace{11pt}
+
+Or to change the value associated with an existing key:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+numbers['one'] = 'Pluto'
+numbers
+
+# => {'one': 'Pluto', 'two': 2, 'three': 3, 'eleven': 11}
+\end{lstlisting}
+\vspace{11pt}
+
+Python has \textbf{dictionary comprehensions} with syntax similar to the list comprehensions we saw in the previous tutorial.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+planets = ['Mercury', 'Venus', 'Earth', 'Mars', 'Jupiter', 'Saturn', 'Uranus', 'Neptune']
+planet_to_initial = {planet: planet[0] for planet in planets}
+planet_to_initial
+
+# => {'Mercury': 'M',
+ 'Venus': 'V',
+ 'Earth': 'E',
+ 'Mars': 'M',
+ 'Jupiter': 'J',
+ 'Saturn': 'S',
+ 'Uranus': 'U',
+ 'Neptune': 'N'}
+\end{lstlisting}
+\vspace{11pt}
+
+The \texttt{in} operator tells us whether something is a key in the dictionary
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+'Saturn' in planet_to_initial 
+# => True
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+'Betelgeuse' in planet_to_initial
+# => False
+\end{lstlisting}
+\vspace{11pt}
+
+A for loop over a dictionary will loop over it keys:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+for k in numbers:
+    print("{} = {}".format(k, numbers[k]))
+
+# => one = Pluto
+# => two = 2
+# => three = 3
+# => eleven = 11
+\end{lstlisting}
+\vspace{11pt}
+
+We can access a collection of all the keys or all the values with \texttt{dict.keys()} and \texttt{dict.values()}, respectively.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+# Get all the initials, sort them alphabetically, and put them in a space-separated string.
+' '.join(sorted(planet_to_initial.values()))
+
+# => 'E J M M N S U V'
+\end{lstlisting}
+\vspace{11pt}
+
+The very useful \texttt{dict.items()} method lets us iterate over the keys and values of a dictionary simultaneously. (In Python jargon, an item refers to a key-value pair)
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, 
+breaklines=true]
+for planet, initial in planet_to_initial.items():
+    print("{} begins with \"{}\"".format(planet.rjust(10), initial))
+
+# => Mercury begins with "M"
+     Venus begins with "V"
+     Earth begins with "E"
+      Mars begins with "M"
+   Jupiter begins with "J"
+    Saturn begins with "S"
+    Uranus begins with "U"
+   Neptune begins with "N"
+\end{lstlisting}
+\vspace{11pt}
+
+To read a full inventory of dictionaries' methods, you can run:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(dict)
+\end{lstlisting}
+\vspace{11pt}
+
+\newpage
+
+\section{Working with External Libraries}
+\vspace{11pt}
+
+\subsection{Imports}
+\vspace{11pt}
+
+So far we have talked about types and functions which are built-in to the language.
+
+But one of the best things about Python (especially if you are a data scientist) is the vast number of high-quality custom libraries that have been written for it.
+
+Some of these libraries are in the "standard library", meaning you can find them anywhere you run Python. Other libraries can be easily added, even if they are not always shipped with Python.
+
+Either way, we'll access this code with imports.
+
+We'll start our example by import \texttt{math} from the standard library.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+import math
+
+print("It's math! It has type {}".format(type(math)))
+
+# => It's math! It has type <class 'module'>
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{math} is a module. A module is just a collection of variables (a name-space, if you like) defined by someone else. We can see all the names in \texttt{math} using the built-in function \texttt{dir()}.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(dir(math))
+
+# => ['__doc__', '__file__', '__loader__', '__name__', '__package__', '__spec__', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh', 'ceil', 'copysign', 'cos', 'cosh', 'degrees', 'e', 'erf', 'erfc', 'exp', 'expm1', 'fabs', 'factorial', 'floor', 'fmod', 'frexp', 'fsum', 'gamma', 'gcd', 'hypot', 'inf', 'isclose', 'isfinite', 'isinf', 'isnan', 'ldexp', 'lgamma', 'log', 'log10', 'log1p', 'log2', 'modf', 'nan', 'pi', 'pow', 'radians', 'remainder', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'tau', 'trunc']
+\end{lstlisting}
+\vspace{11pt}
+
+We can access these variables using dot syntax. Some of them refer to simple values, like \texttt{math.pi}:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print("pi to 4 significant digits = {:.4}".format(math.pi))
+
+pi to 4 significant digits = 3.142
+\end{lstlisting}
+\vspace{11pt}
+
+But most of what we will find in the module are functions, like \texttt{math.log}:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+math.log(32, 2)
+
+# => 5.0
+\end{lstlisting}
+\vspace{11pt}
+
+Of course, if we don't know what \texttt{math.log} does, we can call \texttt{help()} on it:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(math.log)
+
+# => Help on built-in function log in module math:
+
+log(...)
+    log(x, [base=math.e])
+    Return the logarithm of x to the given base.
+    
+    If the base not specified, returns the natural logarithm (base e) of x.
+\end{lstlisting}
+\vspace{11pt}
+
+We can also call \texttt{help()} on the module itself. This will give us the combined documentation for all the functions and values in the module (as well as a high-level description of the module).
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+help(math)
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Other Import Syntax}
+\vspace{11pt}
+
+If we know we'll be using functions in \texttt{math} frequently we can import it under a shorter alias to save some type (though in this case "math" is already pretty short).
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+import math as mt
+mt.pi # => 3.14159265358979323
+\end{lstlisting}
+\vspace{11pt}
+
+\begin{aside}
+    You may have seen code that does this with certain popular libraries like Pandas, Numpy, Tensorflow, or Matplotlib. For example, it is a common convention to \texttt{import numpy as np} and \texttt{import pandas as pd}. 
+\end{aside}
+\vspace{11pt}
+
+The \texttt{as} simply renames the imported module. It's equivalent to doing something like:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+import math
+mt = math
+\end{lstlisting}
+\vspace{11pt}
+
+Wouldn't it be great if we could refer to all the variables in the math module by themselves? i.e. if we could just refer to \texttt{pi} instead of \texttt{mt.pi}? Good news: we can do that:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+from math import *
+print(pi, log(32, 2))
+
+# => 3.141592653589793 5.0
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{import *} makes all the module's variables directly accessible to you (without any dotted prefix).
+
+Bad news: some purists might grumble at you for doing this.
+
+Worse: They kind of have a point.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+from math import *
+from numpy import *
+print(pi, log(32, 2))
+
+# => TypeError! return arrays must be of ArrayType
+\end{lstlisting}
+\vspace{11pt}
+
+What happened? It worked before!
+
+These kinds of "star imports" can occasionally lead to weird, difficult-to-debug situations.
+
+The problem in this case is that the \texttt{math} and \texttt{numpy} modules both have functions called \texttt{log}, but they have different semantics. Because we import from \texttt{numpy} second, its \texttt{log} overwrites (or "shadows") the \texttt{log} variable we imported from \texttt{math}.
+
+A good compromise is to import only the specific things we will need from each module:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+from math import log, pi
+from numpy import asarray
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Submodules}
+\vspace{11pt}
+
+We have seen that modules contain variables which can refer to functions or values. Something to be aware of is that they can also have variables referring to \textit{other }modules.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+import numpy
+print("numpy.random is a", type(numpy.random))
+print("it contains names such as...",
+      dir(numpy.random)[-15:]
+     )
+
+# => numpy.random is a <class 'module'>
+it contains names such as... ['seed', 'set_state', 'shuffle', 'standard_cauchy', 'standard_exponential', 'standard_gamma', 'standard_normal', 'standard_t', 'test', 'triangular', 'uniform', 'vonmises', 'wald', 'weibull', 'zipf']
+\end{lstlisting}
+\vspace{11pt}
+
+So if we import \texttt{numpy} as above, then calling a function in the \texttt{random} "submodule" will require two dots.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Roll 10 dice
+rolls = numpy.random.randint(low=1, high=6, size=10)
+rolls
+
+# => array([3, 4, 3, 4, 5, 5, 2, 1, 3, 3])
+\end{lstlisting}
+\vspace{11pt}
+
+\subsubsection{Oh the places you'll go, oh the objects you'll see}
+\vspace{11pt}
+
+So after 6 lessons, you're a pro with ints, floats, bools, lists, strings, and dicts (right?)
+
+Even if that were true, it does not end there. As you work with various libraries for specialized tasks, you'll find that they define their own types which you'll have to learn to work with. For example, if you work with the graphing library \texttt{matplotlib}, you'll be coming into contact with objects it defines which represent Subplots, Figures, TickMarks, and Annotations. \texttt{pandas} functions will give you DataFrames and Series.
+
+In this section, we will go over a quick survival guide for working with strange types.
+
+\vspace{11pt}
+\subsubsection{Three Tools for Understanding Strange Objects}
+\vspace{11pt}
+
+In the cell above, we saw that calling a \texttt{numpy} function gave us an "array." We have never seen like this before. But don't panic: we have three familiar builtin functions to help us here.
+
+\vspace{11pt}
+\textbf{1: \texttt{type()}} (What is this thing?)
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+type(rolls)
+
+# => numpy.ndarry
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{2: \texttt{dir()}} (What can I do with it?)
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(dir(rolls))
+
+# => ['T', '__abs__', '__add__', '__and__', '__array__', '__array_finalize__', '__array_function__', '__array_interface__', '__array_prepare__', '__array_priority__', '__array_struct__', '__array_ufunc__', '__array_wrap__', '__bool__', '__class__', '__complex__', '__contains__', '__copy__', '__deepcopy__', '__delattr__', '__delitem__', '__dir__', '__divmod__', '__doc__', '__eq__', '__float__', '__floordiv__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__iadd__', '__iand__', '__ifloordiv__', '__ilshift__', '__imatmul__', '__imod__', '__imul__', '__index__', '__init__', '__init_subclass__', '__int__', '__invert__', '__ior__', '__ipow__', '__irshift__', '__isub__', '__iter__', '__itruediv__', '__ixor__', '__le__', '__len__', '__lshift__', '__lt__', '__matmul__', '__mod__', '__mul__', '__ne__', '__neg__', '__new__', '__or__', '__pos__', '__pow__', '__radd__', '__rand__', '__rdivmod__', '__reduce__', '__reduce_ex__', '__repr__', '__rfloordiv__', '__rlshift__', '__rmatmul__', '__rmod__', '__rmul__', '__ror__', '__rpow__', '__rrshift__', '__rshift__', '__rsub__', '__rtruediv__', '__rxor__', '__setattr__', '__setitem__', '__setstate__', '__sizeof__', '__str__', '__sub__', '__subclasshook__', '__truediv__', '__xor__', 'all', 'any', 'argmax', 'argmin', 'argpartition', 'argsort', 'astype', 'base', 'byteswap', 'choose', 'clip', 'compress', 'conj', 'conjugate', 'copy', 'ctypes', 'cumprod', 'cumsum', 'data', 'diagonal', 'dot', 'dtype', 'dump', 'dumps', 'fill', 'flags', 'flat', 'flatten', 'getfield', 'imag', 'item', 'itemset', 'itemsize', 'max', 'mean', 'min', 'nbytes', 'ndim', 'newbyteorder', 'nonzero', 'partition', 'prod', 'ptp', 'put', 'ravel', 'real', 'repeat', 'reshape', 'resize', 'round', 'searchsorted', 'setfield', 'setflags', 'shape', 'size', 'sort', 'squeeze', 'std', 'strides', 'sum', 'swapaxes', 'take', 'tobytes', 'tofile', 'tolist', 'tostring', 'trace', 'transpose', 'var', 'view']
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# If I want the average roll, the "mean" method looks promising...
+rolls.mean() 
+# => 3.3
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Or maybe I just want to turn the array into a list, in which case I can use "tolist"
+rolls.tolist()
+
+# => [3, 4, 3, 4, 5, 5, 2, 1, 3, 3]
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{3: \texttt{help()}} (tell me more)
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# That "ravel" attribute sounds interesting. Let's see what it does!
+help(rolls.ravel)
+
+# => Help on built-in function ravel:
+
+ravel(...) method of numpy.ndarray instance
+    a.ravel([order])
+    
+    Return a flattened array.
+    
+    Refer to `numpy.ravel` for full documentation.
+    
+    See Also
+    --------
+    numpy.ravel : equivalent function
+    
+    ndarray.flat : a flat iterator on the array.
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Okay, just tell me everything there is to know about numpy.ndarray
+help(rolls)
+
+# => ...
+\end{lstlisting}
+\vspace{11pt}
+
+\newpage
+\subsection{Operator Overloading}
+\vspace{11pt}
+
+What's the value of the below expression?
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+[3, 4, 1, 2, 2, 1] + 10
+
+# => TypeError: can only concatenate list (not "int") to list
+\end{lstlisting}
+\vspace{11pt}
+
+What a silly question. Of course it's an error. But what about...
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+rolls + 10
+
+# => array([13, 14, 13, 14, 15, 15, 12, 11, 13, 13])
+\end{lstlisting}
+\vspace{11pt}
+
+We might think that Python strictly policess how piecess of its core syntax behave such as \texttt{+}, \texttt{<}, \texttt{in}, \texttt{==}, or square brackets for indexing and slicing. But, in fact, it takes a very hands-off approach. When you define a new type, you can choose how addition works for it, or what it means for an object of that type to be equal to something else.
+
+The designers of lists decided that adding them to numbers was not allowed. The designers of \texttt{numpy} arrays went a different way (adding the number to each element in the array).
+
+Here are a few more examples of how \texttt{numpy} arrays interact unexpectedly with Python operators (or at least differently from lists).
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# At which indices are the dice less than or equal to 3?
+rolls <= 3
+
+# => array([ True, False,  True, False, False, False,  True,  True,  True, True])
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+xlist = [[1,2,3],[2,4,6],]
+# Create a 2-dimensional array
+x = numpy.asarray(xlist)
+print("xlist = {}\nx =\n{}".format(xlist, x))
+
+# => xlist = [[1, 2, 3], [2, 4, 6]]
+x =
+[[1 2 3]
+ [2 4 6]]
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Get the last element of the second row of our numpy array
+x[1,-1]
+
+# => 6
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Get the last element of the second sublist of our nested list?
+xlist[1,-1]
+
+# => TypeError: list indices must be integers or slices, not tuples
+\end{lstlisting}
+\vspace{11pt}
+
+numpy's \texttt{ndarray} type is specialized for working with multi-dimensional data, so it defines its own logic for indexing, allowing us to index by a tuple to specify the index at each dimension.
+
+\vspace{11pt}
+\textbf{When does 1 + 1 not equal 2?}
+\vspace{11pt}
+
+Things can get weirder than this. You may have heard of (or even used) tensorflow, a Python library popularly used for deep learning. It makes extensive use of operator overloading.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+import tensorflow as tf
+# Create two constants, each with value 1
+a = tf.constant(1)
+b = tf.constant(1)
+# Add them together to get...
+a + b
+
+# => <tf.Tensor: shape=(), dtype=int32, numpy=2>
+\end{lstlisting}
+\vspace{11pt}
+
+\texttt{a + b} isn't 2, it is (to quote tensorflow's documentation)...
+
+\vspace{11pt}
+\begin{aside}
+    A symbolic handle to one of the outputs of an \texttt{Operation}. It does not hold the values of that operation's output, but instead provides a means of computing those values in a TensorFlow \texttt{tf.Session}.
+\end{aside}
+\vspace{11pt}
+
+It is important just to be aware of the fact that this sort of thing is possible and that libraries will often use operator overloading in non-obvious or magical-seeming ways.
+
+Understanding how Python's operators work when applied to ints, strings, and lists is no guarantee that you'll be able to immediately understand what they do when applied to a tensorflow \texttt{Tensor}, or a numpy \texttt{ndarray}, or a pandas \texttt{DataFrame}.
+
+Once you've had a little taste of DataFrames, for example, an expression like the one below starts to look appealingly intuitive:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# Get the rows with population over 1m in South America
+df[(df['population'] > 10**6) & (df['continent'] == 'South America')]
+\end{lstlisting}
+\vspace{11pt}
+
+But why does it work? The example above features something like \textbf{5} different overloaded operators. What's each of those operations doing? It can help to know the answer when things start going wrong.
+
+\vspace{11pt}
+\textbf{How does it all work?}
+\vspace{11pt}
+
+Have you ever called \texttt{help()} or \texttt{dir()} on an object and wondered what the heck all those names with double-underscores were?
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+print(dir(list))
+
+# => ['__add__', '__class__', '__contains__', '__delattr__', '__delitem__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__getitem__', '__gt__', '__hash__', '__iadd__', '__imul__', '__init__', '__init_subclass__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__reversed__', '__rmul__', '__setattr__', '__setitem__', '__sizeof__', '__str__', '__subclasshook__', 'append', 'clear', 'copy', 'count', 'extend', 'index', 'insert', 'pop', 'remove', 'reverse', 'sort']
+\end{lstlisting}
+\vspace{11pt}
+
+This turns out to be directly related to operator overloading.
+
+When Python programmers want to define how operators behave on their types, they do so by implementing methods with special names beginning and ending with 2 underscores such as \texttt{\_\_lt\_\_}, \texttt{\_\_setattr\_\_}, or \texttt{\_\_contains\_\_}. Generally, names that follow this double-underscore format have a special meaning to Python.
+
+So, for example, the expression \texttt{x in [1, 2, 3]} is actually calling the list method \texttt{\_\_contains\_\_} behind-the-scenes. It is equivalent to (the much uglier) \texttt{[1, 2, 3].\_\_contains\_\_(x)}.
+
+If you are curious to learn more, you can check out \href{https://docs.python.org/3.4/reference/datamodel.html#special-method-names}{Python's official documentation}, which describes many, many more of these special "underscores" methods.
+
+\end{document}
+
