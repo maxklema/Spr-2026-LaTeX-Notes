@@ -1,26 +1,4 @@
-\documentclass[11pt]{article}
-\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
-\usepackage[english]{babel}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\usepackage{fancyhdr} % Headings
-\usepackage{listings} % Code
-\usepackage{parskip} % Spacing for Paragraphs
-\usepackage{mdframed} % Asides
-\usepackage{caption}
-\usepackage{graphicx}
-\usepackage{amsmath}
-
-% Asides
-\newenvironment{aside}
-  {\begin{mdframed}[style=0,%
-      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
-          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
-      skipabove=7pt,skipbelow=7pt]\small}
-  {\end{mdframed}}
-
-\renewcommand{\headrulewidth}{.2mm} % header line width
+der line width
 
 \rhead{\today}
 \lhead{\textbf{Maxwell Klema}}
@@ -50,7 +28,30 @@
 \subsection{Learning Methodology}
 \vspace{11pt}
 
-It is important to learn from examples. Machine learning is all about "learning from the data". It is also important to compare with something you are familiar with. For example, when picking up C language after knowing another language, like Java, or C\#, or C++, it is easier than learning it as your first language. In deep learning, transfer learning is when you build a model for one task and then use it for another task. It can be expensive, takes a lot of money, but once you have one model for a certain task, you can use it for another task using transfer learning.
+It is important to learn from examples. Machine learning is all about "learning from the data". It is also important to compare with something you are familiar with. For example, when picking up C language after knowing anoth\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr} % Headings
+\usepackage{listings} % Code
+\usepackage{parskip} % Spacing for Paragraphs
+\usepackage{mdframed} % Asides
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+% Asides
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+
+\renewcommand{\headrulewidth}{.2mm} % heer language, like Java, or C\#, or C++, it is easier than learning it as your first language. In deep learning, transfer learning is when you build a model for one task and then use it for another task. It can be expensive, takes a lot of money, but once you have one model for a certain task, you can use it for another task using transfer learning.
 
 It is also important to get your "hands dirty" and try out new projects through trial and error. In machine learning, this is known as reinforcement learning - try to get the agent to do something, and if it fails, give it a penalty to try something else until it "succeeds" or "learns".
 
@@ -137,21 +138,21 @@ In the code block sections, you can execute special UNIX commands that follow a 
 \vspace{11pt}
 
 \vspace{11pt}
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, breaklines=true]
 import tensorflow as tf
 tf.config.list_physical_devices('GPU')    
 \end{lstlisting}
 \vspace{11pt}
 
 \vspace{11pt}
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, breaklines=true]
 import torch
 torch.cuda.is_available() # => True  
 \end{lstlisting}
 \vspace{11pt}
 
 \vspace{11pt}
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, breaklines=true]
 # Using Google Drive
 from google.colab import drive
 drive.mount('/content/drive')
@@ -160,7 +161,7 @@ drive.mount('/content/drive')
 \vspace{11pt}
 
 \vspace{11pt}
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, breaklines=true]
 !pwd
 !ls
 
@@ -177,7 +178,7 @@ drive.mount('/content/drive')
 Using the '!' only works for that one command and then closed the environment. To make it persist, use the \% symbol.
 
 \vspace{11pt}
-\begin{lstlisting}[language=Python]
+\begin{lstlisting}[language=Python, breaklines=true]
 %cd drive/MyDrive
 !ls
 
@@ -187,25 +188,437 @@ Using the '!' only works for that one command and then closed the environment. T
 
 If the Google Colab sessions keeps timing out, you can use a special connectButton() function in DevTools that keeps pressing the connect button repeatedly to keep the session awake. Another method is using a GPU provided by Kaggle.
 
+\vspace{11pt}
+\section{Lecture 2 - Python in Machine Learning}
+\vspace{11pt}
+
+\textbf{Deep Learning} is a spacial-type of model for learning. It can use its own knowledge base to learn and recognize patterns.
+
+\textbf{Review}: In Google Collab, '!' opens a session, runs the command, and then closes the session. Meanwhile, the \% is the 'magic command' begins it keeps a session open after running a single command. '!' is mostly used for pip installing different packages for different libraries and such.
+
+Python is ranked as the \#2 top language in both GitHub (By number of projects) as well as Stack Overflow (By number of question tags).
+
+\vspace{11pt}
+\textbf{How to Learn a New Programming Language Fast?}
+\vspace{11pt}
+
+\textbf{Compare the language to another language that you know}, build projects, look at pre-existing projects on Github, look at examples, watch tutorials, \textbf{Apply ChatGPT to learn}, \textbf{pay attention to langauge features \& topics}
+
+\vspace{11pt}
+\textbf{Differences from C Programming Language}
+\vspace{11pt}
+
+\begin{itemize}
+  \item C is strongly typed; Python is weakly typed.
+  \item Python is historically interpreted; C is compiled.
+  \item \textbf{No main function in Python.}
+  \item C requires manual memory management; Python manages memory for you.
+  \item \textbf{Python uses indentation; C uses curly braces.}
+  \item \textbf{C uses semicolons; Python does not.}
+  \item \textbf{C is procedural (not OOP); Python is OOP.}
+  \item Python reads more like English than C.
+  \item \textbf{There are no "do ... while" loops in Python}
+  \item \textbf{Variable scope within a function: Python variable scope is local to a function (while/for/if statements do not create a new scope) while C local to a block.}
+  \item \textbf{Exception handling: In C, everytime you call a function, you check some variable and return a error code. In Python, you can use try and except.}
+  \item \textbf{Passing an object in Python is similar to pass by reference, while passing in an int, float, etc is pass by variable (value).}
+\end{itemize}
+
+\vspace{11pt}
+\textbf{Language Features or Topics}
+\vspace{11pt}
+
+The paradigm of a language is important to consider. Is it OOP, procedural, functional, etc? Additionally, are variables weak/strong typed, static or dynamic? For conditional branches, how do if/else, while, and for statements work?
+
+For functions, are these pass-by-value, pass-by-pointer, etc? How do return types work, what about recursive functions, default parameters, etc?
+
+What are popular libraries in the language? 
+
+What are the build-in data types (int, double, char, string, etc.) What about advanced data types and structures (struct, pointers, list, tuple, dictionary, etc.).
+
+What about I/O (file, socket, etc), memory management, and debugging and the IDE?
+
+\vspace{11pt}
+\textbf{Python Data Types}
+\vspace{11pt}
+
+\begin{itemize}
+  \item Boolean
+  \item Numbers (\texttt{int}, \texttt{float})
+  \item String
+  \item Range (sequence of numbers)
+  \item List (array — sequence of mutable values using \texttt{[ ... ]})
+  \item Tuple (immutable list using parentheses; useful for returning multiple values)
+  \item Dictionary (key:value pairs; similar to a JavaScript Object/JSON; uses \{ \})
+  \item Set (collection of unique values; uses \{ \})
+\end{itemize}
 
 
+\vspace{11pt}
+\textbf{Python Examples}
+\vspace{11pt}
 
 
+\begin{lstlisting}[language=Python, breaklines=true]
+myvar = 123
+print(myvar) # => 123
+myvar = "Hello World"
+print(myvar) # => "Hello World"
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+for i in range(4):
+    #print("#")
+    print("#", end="")
 
+print()
+print("#"*4)
 
+# => ####
+# => ####
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+total = 0 # do NOT use "sum" for variable name!!!
+for i in range(11):
+    total += i
+    #print("sum = %d" % (sum)) => more C style
+print(f"sum = {total}")
 
+# => sum of first 10 numbers
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def calculate_sum(n):
+    sum = 0
+    for i in range (n):
+        sum += i
+    return sum
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+def is_even(n):
+    return (n % 2 == 0)
 
+for i in range(11):
+    if is_even(i):
+        print(f"{i} is even")
+    else:
+        print(f"{i} is odd")
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x = int(input("x: "))
+y = int(input("y: "))
+print(x+y)
+print(x/y)
+print(x//y) # floor division
 
+z = x/y
+print(f"{z:.50f}") # formats the floating-point value z 
+# with fixed-point notation to 50 digits after the decimal
+\end{lstlisting}
+\vspace{11pt}
+This code is not robust: What if the user enters a non-numeric input or y = 0? The program can use a try..except to ensure that data types are valid.
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+people = {
+    "Chen": "12343243",
+    "David": "43243243"
+}
 
+name = "Chen"
+if name in peopple:
+    print(f"Number: {people[name]}")
+\end{lstlisting}
 
+\begin{lstlisting}[language=Python, breaklines=true]
+import csv
 
+# Upload phonebook.csv file
 
+name = "Chen"
+number = "324234234"
+'''
+file = open("phonebook.csv", "a")
+writer = csv.writer(file)
+writer.writerow([name, number])
+...
+'''
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+#Blurs an image
 
+from PIL import Image, ImageFilter
 
+#Upload "bridge.bmp" file
 
+#blur image
+before = Image.open("Bridge.bmp")
+after = before.filter(ImageFilter.BoxBlur(5))
+after.save("out1.bmp")
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+#zip() function
+nums = [1,2,3]
+strings = ["hi", "cs590", "DL"]
 
+for i, string in zip(nums, strings):
+    print(i, string)
 
+# Go through two lists and get the corresponding elements one by one
+# 1 hi
+# 2 cs590
+# 3 DL
 
+# zip() prints the min(length) of both lists in 
+# case one is larger than the other.
+\end{lstlisting}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# enumerate() function
+for index, string in enumerate(strings):
+    print(index, string)
+
+# enumerate() will give you the index of each element in the list.
+\end{lstlisting}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+#map() function
+
+numbers = (1,2,3,4)
+result = map(lambda: x: x**2, numbers)
+print(list(result))
+
+# [1, 4, 9, 16]
+\end{lstlisting}
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+# List comprehensions
+
+squares = [n**2 for n in range(1,5)]
+print(squares)
+
+# Using the SQL analogy
+# you could think of SELECT, FROM, WHERE, etc..
+\end{lstlisting}
+\vspace{11pt}
+Slicing
+
+\begin{lstlisting}[language=Python, breaklines=true]
+org_data = list(range(1,11))
+print(org_data) # prints 1 to 10
+print(org_data[2:5]) # prints index 2 through 4
+print(org_data[:5]) # first 5 index
+print(org_data[5:]) # 6th index to the end
+print(org_data[-1]) # last element
+print(org_data[-2]) # second from the last
+print(org_data[4:-4]) # [5,6]
+\end{lstlisting}
+
+\vspace{11pt}
+\section{Lecture 3 - ChatGPT APIs}
+\vspace{11pt}
+
+From the last lecture, we talked about basic Python concepts. What are some ways to pick up Python quickly? We can compare it to other languages, build projects, use AI, etc.
+
+Let's look into Python Libraries
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+import numpy as np
+a = [1,2,3]
+b = [4,5,6]
+c = np.maximum(a,b)
+print(c)
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+from numpy import maximum
+c = maximum(a,b)
+print(c)
+
+# It is better to import np if you are going to use multiple different numpy functions
+\end{lstlisting}
+\vspace{11pt}
+
+Note: when we import ...
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+x = int(input("x: ")) #error prone
+print(x)
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+while True:
+    try:
+        x = int(input("x: ")) #error prone
+    except ValueError:
+        print("That is not an int!")
+        continue
+break
+print(x)
+\end{lstlisting}
+\vspace{11pt}
+
+\newpage
+\textbf{Audio Example}
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+!pip install gtts
+
+from gtts import gTTS
+from IPython.display import Audio
+tts = gTTS('Hello cs492 machine learning!')
+tts.save('1.wav')
+sound_file = '1.wav'
+Audio(sound_file, autoplay=True)
+\end{lstlisting}
+\vspace{11pt}
+
+\subsection{ChatGPT APIs}
+\vspace{11pt}
+
+\subsubsection{Motivation}
+\vspace{11pt}
+
+In the browser, we use the ChatGPT model. Every question is sent to the ChatGPT model behind-the-scenes and then responds back to the user session in the browser.
+
+Say you want to create your own application using ChatGPT. For example, we want to create an application that adds appropriate emojis to any given input, and you want to power it by ChatGPT.
+
+Instead of doing this in the ChatGPT app, we may want to do this in our own website. We need to use the ChatGPT API for this, but it can be much slower and more expensive.
+
+The \textbf{ChatGPT API} (Application Programming Interface) enables programmatic interaction with the ChatGPT model. You tell ChatGPT what you want it to do in a programmatic way, then ChatGPT returns the response by following what you ask it to do.
+
+\vspace{11pt}
+\subsubsection{Setup}
+\vspace{11pt}
+
+Go to \href{https://www.openai.com/api}{https://www.openai.com/api}. Then, sign in with your Google account. You will probably have to add at least \$5 in credits to use the API.
+
+After you put money in, you can go to home > API Keys > Create new secret key. You will use this secret key in your codebase.
+
+Example:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+!pip install langchain_openai
+
+from langchain_openai import OpenAI
+
+llm = OpenAI()
+
+question = ["Are you working propertly?"]
+response = llm.invoke(question)
+
+# key is already added before as a environment secret
+
+print(response)
+\end{lstlisting}
+\vspace{11pt}
+
+It is important to use Google Colab secrets and place your OpenAI API Key there.
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+!pip install openai
+!pip install gradio #Python GUI (similar to HTML)
+
+import openai
+import gradio as gr
+import json
+from typing import List, Dict, Tuple
+
+client = openai.OpenAI()
+
+try:
+    response = client.chat.completions.create(
+        model="gpt-3.5-turbo",
+        messages = [{'role':'user', 'content': "test"}],
+        max_tokens=1, #max output tokens (~ 1 word)
+    )
+    print("Set ChatGPT API successfully!!")
+except:
+    print("There seems to be some sort of error")
+\end{lstlisting}
+\vspace{11pt}
+
+In many AI models, a higher \textbf{temperature} means a more "randomized" output, whereas a lower temperature means a more predictable output.
+
+The following demo uses gradio as a GUI library and Google's genai library to create a grammar fixer:
+
+\vspace{11pt}
+\begin{lstlisting}[language=Python, breaklines=true]
+from google import genai
+from google.colab import userdata
+from google.genai.types import GenerateContentConfig
+import gradio as gr # Moved import here to be consistent with other imports
+
+client = genai.Client(api_key=userdata.get('GEMINI_API_KEY'))
+prompt_for_summarization = "Please correct the following sentence with proper spelling, grammer, and punctuation."
+
+# function to reset the conversation
+def reset() -> list:
+    return []
+
+# function to call the model to generate
+def interact_summarization(prompt: str, article: str, temp = 1.0) -> list[tuple[str, str]]:
+    '''
+    * Arguments
+
+      - prompt: the prompt that we use in this section
+
+      - article: the article to be summarized
+
+      - temp: the temperature parameter of this model. Temperature is used to control the output of the chatbot.
+              The higher the temperature is, the more creative response you will get.
+
+    '''
+    input = f"{prompt}\n{article}"
+
+    response = client.models.generate_content(
+      model="gemini-3-flash-preview",
+      contents=input,
+      config=GenerateContentConfig(
+        temperature=temp,        # creativity / randomness
+        max_output_tokens=2000,  # cap on response length
+      ),
+    )
+
+    # Check if the response has choices and if the first choice has a message and content
+    if response.candidates and response.candidates[0].content and response.candidates[0].content.parts:
+        return [(input, response.candidates[0].content.parts[0].text)]
+    else:
+        return [(input, "No summary could be generated.")]
+
+# this part generates the Gradio UI interface
+with gr.Blocks() as demo:
+    gr.Markdown("# Part1: Summarization\nFill in any article you like and let the chatbot summarize it for you!!")
+    chatbot = gr.Chatbot()
+    prompt_textbox = gr.Textbox(label="Prompt", value=prompt_for_summarization, visible=True)
+    article_textbox = gr.Textbox(label="Article", interactive = True, value = "helo hw r u?")
+    with gr.Column():
+        gr.Markdown("#  Temperature\n Temperature is used to control the output of the chatbot. The higher the temperature is, the more creative response you will get.")
+        temperature_slider = gr.Slider(0.0, 2.0, 1.0, step = 0.1, label="Temperature")
+    with gr.Row():
+        sent_button = gr.Button(value="Send")
+        reset_button = gr.Button(value="Reset")
+
+    sent_button.click(interact_summarization, inputs=[prompt_textbox, article_textbox, temperature_slider], outputs=[chatbot])
+    reset_button.click(reset, outputs=[chatbot])
+
+demo.launch(debug = True)
+\end{lstlisting}
+\vspace{11pt}
 
 
 
