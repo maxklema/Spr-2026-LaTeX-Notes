@@ -412,7 +412,7 @@ The term truncation error in the Taylor polynomial refers to the error involved 
 Since $f \in C^\infty(\mathbb{R})$, Taylor's Theorem can be applied to any $n \geq 0$. Also,
 
 \vspace{11pt}
-$f'(x)=-sin(x), f''(x)=-cos(x), f'''(x)=sin(x), and f^{4}=cos(x)$.
+$f'(x)=-sin(x), f''(x)=-cos(x), f'''(x)=sin(x), f^{4}=cos(x)$.
 
 \vspace{11pt}
 so, $f(0)=1, f'(0)=0, f''(0)=-1,f'''(0)=0$.
@@ -435,9 +435,676 @@ where $\xi(x)$ is some (generally unknown) number between 0 and $x$.
 \includegraphics[width=0.65\textwidth]{9.png}    
 \vspace{11pt}
 
+When $x=0.01$, this becomes
 
+\begin{displaymath}
+    cos(0.01) = 1-\frac{(0.01)^2}{2}+\frac{(0.01)^3}{6}sin(\xi(0.01)) = 0.99995+\frac{10^{-6}}{6}sin(\xi(0.01)).
+\end{displaymath}
+
+The approximation to $cos(0.01)$ given by the Taylor polynomial is therefore 0.99995. The truncation error, or remainder term, associated with this approximation is:
+
+\begin{displaymath}
+    \frac{10^{-6}}{6}sin(\xi(0.01)) = 0.1\overline{6}*10^{-6}sin(\xi(0.01))
+\end{displaymath}
+
+where the bar over the 6 in $0.1\overline{6}$ is used to indicate that this digit repeats indefinitely. Although we have no way of determining $\xi(0.01)$, we know that all values of the sine lie in the interval $[-1, 1]$, so the error occurring if we use the approximation 0.99995 for the value of $cos(0.01)$ is bounded by:
+
+\begin{displaymath}
+    |cos(0.01)-0.99995| = 0.1\overline{6} * 10^{-6}*|sin(\xi(0.01))| \leq 0.1\overline{6} * 10^{-6}.
+\end{displaymath}
+
+Hence, the approximation 0.99995 matches at least the first five digits of $cos(0.01)$, and
+
+\begin{displaymath}
+    0.999949833 < 0.99995 - 0.1\overline{6} * 10^{-6} \leq cos(0.01) \leq 0.99995 + 0.1\overline{6}*10^{-6} < 0.999950166
+\end{displaymath}
+
+The error bound is much larger than the actual error. This is due in part to the poor bound we used for $|sin(\xi(x))|$. It is shown that for all values of $x$, we have $|sin(x)|$ < $|x|$. Since $0 \leq\xi\leq0.01$, we could have used the fact that $|sin\xi(x)| \leq0.01$ in the error formula, producing the bound $0.1\overline{6}*10^{-8}$.
+
+\vspace{11pt}
+\textbf{(b)}
+\vspace{11pt}
+
+Since $f'''(x)=0$, the third Taylor polynomial with remainder term about $x_0=0$ is
+
+\begin{displaymath}
+    cos(x)=1-\frac{x^2}{2}+\frac{x^4}{24}*cos(\xi(x)))
+\end{displaymath}
+
+where $0 < \xi(x) < 0.01$. The approximating polynomial remains the same, and the approximation is still 0.99995, but we now have much better accuracy assurance. Since $|cos(\xi(x))| \leq1$ for all $x$, we have
+
+\begin{displaymath}
+    |\frac{x^4}{24}cos(\xi(x))| \leq\frac{(0.01)^4}{24}(1) \approx 4.2*10^{-10}
+\end{displaymath}
+
+So,
+
+\begin{displaymath}
+    |cos(0.01)-0.9995| \leq 4.2*10^{-10}
+\end{displaymath}
+
+and
+
+\begin{displaymath}
+    0.99994999958=0.99995-4.2*10^{-10} \leq cos(0.01) \leq 0.99995 + 4.2*10^{-10} = 0.9995000042.
+\end{displaymath}
+\end{center}
+
+This examples illustrates the two objectives of numerical analysis:
+\begin{itemize}
+    \item Find an approximation to the solution of a given problem
+    \item Determine a bound for the accuracy of the approximation
+\end{itemize}
+
+\vspace{11pt}
+The Taylor polynomials in both parts provide the same answer to (i), but the third Taylor polynomial gave a much better answer to (ii) than the second Taylor polynomial.
+
+We can also use the Taylor polynomials to give us approximations to integrals.
+
+\vspace{11pt}
+\textbf{Example 2}: Find the approximation of $\int_0^1cos(x)dx$.
+\vspace{11pt}
+
+\vspace{11pt}
+\textbf{Solution}
+\vspace{11pt}
+
+\begin{center}
+\begin{displaymath}
+    \int_0^{0.1}cos(x)dx = \int_0^{0.1}(1-\frac{1}{2}x^2)dx+\frac{1}{24}\int_0^{0.1}x^4cos(\xi(x))dx
+\end{displaymath}
+
+\begin{displaymath}
+    =\left[ x - \frac{1}{6}x^3 \right]_{0}^{0.1} + \frac{1}{24}\int_0^{0.1}x^4cos(\xi(x))dx
+\end{displaymath}
+
+\begin{displaymath}
+=0.1-\frac{(0.1)^3}{6}+\frac{1}{24}\int_0^{0.1}x^4cos(\xi(x))dx    
+\end{displaymath}
+
+Therefore,
+
+\begin{displaymath}
+    \int_0^{0.1}cos(x)dx\approx0.1-\frac{(0.1)^3}{6}=0.998\overline{3}
+\end{displaymath}
+
+A bound for the error in this approximation is determined from the integral of the Taylor remainder term and the fact that $|cos(\xi(x))|\leq1$ for all $x$:
+
+\begin{displaymath}
+    \frac{1}{24}|\int_0^{0.1}x^4cos(\xi(x))dx| \leq\frac{1}{24}\int_0^{0.1}x^4|cos(\xi(x))|dx \leq \frac{1}{24}\int_0^{0.1}x^4dx
+\end{displaymath}
+
+\begin{displaymath}
+    =\frac{(0.1)^5}{120}\approx8.\overline{3}*10^{-8}
+\end{displaymath}
+
+The true value of this integral is
+
+\begin{displaymath}
+    \int_0^{0.1}cos(x)dx = sin(x)\right]_0^{0.1} = sin(0.1) \approx 0.099833416647
+\end{displaymath}
+
+So the actual error for this approximation is $8.3314*10^{-8}$, which is within the error bound.
 
 \end{center}
+
+
+\vspace{11pt}
+\textbf{Other important topics non-related to Taylor polynomials}
+\vspace{11pt}
+
+Chopping $\to$ Chop off x-bits.
+
+Rounding $\to$ Round the last bit.
+
+\vspace{11pt}
+\textbf{Example}: Chop and round 5 digits of $\pi$
+\vspace{11pt}
+
+Chopping $\to$ $0.31415*10^1$
+
+Rounding $\to$ $0.31416*10^1$
+
+\vspace{11pt}
+\begin{aside}
+In both chopping and rounding, it is important to normalize (create solution as floating-point multiplied as power of of 10)
+\end{aside} 
+\vspace{11pt}
+
+Error $\to p*$ approximation to $p$
+
+Actual Error $\to p -p*$
+
+Absolute Error $\to |p-p*|$
+
+Relative Error $\to \frac{|p-p*|}{|p|}$
+
+\vspace{11pt}
+\begin{aside}
+Relative error approximation is the best, as the sizes of $p$ and $p*$ do not matter.
+\end{aside} 
+\vspace{11pt}
+
+\vspace{11pt}
+\textbf{Example}
+\vspace{11pt}
+
+\begin{center}
+\textbf{(a)}
+\begin{displaymath}
+    p=0.3000*10^1, p*=0.3100*10^1
+\end{displaymath}
+
+actual = $-0.01*10^1$, absolute = $0.01*10^1$, relative = $0.0\overline{3}$
+\end{center}
+
+\begin{center}
+\textbf{(b)}
+\begin{displaymath}
+    p=0.3000*10^{-3}, p*=0.3100*10^{-3}
+\end{displaymath}
+
+actual = $-0.01*10^{-3}$, absolute = $0.01*10^{-3}$, relative = $0.0\overline{3}$
+\end{center}
+
+\begin{center}
+\textbf{(c)}
+\begin{displaymath}
+    p=0.3000*10^4, p*=0.3100*10^4
+\end{displaymath}
+
+actual = $-0.01*10^4$, absolute = $0.01*10^4$, relative = $0.0\overline{3}$
+\end{center}
+
+\vspace{11pt}
+\begin{aside}
+Notice how for all three examples, the relative errors are $0.0\overline{3}$ despite the sizes of $p$ and $p*$.
+\end{aside} 
+\vspace{11pt}
+
+\vspace{11pt}
+\section{Lecture 3 - The Bisection Method and Fixed-Point Iteration}
+
+Chapter two discusses one of the most basic problems of numerical approximation: the root-finding problem. This process involves finding a root, or solution, of an equation of the form $f(x)=0$, for a given function $f$. A root of this equation is called a \textbf{zero} of the function $f$.
+
+\vspace{11pt}
+\subsection{Bisection Technique}
+\vspace{11pt}
+
+The first technique, based on the Intermediate Value Theorem, is called the \textbf{Bisection}, or \textbf{Binary-search}, method.
+
+Suppose $f$ is a continuous function defined on the interval $[a,b]$, with $f(a)$ and $f(b)$ of opposite sign. The Intermediate Value Theorem implies that a number $p$ exists in $(a,b)$ with $f(p)=0$. Although the procedure will work when there is more than one root in the interval $(a,b)$, we assume for simplicity that the root in this interval is unique. The method calls for a repeated halving (or bisecting) of sub intervals of $[a,b]$ and, at each step, locating the half containing $p$.
+
+To begin, set $a_1=a$ and $b_1=b$ and let $p_1$ be the midpoint of $[a,b]$; that is,
+
+\vspace{11pt}
+\begin{center}
+    $p_1=a_1+\frac{b_1-a_1}{2}=\frac{a_1+b_1}{2}$
+\end{center}
+\vspace{11pt}
+
+\begin{itemize}
+    \item If $f(p_1)=0$, then $p=p_1$, and we are done.
+    \item If $f(p_1)\neq0$, then $f(p_1)$ has the same sign as either $f(a_1)$ or $f(b_1)$.
+    \begin{itemize}
+        \item If $f(p_1)$ and $f(a_1)$ have the same sign, $p \in (p_1,b_1)$. Set $a_2=p_1$ and $b_2=b_1$.
+        \item If $f(p_1)$ and $f(a_1)$ have opposite signs, $p \in (a_1,p_1)$. Set $b_2=p_1$ and $a_1=a_2$.
+    \end{itemize}
+\end{itemize}
+\vspace{11pt}
+
+Then reapply the process to the interval $[a_2,b_2]$. This produces the method described below:
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{10.jpg}
+\end{center}
+\vspace{11pt}
+
+\subsubsection{Algorithm 2.1: Bisection}
+\vspace{11pt}
+
+To find a solution to $f(x)=0$ given the continuous function $f$ on the interval $[a,b]$, where $f(a)$ and $f(b)$ have opposite signs:
+
+\textbf{Input:} Endpoints $a$, $b$; tolerance $TOL$; maximum number of iterations $N_0$.
+
+\textbf{Output:} Approximate solution $p$ or message of failure.
+
+\begin{itemize}
+    \item Set $i=1$. $FA=f(a)$.
+    \item While $i \leq N_0$, do Steps 3, 4, 5, and 6.
+    \item Set $p=a+(b-a)/2$; (compute $p_i$). $FP=f(p)$
+    \item if $FP=0$ or $(b-a)/2<TOL$, then OUTPUT($p$) (procedure completed successful); STOP.
+    \item Set $i=i+1$
+    \item If $FA*FP>0$ then set $a=p$; (compute $a_i,b_i$). $FA=FP$. Else, set $b=p$ ($FA$ is unchanged).
+    \item OUTPUT (Method failed after $N_0$ iterations, $N_0=',N_0)$; (The procedure was unsuccessful); STOP.
+\end{itemize}
+\vspace{11pt}
+
+Other stopping procedures can be applied in Step 4 of the algorithm or in any of the iterative techniques in this chapter. For example, we can select a tolerance of $\epsilon >0$, and generate $p_1,....,p_N$ until one of the following conditions is met:
+
+\vspace{11pt}
+\begin{center}
+\textbf{(2.1)} $|P_N-P_{N-1}| < \epsilon$
+
+\textbf{(2.2)} $\frac{|P_N-P_{N-1}|}{|P_N|}<\epsilon, P_N\neq0$, or
+
+\textbf{(2.3)} $|f(P_N)| < \epsilon$
+\end{center}
+\vspace{11pt}
+
+Unfortunately, difficulties can arise using any of these stopping criteria. For example, there are sequences $\{P_n\}_{n=0}^{\infty}$ with the property that the difference $p_n-p_{n-1}$ converge to zero while the sequence itself diverges. It is also possible for $f(p_n)$ to be close to zero while $p_n$ differs significantly from $p$. Without additional knowledge about $f$ or $p$, Inequality is the best stopping criterion to apply because it comes closest to testing relative error.
+
+When using a computer to generate approximations, it is good practice to set an upper bound on the number of iterations. This eliminates the possibility of entering an infinite loop, a situation that can arise when the sequence diverges (and also when the program is incorrectly coded). This was down in step 2 of the algorithm above, where the bound $N_0$ was set, and the procedure terminated if $i>N_0$.
+
+Note that to start the Bisection Algorithm, an interval $[a,b]$ must be found with $f(a)*f(b)<0$. At each step, the length of the interval known to contain a zero of $f$  is reduced by a factor of 2; hence, it is advantageous to choose the initial interval $[a,b]$ as small as possible. For example, if $f(x) = 2x^3-x^2+x-1$, we have both
+
+\vspace{11pt}
+\begin{center}
+    $f(-4)*f(4)<0$ and $f(0)*f(1)<0$,
+\end{center}
+\vspace{11pt}
+
+so the Bisection Algorithm could be used on $[-4,4]$ or on $[0,1]$. Starting the Bisection Algorithm on $[0,1]$ instead of $[-4,4]$ will reduce by 3 the number of iterations required to achieve a specified accuracy.
+
+The following example illustrates the Bisection Algorithm. The iteration in this example is terminated when a bound for the relative error is less than 0.0001. This is ensured by having
+
+\vspace{11pt}
+\begin{center}
+    $\frac{|p-p_n|}{min\{|a_n|,|b_n|\}} < 10^{-4}$.
+\end{center}
+\vspace{11pt}
+
+\textbf{Example 1}: Show that $f(x)=x^3+4x^2-10=0$ has a root in $[1,2]$ and use the Bisection method to determine an approximation to the root that is accurate to at least $10^{-4}$.
+
+\textbf{Solution}: Because $f(1)=-5, f(2)=14$, the Intermediate Value Theorem ensures that this continuous function has a root in $[1,2]$. For the first iteration of the Bisection method, we use the fact that the midpoint of $[1,2]$ we have $f(1.5)=2.375>0$. This indicates that we should select the interval $[1,1.5]$ for our second iteration. Then we find that $f(1.25)=-1.796875$, so our new interval becomes $[1.25,1.5]$, whose midpoint is $1.375$. Continuing in this manner gives the following values:
+
+\vspace{11pt}
+\begin{center}
+\begin{table}[h]
+  \centering
+  \begin{tabular}{c|c|c}
+    $n$ & $p_n$ & $f(p_n)$ \\ \hline
+    1  & 1.5000 &  2.375000  \\
+    2  & 1.2500 & -1.796875  \\
+    3  & 1.3750 &  0.162109  \\
+    4  & 1.3125 & -0.848633  \\
+    5  & 1.3438 & -0.350082  \\
+    6  & 1.3594 & -0.096409  \\
+    7  & 1.3672 &  0.032355  \\
+    8  & 1.3633 & -0.032813  \\
+    9  & 1.3652 & -0.000227  \\
+    10 & 1.3662 &  0.016055  \\
+  \end{tabular}
+  \caption{Bisection method for $f(x)=x^3+4x^2-10$ on $[1,2]$.}
+\end{table}
+\end{center}
+\vspace{11pt}
+
+After 13 iterations, $p_{13}=1.365112305$ approximates the root $p$ with an error $|p-p_{13}|<|b_{14}-a_{14}|=|1.365234375-1.365112305|=0.000122070.$
+
+Since $|a_{14}|<|p|$, we have $\frac{|p-p_{13}|}{|p|} <\frac{|b_{14}-a_{14}|}{|a_{14}|} \leq9.0*10^{-5}$.
+
+So the approximation is correct to at least within $10^{-4}$. The correct value of $p$ to nine decimal places is $p=1.365230013$. Note that $p_9$ is closer to $p$ than is the final approximation of $p_{13}$. You might suspect this is true because $|f(p_9)|<|f(p_{13})|$, but we cannot be sure of this unless the true answer is known.
+\vspace{11pt}
+
+The Bisection method, though conceptually clear, has significant drawbacks. It is relatively slow to converge (That is, $N$ may become quite large before $|p-p_N|$ is sufficiently small), and a good intermediate approximation might be inadvertently discarded. However, the method has an important property that it always converges to a solution, and for that reason, it is often used as a starter for more efficient methods we will see later in the chapter.
+
+\vspace{11pt}
+\textbf{Theorem 2.1}: Suppose $f\in C[a,b]$ and $f(a)*f(b)<0$. The Bisection method generates a sequence $\{p_n\}_{n=1}^\infty$ approximating a zero $p$ of $f$ with
+
+$|p_n-p|\leq\frac{b-a}{2^n}$, when $n\geq1$.
+
+\vspace{11pt}
+\textbf{Proof:} For each $n \geq1$, we have $b_n-a_n=\frac{1}{2^{n-1}}(b-a)$ and
+
+\vspace{11pt}
+\begin{center}
+$p \in (a_n,b_n)$.
+
+Since $p_n=\frac{1}2{(a_n+b_n)}$ for all $n\geq1$, it follows that:
+
+$|p_n-p|\leq\frac{1}{2}(b_n-a_n)=\frac{a-b}{2^n}$.
+\end{center}
+\vspace{11pt}
+
+Because $|p_n-p|\leq(b-a)\frac{1}{2^n}$, the sequence $\{p_n\}_{n=1}^\infty$ converge to $p$ with the rate of convergence $O(\frac{1}{2^n}$); that is,
+
+\vspace{11pt}
+\begin{center}
+    $p_n=p+O(\frac{1}{2^n})$.
+\end{center}
+\vspace{11pt}
+
+It is important to realize that Theorem 2.1 gives only a bound for approximation error and \textbf{that this bound might be quite conservative}. For example, this bound applied to problem in Example 1 ensures only that
+
+\vspace{11pt}
+\begin{center}
+    $|p-p_9|\leq\frac{2-1}{2^9}\approx2*10^{-3}$.
+\end{center}
+\vspace{11pt}
+
+But the actual error is much smaller at $|p-p_9| = |1.365230013-1.365234375|\approx4.4*10^{-6}$.
+\vspace{11pt}
+
+\textbf{Example 2}: Determine the number of iterations necessary to solve $f(x)=x^3+4x^2-10=0$ with accuracy $10^{-3}$ using $a_1=1,b_2=2$.
+
+\textbf{Solution}: We will use logarithms to find an integer $N$ that satisfies $|P_N-p|\leq2^{-N}(b-a)=2^{-N}<10^{-3}$.
+
+Logarithms to any base would suffice, but we will use base-10 logarithms because the tolerance is given as a power of 10. Since $2^{-N}<10^{-3}$ implies that $log_{10}2^{-N}<log_{10}10^{-3}=-3$, we have
+
+\vspace{11pt}
+\begin{center}
+    $-Nlog_{10}2<-3$ and $N > \frac{3}{log_{10}2}\approx9.96$.
+\end{center}
+\vspace{11pt}
+
+Hence, 10 iterations are required for an approximation accurate within $10^{-3}$. The table above shows that the value of $p_9=1.365234375$ is accurate within $10^ {-4}$. Again, it is important to keep in mind that the error analysis gives only a bound for the number of iterations. In many cases, this bound is much larger than the actual number required.
+
+\newpage
+The bound for the number of iterations for the Bisection method assumes that the calculations are performed using infinite digit arithmetic. When implementing the method on a computer, we need to consider the effects of round-off error. For example, the computation of the midpoint of the interval $[a_n,b_n]$ should be found from the equation
+
+\vspace{11pt}
+\begin{center}
+    $p_n=a_n+\frac{b_n-a_n}{2}$ instead of $p_n=\frac{a_n+b_n}{2}$.
+\end{center}
+
+
+The first equation adds a small correction, $(b_n-a_n)/2$, to the known value $a_n$. When $b_n-a_n$ is near the maximum precision of the machine, this correction might be in error, but the error would not significantly affect the computed value of $p_n$. However, $(b_n-a_n)/2$ can return a midpoint that is not even in the interval $[a_n,b_n]$.
+
+As a final remark, to determine which subinterval $[a_n,b_n]$ contains a root of $f$, it is better to make use of the \textbf{signum} function, which is defined as:
+
+\vspace{11pt}
+\begin{center}
+    \[
+\operatorname{sgn}(x) =
+\begin{cases}
+-1, & \text{if } x < 0, \\
+0,  & \text{if } x = 0, \\
+1,  & \text{if } x > 0.
+\end{cases}
+\]
+\end{center}
+
+The test $sgn(f(a_n))sgn(f(p_n))<0$ instead of $f(a_n)f(p_n)<0$ gives the same result but avoids the possibility of overflow or underflow in the multiplication of $f(a_n)$ and $f(b_n)$.
+
+\vspace{11pt}
+\subsection{Fixed-Point Iteration}
+\vspace{11pt}
+
+A fixed point for a function is a number at which the value of the function does not change when the function is applied. In other words, the number $p$ is a fixed point for a given function $g$ if $g(p)=p$.
+
+In this section, we consider the problem of finding solutions to fixed-point problems and the connection between these problems and the root-finding problems we wish to solve. Root-finding problems and fixed-point problems are equivalent classes in the following sense:
+
+\vspace{11pt}
+\begin{itemize}
+    \item Given a root-finding problem $f(p)=0$, we can define functions $g$ with a fixed point at $p$ in a number of ways, for example, as $g(x)=x-f(x)$ or as $g(x)=x+3f(x)$.
+    \item Conversely, if the function $g$ has a fixed point at $p$, then the function defined by $f(x)=x-g(x)$ has a zero at $p$.
+\end{itemize}
+\vspace{11pt}
+
+Although the problems we wish to solve are in the root-finding form, the fixed-point form is easier to analyze, and certain fixed-point choices lead to very powerful root-finding techniques.
+
+We first need to become comfortable with this new type of problem and to decide when a function has a fixed point and how the fixed points can be approximated to within a specific accuracy.
+
+\vspace{11pt}
+\textbf{Example 1: }Determine any fixed points at the function $g(x)=x^2-2$.
+
+\vspace{11pt}
+Solution: A fixed point $p$ for $g$ has the property that $p=g(p)=p^2-2$ ($p=p^2-2$), which implies that $0=p^2-p-2=(p+1)(p-2)$.
+
+A fixed point for $g$ occurs precisely when the graph of $y=g(x)$ intersects the graph of $y=x$, so $g$ has two fixed points, one at $p=-1$ and the other at $p=2$. These are shown in the figure below:
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{11.jpg}
+\end{center}
+\vspace{11pt}
+
+The following theorem gives sufficient conditions for the existence and uniqueness of a fixed point.
+
+\vspace{11pt}
+\textbf{Theorem 2.3:}
+\begin{itemize}
+    \item (i): if $g \in C[a,b]$ and $g(x) \in [a,b]$ for all $x \in [a,b]$, then $g$ has at least one fixed point in $[a,b]$.
+    \item (ii): If, in addition, $g'(x)$ exists on $(a,b)$ and a positive constant $k<1$ exists with $|g'(x)|\leq k$, for all $x \in (a,b),$ then there is exactly one fixed point in $[a,b]$.
+\end{itemize}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{12.jpg}
+\end{center}
+\vspace{11pt}
+
+\textbf{Proof}: 
+
+(i): If $g(a)=a$ or $g(b)=b$, then $g$ has a fixed point at an endpoint. If not, then $g(a)>a$ and $g(b)<b$. The function $h(x)=g(x)-x$ is continuous on $[a,b]$, with $h(a) = g(a)-a>0$ and $h(b)=g(b)-b<0$.
+
+The Intermediate Value Theorem implies that there exists $p \in (a,b)$ for which $h(p)=0$. This number $p$ is a fixed point for $g$ because $0=h(p)=g(p)-p$ implies that $g(p)=p$.
+
+\vspace{11pt}
+(ii): Suppose, in addition that $|g'(x)| \leq k < 1$ and that $p$ and $q$ are both fixed points in $[a,b]$. If $p \neq q$, then the Mean Value Theorem implies that a number $\xi$ exists between $p$ and $q$ and hence in $[a,b]$ with 
+
+\vspace{11pt}
+\begin{center}
+    $\frac{g(p)-g(q)}{p-q}=g'(\xi)$
+\end{center}
+
+Thus, $|p-q|=|g(p)=g(q)|=|g'(\xi)||p-q| \leq k|p-q| < |p-q|$,
+
+which is a contradiction. This contraction must come from the only supposition, $p \neq q$. Hence, $p = q$, and the fixed point in $[a,b]$ is unique.
+
+\vspace{11pt}
+\textbf{Example 2}: Show that $g(x)=(x^2-1)/3$ has a unique fixed point on the interval $[-1,1]$.
+
+\vspace{11pt}
+\textbf{Solution}: The maximum and minimum values of $g(x)$ for $x$ in $[-1,1]$ must occur when $x$ is an endpoint of the interval or when the derivative is 0. Since $g'(x) = 2x/3$, the function $g$ is continuous, and $g'(x)$ exists on $[-1,1]$. The maximum and minimum values of $g(x)$ occur at $x=-1,x=0,$ or $x=1$. But $g(-1)=0$, $g(1)=0$, and $g(0)=\frac{-1}{3}$, so an absolute maximum for $g(x)$ on $[-1,1]$ occurs at $x=-1$ and $x=1$ and an absolute minimum at $x=0$.
+
+Moreover, $|g'(x)| = |\frac{2x}{3}| \leq \frac{2}{3}$, for all $x \in (-1,1)$.
+
+So $g$ satisfies all the hypotheses of Theorem 2.3 and has a unique fixed point in $[-1,1]$.
+
+For the function in Example 2, the unique fixed point $p$ in the interval $[-1,1]$ can be determined algebraically. If
+
+\vspace{11pt}
+\begin{center}
+    $p=g(p)=\frac{p^2-1}{3}$, then $p^2-3p-1=0$.
+\end{center}
+\vspace{11pt}
+
+which, by the quadratic formula, implies, as shown on the left graph in Figure 2.4, that
+
+\vspace{11pt}
+\begin{center}
+    $p=\frac{1}{2}(3-\sqrt{13})$
+\end{center}
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{13.jpg}
+\end{center}
+\vspace{11pt}
+
+It is important to note that $g$ also has a fixed point $p=\frac{1}{2}(3+\sqrt{13})$ for the interval $[3,4]$. However, $g(4)=5$ and $g'(4)=\frac{8}{3} > 1$, so $g$ does not satisfy the hypothesis of theorem 2.3 on $[3,4]$. This demonstrates that the hypotheses of Theorem 2.3 are sufficient to guarantee a unique fixed point but are not necessary.
+
+\vspace{11pt}
+\textbf{Example 3}: Show that Theorem 2.3 does not ensure a unique fixed point of $g(x)=3^{-x}$ on the interval $[0,1]$, even though a unique fixed point on this interval does exist.
+
+\vspace{11pt}
+\textbf{Solution}: $g'(x)=-3^{-x}ln(3)<0$ on $[0,1]$, the function $g$ is strictly decreasing on $[0,1]$. So,
+
+\vspace{11pt}
+\begin{center}
+    $g(1)=\frac{1}{3}\leq g(x) \leq 1 = g(0)$, for $0 \leq x \leq 1$.
+\end{center}
+\vspace{11pt}
+
+Thus, for $x \in [0,1]$, we have $g(x) \in [0,1]$. The first part of Theorem 2.3 ensures that there is at least one fixed point in $[0,1]$.
+
+However, $g'(0) = -ln3 = -1.098613389$. So, $|g'(x)| \nleq 1$ on $(0,1)$, and Theorem 2.3 cannot be used to determine uniqueness. But $g$ is always decreasing, and it is clear from the figure below that the fixed point must be unique.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{14.jpg}
+\end{center}
+\vspace{11pt}
+
+We cannot explicitly determine the fixed point in the previous example because we have no way to solve for $p$ in the equation $p=g(p)=3^{-P}$. We can, however, determine approximations to this fixed point to any specified degree of accuracy. We will now consider how this can be done.
+
+To approximate the fixed point of a function $g$, we choose an initial approximation $p_0$ and generate the sequence $\{P_n\}_{n=0}^\infty$ by letting $p_n=g(p_{n-1})$, for each $n \geq 1$. If the sequence converges to $p$ and $g$ is continuous, then
+
+\vspace{11pt}
+\begin{center}
+    $p=\lim_{n \to \infty}p_n = \lim_{n \to \infty}g(p_{n-1})=g(\lim_{n \to \infty}p_{n-1})=g(p)$
+\end{center}
+\vspace{11pt}
+
+and a solution to $x=g(x)$ is obtained. This technique is called \textbf{fixed-point}, or \textbf{functional iteration}. The procedure is illustrated in the figure below and is detailed in Algorithm 2.2:
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{15.jpg}
+\end{center}
+\vspace{11pt}
+
+\textbf{Algorithm 2.2}: Fixed Point Iteration --- To find a solution $p = g(p)$ given an initial approximation $p_0$:
+
+\textbf{Input}: Initial approximation $p_0$, tolerance $TOL$; maximum number of iterations $N_0$.
+
+\textbf{Output}: Approximate solution $p$ or message of failure.
+
+\vspace{11pt}
+\begin{itemize}
+    \item Set $i = 1$.
+    \item While $i \leq N_0$, do steps 3, 4, 5, and 6.
+    \item Set $p = g(p_0)$ (compute $p_i$).
+    \item If $|p-p_0| < TOL$ then OUTPUT ($p$); (The procedure wass successful). STOP.
+    \item Set $i = i + 1$
+    \item Set $p_0 = p$. (Update $p_0$).
+    \item OUTPUT (The Method failed after $N_0$ iterations, $N_0=',N_0)$. (The procedure was unsuccessful). STOP.
+\end{itemize}
+\vspace{11pt}
+
+The following illustrates some features of functional iteration.
+
+\textbf{Illustration}: The equation $x^3+4x^2-10=0$ has a unique root in $[1,2]$. There are many ways to change the equation to the fixed-point form $x=g(x)$ using simple algebraic manipulation. For example, to obtain the function $g$ described in part (c) below, we can manipulate the equation $x^3 +4x^2-10=0$ as follows:
+
+\vspace{11pt}
+\begin{center}
+    $4x^2=10-x^3$, so $x^2=\frac{1}{4}(10-x^3)$, and $x=\pm\frac{1}{2}(10-x^3)^{1/2}$
+\end{center}
+\vspace{11pt}
+
+To obtain a positive solution, $g_3(x)$ is chosen. It is not important to derive the functions shown here, but you should verify that the fixed point of each is actually a solution to the original equation, $x^3+4x^2-10=0$.
+
+\vspace{11pt}
+\begin{itemize}
+    \item (a): $x=g_1(x)=x-x^3-4x^2+10$
+    \item (b): $x=g_2(x)=(\frac{10}{x}-4x)^{1/2}$
+    \item (c): $x=g_3(x) = \frac{1}{2}(10-x^3)^{1/2}$
+    \item (d): $x=g_4(x)=(\frac{10}{4+x})^{1/2}$
+    \item (e): $x=g_5(x)=x-\frac{x^3+4x^2-10}{3x^2+8x}$
+\end{itemize}
+\vspace{11pt}
+
+With $p_0=1.5$, the table below lists the results of the fixed-point iteration for all 5 choices of $g$.
+
+\vspace{11pt}
+\begin{center}
+\begin{tabular}{c|c|c|c|c|c|}
+\hline
+$n$ 
+& $p_n$ for $g_1$ 
+& $p_n$ for $g_2$ 
+& $p_n$ for $g_3$ 
+& $p_n$ for $g_4$ 
+& $p_n$ for $g_5$ \\
+\hline
+0  & 1.500000000 & 1.500000000 & 1.500000000 & 1.500000000 & 1.500000000 \\
+1  & -0.875000000 & 0.816496581 & 1.347219739 & 1.360827634 & 1.373333333 \\
+2  & 6.732421875 & 2.996910008 & 1.383101928 & 1.365230013 & 1.365262014 \\
+3  & -469.663757324 & 0.304025151 & 1.362069388 & 1.365230013 & 1.365230013 \\
+4  & $1.032079724\times 10^{8}$ & 5.689005112 & 1.366141770 & 1.365230013 & 1.365230013 \\
+5  & \text{diverges} & 0.521001285 & 1.364500879 & 1.365230013 & 1.365230013 \\
+10 &             & 1.702749047 & 1.365227120 & 1.365230013 & 1.365230013 \\
+20 &             & 1.121527040 & 1.365230013 & 1.365230013 & 1.365230013 \\
+30 &             & 1.887732601 & 1.365230013 & 1.365230013 & 1.365230013 \\
+\hline
+\multicolumn{6}{c}{Actual root: $p = 1.365230013$ (see Example 1 of Section 2.1)} \\
+\hline
+\end{tabular}
+\end{center}
+\vspace{11pt}
+
+The actual root is 1.365230013, as was noted in a previous example. Comparing the results to the Bisection Algorithm given in that example, it can be seen that excellent results have been obtained for choices (d) and (e) (the Bisection method requires 27 iterations for this accuracy). It is interesting to note that choice (a) was divergent and that choice (b) became undefined because it involved the square root of a negative number.
+
+\newpage
+Although the various functions we have given are fixed-point problems for the same root-finding problem, they differ vastly as techniques for approximating the solution to the root-finding problem. Their purpose is to illustrate what needs to be answered:
+\begin{itemize}
+    \item Question: How can we find a fixed-point problem that produces a sequence that reliably and rapidly converges to a solution to a given root-finding problem?
+\end{itemize}
+\vspace{11pt}
+
+The following theorem and its corollary give some clues concerning the paths we should pursue and, perhaps more importantly, some we should reject.
+
+\vspace{11pt}
+\textbf{Theorem 2.4 (Fixed-Point Theorem)}
+Let $g \in C[a,b]$ be such that $g(x) \in [a,b]$, for all $x$ in $[a,b]$. Suppose, in addition, that $g'$ exists on $(a,b)$ and that a constant $0 < k < 1$ exists with
+
+\vspace{11pt}
+\begin{center}
+    $|g'(x) \leq k|$, for all $x \in (a,b)$
+\end{center}
+\vspace{11pt}
+
+Then, for any number $p_0$ in $[a,b]$, the sequence defined by $p_n=g(p_{n-1}),n \geq 1$
+
+converges to the unique fixed point $p$ in $[a,b]$.
+
+\vspace{11pt}
+\textbf{Corollary 2.5}: If $g$ satisfies the hypothesis from Theorem 2.4, then bounds for the error involved in using $p_n$ to approximate $p$ are given by
+
+\vspace{11pt}
+\begin{center}
+    (2.5) $|p_n-p| \leq k^n\max\{p_0-a,b-p_0\}$ and
+
+    (2.6) $|p_n-p| \leq \frac
+    {k^n}{1-k}|p_1-p_0|,$ for all $n \geq 1$.
+\end{center}
+\vspace{11pt}
+
+Both inequalities in the corollary relate the rate at which $\{p_n\}_{n=0}^\infty$ converges to the bound $k$ on the first derivative. The rate of convergence depends on the factor $k^n$. The smaller the value for $k$, the faster the convergence. However, the convergence may be very slow if $k$ is close to 1.
+
+\vspace{11pt}
+\textbf{Illustration:} Let's reconsider the various fixed-point sachems described in the preceding illustration in light of the Fixed-Point Theorem 2.4 and its Corollary 2.5.
+
+\vspace{11pt}
+\begin{itemize}
+    \item For $g_1(x)=x-x^3-4x^2+10$, we have $g_1(1)=6$ and $g_1(2)=-12$, so $g_1$ does not map $[1,2]$ into itself. Moreover, $g'_1(x)=1-3xZ^2-8x$, so $|g'_1(x)| > 1$ for all $x$ in $[1,2]$. Although Theorem 2.4 does not guarantee that the method must fail for this choice of $g$, there is no reason to expect convergence.
+    \item With $g_2(x) = [(10/x)-4x]^{1/2}$, we can see that $g_2$ does not map $[1,2]$ into $[1,2]$, and the sequence $\{p_n\}_{n=0}^\infty$ is not defined when $p_0$ = 1.5. Moreover, there is no interval containing $p \approx1.365$ such that $|g'_2(x)| < 1$ because $|g'_2(p)| \approx3.4$. There is no reason to expect this method to converge.
+    \item For the function $g_3(x)=\frac{1}{2}(10-x^3)^{1/2}$, we have $g'_3(x)=-\frac{3}{4}x^2(10-x^3)^{-1/2} < 0$ on $[1,2]$, so $g_3$ is strictly decreasing on $[1,2]$. However, $|g'_3(2)| \approx2.12$, so the condition $|g'_3(2)| \leq 1$ fails on $[1,2]$. A closer examination of the sequence $\{p_n\}_{n=0}^\infty$ starting with $p_0=1.5$ shows that it suffices to consider the interval $[1,1.5]$ instead of $[1,2]$. On this interval, it is still true that $g'_3(x) < 0$ and $g_3$ is strictly decreasing, but, additionally, $1 < 1.28 \approx g_3(1.5) \leq g_3(x) \leq g_3(1) = 1.5$ for all $x \in [1,1.5]$. This shows that $g_3$ maps the interval $[1,1.5]$ into itself. It is also true that $|g'_3(x)| \leq |g'_3(1.5)| \approx 0.66$ on this interval, so Theorem 2.4 confirms the convergence.
+    \item For $g_4(x) = (10/(4+x))^{1/2}$, we have
+    \vspace{11pt}
+    \begin{center}
+        $|g'_4(x) = |\frac{-5}{\sqrt{10}(4+x)^{3/2}}| \leq \frac{5}{\sqrt{10}(5)^{3/2}} < 0.15$, for all $x \in [1,2]$.
+    \end{center}
+    The bound on the magnitude of $g'_4(x)$ is much smaller than the bound on the magnitude of $g'_3(x)$, which explains the more rapid convergence using $g_4$.
+    \item The sequence defined by
+    \begin{center}
+        $g_5(x)=x-\frac{x^3+4x^2-10}{3x^2+8x}$
+    \end{center}
+    converges much more rapidly than the other choices. The next lecture will discuss the effectiveness of this choice in more detail.
+\end{itemize}
+\vspace{11pt}
+
+\textbf{Question from Earlier}: How can we find a fixed-point problem that produces a sequence that reliably and rapidly converges to a solution to a given root-finding problem?
+
+\textbf{Answer}: Manipulate the root-finding problem into a fixed-point problem that satisfies the conditions of Fixed-Point Theorem 2.4 and has a derivative that is as small as possible $|g'(x)| < k < 1$ near the fixed point.
+
+
+
+
+
 
 
 
