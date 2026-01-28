@@ -27,9 +27,9 @@
 \cfoot{\thepage}
 
 
-\title{Advanced Database Topics}
+\title{Analysis of Algorithms}
 \date{Spring 2026, Purdue University Fort Wayne}
-\author{Maxwell Klema | Professor Jin Soung Yoo}
+\author{Maxwell Klema | Professor Zesheng Chen}
 
 \lstset{
     frame=single, % Adds a single line frame around the code
@@ -40,1157 +40,541 @@
 \maketitle
 \pagestyle{fancy}
 
-\vspace{11pt}
-\section{Lecture 1 - Fundamental Concepts of Database Management}
-\vspace{11pt}
 
-\subsection{Applications of Database Technology}
+% The well known Pythagorean theorem \(x^2 + y^2 = z^2\) was 
+% proved to be invalid for other exponents. 
+% Meaning the next equation has no integer solutions:
+
+% \[ x^n + y^n = z^n + log(n)\]
+% \[\sqrt{x^2+1}\] 
+% This is a simple math expression \(\sqrt{x^2+1}\) inside text. 
+% And this is also the same: 
+% \( \log_b a\)
+% \begin{lstlisting}[language=Python]
+%     dsad
+% \end{lstlisting}
+
+
+\section{Lecture 1 - Algorithms Introduction}
 \vspace{11pt}
+\textbf{Merge Sort} is sort of like the "hello world" for advanced algorithms. In a merge sort, you keep splitting the array in half until there are only chunks of one element, then you merge back up. This means that you take two single elements and merge them from smallest to largest. Then, you take that shorted chunk of some size \textit{m}, and merge it with another sorted array of some size \textit{m}, until the whole array with \textit{n} elements is sorted.
 
-\textbf{Data in the Real World}
-\vspace{11pt}
-
-Data is everywhere, appearing in various forms and sizes. This includes:
-\begin{itemize}
-    \item Traditional data: Traditional numeric and alphanumeric data in an application
-    \item Text data: Documents, emails, and social media posts
-    \item Multimedia data: images, audio, and video files
-    \item Spatial, temporal data: Geographical, location-based, and time-related information
-    \item Volatile data: High-frequency, real-time data
-    \item Big Data: large and complex data sets.
-\end{itemize}
-
-These data types require effective storage and management using suitable data management techniques.
-
-\vspace{11pt}
-\textbf{Applications of Database Technology}
-\vspace{11pt}
-
-There are many applications of Database Technology. They can include, but are not limited to: Traditional Business Applications (Structured numeric and alphanumeric data - inventory, payroll, accounting systems), Multimedia Applications (Storage and retrieval of images, audio, and video - e.g,. YouTube, Spotify), Geographical Information Systems (GIS) (Management and analysis of spatial and located-based data - Google Maps), Financial Applications (High-volume, rapidly changing data with strict consistency requirements - like investment banking systems), Sensor-Based Applications (Continuous data streams from sensors - e.g., environmental monitoring, automated shutdown systems), Biometric Applications (Management of biological identifiers - fingerprints, facial or retina scans), Wearable and IoT Applications (Personal and real-time activity data - Fitbit, Apple Watch), Big Data Applications (Large-scale data collection and analytics - retailer point-of-sale and transaction systems).
+A good example to try a merge sort on is \textit{[5, 4, 1, 8, 7, 2, 6, 3]}.
 
 \vspace{11pt}
-\subsection{Key Definitions}
+\subsection{Why Study Algorithms?}
 \vspace{11pt}
 
-A Database is a collection of related data organized to support a specific business process or problem domain. A database is designed for a target group of users and the applications that access the data.
+\textbf{Review: What is an Algorithm?} It's a set of well-defined rules - a recipe, in effect - for solving some computation problem.
 
-A Database Management System (DBMS) is a software system used to define, create, store, manipulate, and maintain a database. A DBMS is composed of multiple software modules, each supporting different database functions.
+Example: Sorting, shortest path, and scheduling.
 
-A Database System is the combination of a database and its DBMS, which often includes database programs/tools and users.
+It is important to study algorithms because it applies to all other branches of computer science. For example, in Networking, there are routing protocols such as Dijkstra's algorithm. There is intra-domain and inter-domain routing which may use different routing algorithms. In Computer Security, there are many cryptography algorithms. In Computer Graphics, there are geometric algorithms. In databases, there are balance search tree algorithms to speed up database queries using indexing. In Computational Biology, dynamic programming is heavily used. In Machine Learning, any model, including deep learning models, is a set of algorithms. An example is a clustering algorithm.
+
+Studying algorithms plays a key role in modern technological innovation.
+\vspace{11pt}
+\begin{aside}
+"Everyone knows Moore's Law - a prediction made in 1965 by Intel c-ofounder Gordon Moore that the density of transistors in integrated circuits would continue to double every one to two years... in many areas, performance gains due to improvements in algorithms have vastly exceeded even the dramatic performance gains due to increased processor speed."
+
+- Excerpt from Report to the President and Congress: Designing a Digital Future, December 2010 (page 71).
+\end{aside}
+\vspace{11pt}
+Another famous use-case of algorithms is Google's PageRank algorithm, which measures the "quality" of a webpage based on how many other pages refer to it, as well as other quality metrics. This algorithm relies on probability distribution using eigenvectors and matrices.
+
+Additionally, studying algorithms provides a novel "lens" on processes outside of computer science and technology. This includes quantum mechanics, economic markets, and evolution.
+
+Studying algorithms is also challenging. But, that makes you a better programmer and an overall better problem-solver. It can also be fun: seeing an abstract problem and coming up with a creative solution. It is the blend of precision and creativity.
+
+\subsection{Integer Multiplication and Karatsuba}
+\vspace{11pt}
+\subsubsection{Integer Multiplication Problem}
+\textbf{Input}: 2 n-digit numbers $x$ and $y$.
+
+\textbf{Output}: product of $x * y$.
+\vspace{11pt}
+\\A "primitive operation" may be adding or multiplying 2 single-digit numbers, and adding a zero to the beginning or end of a number.
+
+For example, $12 + 8$ takes two operations: $8 + 2$ and $1 + 1$.
+
 
 \vspace{11pt}
-\subsection{File vs. Database Approach to Data Management}
+\textbf{The Grade-School Algorithm}
 \vspace{11pt}
 
-
-\vspace{11pt}
-\textbf{File-based Approach to Data Management}
-\vspace{11pt}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{1.jpg}    
-\end{center}
-
-In a file-based approach to data management, each application maintains its own data files, even when storing the same data. An application may access one or multiple files, and data files store only raw data, without metadata or structured definitions.
-
-Data definitions and descriptions are embedded separately within each application, and, as a result, as the number of applications grows, this approach leads to major data management problems.
-
-Here are Seven Problems related to the File-based Approach
-\begin{itemize}
-    \item Data Redundancy - The same information is stored multiple times across different files.
-    \item Data Inconsistency - Duplicate data may become inconsistent when updates are not synchronized.
-    \item Strong Application-Data Dependence - Data structure changes require modifications to application programs.
-    \item Duplicate Access Logic - Each application defines its own queries and access procedures. Similar procedures are repeatedly implemented across applications.
-    \item Poor Maintainability - Systems are difficult to update, manage, and scale over time.
-    \item Limited Concurrency Control - Hard to support safe simultaneous access by multiple users.
-    \item Difficult Integration - Integrating applications across departments or organizations is challenging.
-\end{itemize}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{2.jpg}  
-\end{center}
-\vspace{11pt}
-
-Note: Raw data and Catalog data (metadata, permissions, users, etc.) are a part of the DBMS.
-
-All data is stored and managed centrally by a DBMS, and applications interact directly with the DBMS, not with individual files. The DBMS retrieves and delivers data in response to application requests. 
-
-The DBMS can manage two types of data: Raw data (actual stored data) and Metadata (data definitions and descriptions). Metadata is centrally managed by the DBMS, rather than embedded in applications (Key difference from the file-based approach)
-
-\vspace{11pt}
-\textbf{Advantages of Database Approach}
-\vspace{11pt}
-
-A database approach is more efficient and reliable than the file-based approach, as there is improved performance, data consistency, and easier maintenance.
-
-There is also increased data independence, where applications are independent of data storage and data definitions. This leads to loose coupling, where applications and data are loosely coupled, making systems easier to modify and extend.
-
-Additionally, with many DBMSs, there are high-level Database Languages provided, such as Structured Query Language (SQL), which is a standardized way to query and manipulate data. With SQL, users specify what they need, not how to retrieve it. SQL queries are executed by the DBMS, hiding low-level retrieval details, leading to transparent execution.
-
-\vspace{11pt}
-\textbf{Query Examples}
-\vspace{11pt}
-
-In a file-based Approach:
-
-\vspace{11pt}
-\begin{lstlisting}[language=SQL]
-Procedure FindCustomer;
-begin
-    open file Customer.txt;
-    Read(Customer)
-    While not EOF(Customer)
-        If Customer.name='Bart then
-            display(Customer);
-        EndIf
-        Read(Customer);
-    EndWhile;
-End;
-\end{lstlisting}
-\vspace{11pt}
-
-In a Database Approach (SQL):
-\vspace{11pt}
-\begin{lstlisting}[language=SQL]
-SELECT *
-FROM Customer
-WHERE name = 'Bart'
-\end{lstlisting}
-\vspace{11pt}
-
-\vspace{11pt}
-\subsection{Elements of a Database System}
-\vspace{11pt}
-
-There are many elements of a Database System:
-\begin{itemize}
-    \item Database Model vs. Database Instances: Distinction between database structure and its current contents.
-    \item Data Model: Concepts and rules used to describe data, relationships, and constraints.
-    \item Three Layer Architecture: Separation of user views, logical structure, and physical storage.
-    \item System Catalog: Metadata repository describing database structure and constraints.
-    \item Database Users: Different user roles interacting with the database system.
-    \item Database Languages: Languages used to define, query, and manipulate data.
-\end{itemize}
-
-\vspace{11pt}
-\textbf{What is the Difference between a Database Schema and a Database State (Instance)?}
-\vspace{11pt}
-
-A Database Schema (or Model) describes the structure of the database, defines data items, data types, relationships, constraints, and storage details, is defined during database design and changes infrequently, and is stored in the DBMS catalog.
-
-For example, in a Database Schema, it may have a structure such as:
-
-Student(number, name, address, email)
-
-Course (number, name)
-
-Building (number, address)
-
-\vspace{11pt}
-Meanwhile, a Database State (Instance) represents the actual data stored in the database at a specific point in time. This is also called a database instance, and it changes frequently as data is inserted, updated, and deleted.
-
-For example, database states (or instances) may be shown as tables with current tuples for STUDENT, COURSE, and BUILDING.
+Let's calculate $5678 * 1234$. Because it is O(\(6n^2\)) (double-check), it should take a maximum of \texttt{\~}96 operations to solve.
 
 \vspace{11pt}
 \begin{aside}
-The schema remains relatively stable, while the database state changes over time as records are added, updated, or removed.
+    \textbf{Note}: To get O(\(6n^2\)), it is important to understand the the multiplication phase takes O(\(3n^2)\) operations (the multiply, the addition of the carry from the previous digit in the same row, and the update that calculates the new carry to pass to the new digit to the left). The addition phase, similarly, takes O(\(3n^2\)) operations (the addition in the column, the addition of the carry-in that came from the column to the right, and the calculation of the carry-out to the column on the left).
+\end{aside}
+\vspace{11pt}
+
+However, that is pretty bad. Can we do better than the "obvious" or "bruteforce" method?
+
+What if we take a divide-and-conquer approach? We divide each number into half and then half and then half, i.e. recursively divide n-digit number into half until it is a single digit and then merge it back into the actual solution.
+
+For example, a = 56, b = 78, c = 12, d = 34. 
+
+Let $x = {10^{n/2}} * a + b$. 
+
+Let $y = {10^{n/2}} * c + d$. 
+
+Finally, $x * y = ({10^n} * ac) + {10^{n/2}}(ad+bc) + bd$
+
+$x*y$ contains $\{ac, ad, bc, bd\}$. These four items are still integer multiplication. For each of these, you apply $x * y$ and get another $4$ items (like a tree). Then you merge them back.
+
+n $\to$ {n/2} $\to$ {n/4} $\to$ ... $\to$ {1 digit}
+
+However, this algorithm does not do better! Why? Because, eventually, the time complexity is O(\(n^2\)).
+\vspace{11pt}
+\begin{aside}
+    The recursive relation of the problem can be expressed as $T(n) = 4T({n/2}) + O(n)$, where O(n) is the work needed to "merge" the results (adding the products and shifting digits by adding zeros). Four is the number of smaller multiplications to perform, while {n/2} shows that each of the smaller multiplications deals with numbers half the size of the original.
+
+    \(log_24 = 2\) shows that each additional level does 2 times more work. By the time you reach 1-digit numbers, you perform exactly \(n^2\) multiplications - the same as grade-school.
+
+    Therefore, O(\(n^{log_24})\)) = O(\(n^2)\).
+\end{aside}
+\vspace{11pt}
+\subsubsection{Karatsuba Multiplication}
+
+So, how does Karatsuba Multiplication fix this?
+
+(a+b)*(c+d) = ac + ad + bc + bd, then subtract - ac - bd = ad + bc. \textbf{You can reduce four recursive calls into three}. That's certaintly better than third-grade multiplication.
+
+The three recursive calls are: $ac$, $bd$, $(a+b) * (c+d)$, then $sum(ad + bc)$ becomes the third.
+
+The new recursive formula becomes:
+
+$T(n) = 3T({n/2) + O(n)}$
+
+Thus, the new additional work factor is only \(log_23 = 1.58\), showing that each level does 1.58 times more additional work than the last, making the overall time complexity \textbf{O(\(n^{log_23})\)}.
+
+For large n-digit multiplications, they use Karatsuba Multiplication.
+
+\vspace{11pt}
+\subsection{Merge Sort}
+
+Merge sort is a good introduction to divide-and-conquer algorithms. It improves over selection, insertion, and bubble sorts. These are all O(\(n^2\)).
+
+It helps to calibrate your preparation and motivates guiding principles for algorithm analysis (worst-case and asymptotic analysis).
+
+Analysis generalizes to "Master Method".
+
+\subsubsection{The Sorting Problem}
+
+\textbf{Input:} array of n numbers, unsorted.
+
+\textbf{Output:} Same numbers, sorted in increasing order.
+\vspace{11pt}
+\begin{aside}
+    \textbf{Note}: For now, we assume that all elements are distinct.
+\end{aside}
+\vspace{11pt}
+\subsubsection{Merge Sort: Example}
+\vspace{11pt}
+\textit{[5,4,1,8,7,2,6,3]} $\to$ \textit{[5,4,1,8] \& [7,2,6,3]} $\to$ ... (recursion) ... $\to$ \textit{[1,4,5,8] \& [2,3,6,7]} $\to$ \textit{[1,2,3,4,5,6,7,8]}
+
+\vspace{11pt}
+\subsubsection{Merge Sort: Pseudocode}
+
+Three function calls: Recursively sort 1st half of the input array, recursively sort 2nd half of the input array, and merge two sorted sublists into one.
+
+The base case for merge sort is when there is only one element or there are zero elements (where n \% 2 != 0).
+
+C = output[length = n]
+
+A = 1st sorted array [n/2]
+
+B = 2nd sorted array [n/2]
+
+i = 1
+\\
+j = 1
+\vspace{11pt}
+\begin{aside}
+    \textbf{Note:} we assume the starting point is 1 instead of 0.
+\end{aside}
+\vspace{11pt}
+
+\begin{lstlisting}[language=Python]
+for k = 1 to n  
+    if A(i) < B(j)
+        C(k) = A(i)
+        i++
+    else [B(j) < A(i)]
+        C(k) = B(j)
+        j++
+
+\end{lstlisting}
+\vspace{11pt}
+\vspace{11pt}
+\begin{aside}
+    \textbf{Note:} This is just the pseudo code for merging, which is O(m). Where m $\leq$ n.
+\end{aside}
+\vspace{11pt}
+
+\textbf{Running Time of Merge Sort}
+\vspace{11pt}
+
+The time complexity is O(\(nlog(n)\)). It takes \(log_2n\) times to divide an array of size n by 2 to get 1 or 0 elements.
+
+The running time is roughly \# amount of lines of code executed.
+
+\textbf{Upshot:} the running time of \textbf{merge} in the array of m numbers is 4m + 2 $\leq$ 6m where m $\geq$ 1
+
+\textbf{Claim:} Merge Sort requires $\leq$ \(6n*log_2n + 6n\)  operations to sort n numbers
+
+\vspace{11pt}
+\begin{aside}
+    \textbf{Recall:} \(log_2n\) is the \# of times you divide by 2 until you get down to 1.
+\end{aside}
+\vspace{11pt}
+
+\textbf{Proof of claim (assuming n = power of 2)}
+
+Use a recursive tree:
+
+level 0 $\to$ root (outer call to Merge Sort) [\(2^1 - 1 = 1\) cumulative divisions]
+
+level 1 $\to$ 1st recursive call [\(2^2 - 1 = 3\) cumulative divisions]
+
+level 2 $\to$ 2nd recursive call [\(2^3 - 1 = 7\) cumulative divisions]
+
+...
+
+\vspace{11pt}
+\begin{aside}
+   \textbf{Quiz:} Roughly how many levels does this recursion tree have (as a function of $n$, the length of the input array)?
+
+   $\to$ \(log_2n\), well actually \(log_2n + 1\) for the root level.
 \end{aside}
 \vspace{11pt}
 
 \vspace{11pt}
-\textbf{Data Model}
-\vspace{11pt}
-
-A database system uses multiple levels of data models - conceptual, logical, and physical, each describing the data from a different perspective. A well-designed data model is the foundation of a successful database application. A data model provides a clear and precise description of data items, relationships among data, and constraints on the data.
-
-Types of Data Models include Conceptual data models, Logical data models, Internal (Physical) data models, and External data models.
-
-\vspace{11pt}
-\textbf{Conceptual Data Model}
-\vspace{11pt}
-
-A conceptual data model provides a high-level representation of data items, their characteristics, and relationships. It serves as a communication tool between information architects and business users. It is implementation-independent and focused on business concepts. It is also user-friendly and aligned with how business users view the data.
-
-Conceptual data models are developed through close collaboration between information architects and business users. They are commonly represented using Enhanced Entity-Relationship (EER) models and Object-oriented models.
-
-\vspace{11pt}
-\textbf{Logical Data Model}
-\vspace{11pt}
-
-A logical data model refines the conceptual data model based on the chosen implementation environment. It maps conceptual concepts to a specific logical data framework, while remaining understandable to business users, while also closer to actual data structures.
-
-A logical data model depends on the database paradigm used, such as Relational, Hierarchical, Object-oriented, Extended relational (object-relational), XML-based, and NoSQL. Logical data models serve as an intermediate step that can be mapped to the internal (physical) data model.
-
-\vspace{11pt}
-\textbf{Physical Data Model (Internal Data Models)}
-\vspace{11pt}
-
-A physical data model describes the physical storage details of the database. Specifically, it specifies where the data is stored, how the data is formatted on disk, and which indexes and access paths are used.
-
-Physical data models focus on performance and storage efficiency. It is highly specific to the DBMS and underlying storage system.
-
-\vspace{11pt}
-\textbf{External Data Model}
-\vspace{11pt}
-
-An external data model consists of user-specific views, each representing a subset of the logical data model. A view shows only the data relevant to a particular application or user group (irrelevant data is hidden, simplifying data accesses).
-
-Views are designed to meet the specific needs of applications or user groups. A single view may be used by one or more applications, while supporting access control and data security.
-
-Some examples of views include a student registration application, which accesses a view with student data, while a capacity planning application accesses a view with building data.
-
-
-\vspace{11pt}
-\subsection{Three Layer Architecture for Database Model}
-\vspace{11pt}
-
-The three-layer architecture is a fundamental architecture for database systems and defines how different levels of data models interact with each other.
-
-The architecture consists of three layers: External Layer (user-specific views), Conceptual (Logical) Layer (overall logical structure of the database, and the Internal Layer (physical storage details). Changes in one layer should have minimal impact on the other layers. This architecture creates modularity and improves efficiency, maintainability, performance, and security.
-
-\vspace{11pt}
-\textbf{Conceptual / Logical Layer}
-\vspace{11pt}
-
-Includes conceptual and logical data models. The logical/conceptual layer also describes data items, their characteristics, types, and relationships with each other. This layer is independent of physical DBMS implementation details.
-
-\vspace{11pt}
-\textbf{External Layer}
-\vspace{11pt}
-
-The external layer consists of external data models, or views, which provide controlled access to selected portions of the logical data model. Views are tailored to specific applications or user groups.
-
-\vspace{11pt}
-\textbf{Internal Layer}
-\vspace{11pt}
-
-The internal layer contains the internal (physical) data model. It defines how data is physically stored and organized, while also focusing on storage structures and access methods.
-
-\vspace{11pt}
-\textbf{Putting the Three-Layers Together}
-\vspace{11pt}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{3.jpg}    
-\end{center}
-\vspace{11pt}
-
-This figure shows the three-layer database architecture. The mappings between layers enable logical and physical data independence, meaning changes at one level have minimal impact on the others.
-
-\vspace{11pt}
-\textbf{Example in a Procurement Business Process}
-\vspace{11pt}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{4.jpg}    
-\end{center}
-\vspace{11pt}
-
-This architecture allows each department to work with relevant data while sharing a consistent underlying database structure.
-
-\vspace{11pt}
-\textbf{Catalog (System Catalog \ Data Dictionary)}
-\vspace{11pt}
-
-The system catalog is a core component of a DBMS. The catalog stores metadata, or data definitions, about the database. Metadata contains definitions of views (external data models), logical data models, and internal (physical) data models. The system catalog ensures consistency and synchronization across different data models. The system catalog is used by the DBMS to manage, access, and validate data.
-
-\vspace{11pt}
-\textbf{Database Users}
-\vspace{11pt}
-
-There are many types of database users, each with unique roles.
-
-The information architect designs the conceptual data model and works closely with business users to capture and model data requirements.
-
-The database designer translated the conceptual model into logical and internal data models. They prepare the database design for implementations.
-
-The database administrator (DBA) is responsible for database implementation and operation. They set up the database infrastructure, while continuously monitoring performance, including response time, throughput, and storage usage.
-
-The application developer develops database applications using general-purpose programming languages. They implement application logic and interacts with the DBMS through APIs or embedded SQL.
-
-Lastly, business users use the database applications to perform specific business tasks. They interact with the database indirectly through applications, not through the DBMS itself.
-
-\vspace{11pt}
-\textbf{Database Languages}
-\vspace{11pt}
-
-Every DBMS provides one or more database languages.
-
-A Data Definition Language (DDL) is used to define database structures. It specifies external, logical, and internal data models, and is typically used by DBAs and application developers.
-
-A Data Manipulation Language (DML) is used to retrieve, insert, delete, and modify data. It can be executed interactively or embedded in a programming language.
-
-Meanwhile, Structured Query Language (SQL) provides a standard language for relational databases. It provides both DDL and DML capabilities.
-
-\vspace{11pt}
-\subsection{Advantages of Database Systems and Database Management}
-\vspace{11pt}
-
-\vspace{11pt}
-\textbf{Data Independence}
-\vspace{11pt}
-
-Data independence is the ability to change data definitions with minimal impact on applications.
-
-In physical data independence, applications, views, and the logical data model remain unchanged. Changes are made only to the internal (physical) data model. Examples include file organization, indexing, and storage location.
-
-In logical data independence, applications are minimally affected by changes to the conceptual or logical data model. Changes at the conceptual/logical layer have little impact on external views.
-
-\vspace{11pt}
-\textbf{Database Modeling}
-\vspace{11pt}
-
-A data model explicitly represents data items, their characteristics, and relationships. A data model may also specify integrity rules and supported operations. Common types of data models include: Hierarchical models, (Enhanced) Entity-Relationship (EER) models, relational models, and object-oriented models.
-
-A conceptual data model captures business data requirements. It is developed in collaboration with business users. The conceptual model is then translated into logical and internal data models. Clear documentation of assumptions and limitations is essential.
-
-\vspace{11pt}
-\textbf{Managing Diverse Data Types}
-\vspace{11pt}
-
-There are three general categories of data:
-\begin{itemize}
-    \item Structured Data: Well-defined schema and data types. Examples include student records (ID, name, address, email).
-    \item Semi-Structured Data: Partial or flexible structure. Examples include JSON documents, resumes, and web data.
-    \item Unstructured Data: No fixed schema. Examples include text documents, images, and videos.
-\end{itemize}
-
-Modern DBMSs can store, manage, and query all three types.
-
-\vspace{11pt}
-\textbf{Managing Data Redundancy}
-\vspace{11pt}
-
-\textbf{Controlled Data Redundancy} means that some data duplication may be intentional, especially in distributed systems, to improve performance.
-
-\textbf{Consistency Management} means that the DBMS provides mechanisms to synchronize replicated data. This ensures data consistency across multiple copies.
-
-\textbf{Automatic Data Correctness}, unlike file-based systems, means that the DBMS automatically enforces data consistency. No manual intervention by users or applications is required.
-
-\vspace{11pt}
-\textbf{Specifying Integrity Rules}
-\vspace{11pt}
-
-Data integrity rules ensure the correctness and validity of stored data. Meanwhile, syntactical rules define how data is represented and stored. Examples may include customerID that must be an integer, or birthdate that is stored as month, day, and year.
-
-Semantic rules ensure the logical meaning of data. Examples may include customerID to be unique, Account balance must be greater than 0, and a customer cannot be deleted if pending invoices exist. Centralized enforcement means that integrity rules are part of the conceptual and logical data models and are stored in the catalog and enforced by the DBMS, not by applications.
-
-\vspace{11pt}
-\textbf{Concurrency Control}
-\vspace{11pt}
-
-DBMSs provide built-in support for concurrent and parallel database operations. Multiple users can simultaneously retrieve and update data. Read and write operations may be executed at the same time.
-
-A key concept is a transaction. A transaction is a sequence of read/write operations treated as an atomic unit. Either all operations are executed, or none are. The DBMS ensures data consistency and prevents inconsistencies during concurrent access.
-
-A DBMS must support ACID properties to ensure correct transaction processing.
-
-\begin{itemize}
-    \item Atomicity - A transaction is executed entirely or not at all.
-    \item Consistency - A transaction moves the database from one valid state to another.
-    \item Isolation - Concurrent transactions behave as if executed sequentially.
-    \item Durability - Once committed, transaction results are permanently stored, even after failures.
-\end{itemize}
-
-\vspace{11pt}
-\textbf{Backup and Recovery Facilities}
-\vspace{11pt}
-
-Backup and recovery facilities protect the database against data loss caused by hardware failures, network errors, and software bugs. Backup facilities support full backups and incremental backups. Recovery facilities restore the database to a previous consistent state.
-
-\vspace{11pt}
-\textbf{Data Security}
-\vspace{11pt}
-
-A DBMS enforces data security using access control mechanisms, where users are authenticated through logins and passwords.
-
-Role-based Access Control (RBAC) assigns different permission levels to users. Examples include read-only access and read-write access. Authorization rules are defined per user or role and are stored in the catalog and enforced by the DBMS. An example includes the Vendor Managed Inventory (VMI) systems, which restrict access based on roles.
-
-\vspace{11pt}
-\textbf{Performance Utilities}
-\vspace{11pt}
-
-Key Performance Indicators (KPIs) include \textbf{response time }(time between issuing a request and receiving a result), \textbf{throughput} (number of transactions processed per unit time), and \textbf{space utilization} (storage used for raw data and metadata).
-
-DBMS Performance Utilities optimize and distribute data storage, tune indexes for faster query execution, optimize queries to improve application performance, and improve buffer and memory management.
-
-\newpage
-\vspace{11pt}
-\section{Lecture 2 - Architecture and Categorization}
-\vspace{11pt}
-
-\subsection{Architecture of a DBMS}
-\vspace{11pt}
-
-\begin{center}
-    \includegraphics[width=0.8\textwidth]{5.jpg}
-    \vspace{11pt}
-    \\
-    This diagram presents a high-level architecture of a DBMS.
-\end{center}
-
-\vspace{11pt}
-\subsection{Architecture of a DBMS - Design Principle \& Access Layer}
-\vspace{11pt}
-
-The design principle of a DBMS emphasizes separation of concerns between user interaction, query processing, and physical data management.
-
-In the User Access Layer, users and applications interact with the DBMS through DDL statements (schema definitions), Interactive SQL queries, Application programs, and Database tools. All access is mediated by DBMS interfaces, providing data independence and a uniform access mechanism.
-
-\vspace{11pt}
-\subsubsection{Architecture of a DBMS: Core Component (Query Processor)}
-\vspace{11pt}
-
-The DBMS consists of two main subsystems. The first is the query processor which interprets and executes SQL statements. Its key components include DDL and DML compilers, query parser and a query rewriter, a query optimizer, and a query executor. Essentially, the query processor translates high-level SQL into efficient execution plans.
-
-\vspace{11pt}
-\subsubsection{Architecture of a DBMS: Core Component (Storage Manager and Database Storage)}
-\vspace{11pt}
-
-The second main subsystem of a DBMS is the storage manager and database storage. The storage manager manages physical data storage and access. Its key components include a transaction manager, buffer manager, lock manager, and recovery manager. The storage manager and database storage ensures concurrency control, efficient memory use, and system reliability. The Database Storage stores raw data, indexes, and system catalog (metadata).
-
-\vspace{11pt}
-\subsubsection{Connection and Security Managers}
-\vspace{11pt}
-
-The Connect Manager established a database connection (locally or through a network) and verifies logon credentials and provides a connection handle.
-
-Meanwhile, the Security Manager ensures users have appropriate privileges. It manages access controls, including connection permissions and read vs. write access.
-
-\vspace{11pt}
-\subsubsection{DDL Compiler}
-\vspace{11pt}
-
-The DDL Compiler compiles the data definitions specified in \textbf{Data Definition Language (DDL)}. It performs the following steps:
-\begin{itemize}
-    \item Parsing: Checks the syntactical correctness of DDL statements.
-    \item Translation: Converts data definitions into an internal format and generates errors if required.
-    \item Registration: Upon successful compilation, store the data definitions in the database catalog.
-\end{itemize}
-
-\vspace{11pt}
-\subsubsection{Query Processor Components}
-\vspace{11pt}
-
-The \textbf{Query Processor} is a critical component of a DBMS that handles query execution efficiently.
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{6.jpg}
-\end{center}
-
-\vspace{11pt}
-\textbf{DML Compiler}
-\vspace{11pt}
-
-The DML Compiler compiles \textbf{Data Manipulation Language (DML)} statements, including INSERT, UPDATE, DELETE, and SELECT. If the DML statement is a query, it collaborates with:
-\begin{itemize}
-    \item Query Parser: Analyzes the query's syntax and structure.
-    \item Query Optimizer: Determines the most efficient execution plan.
-    \item Query Executor: Runs the query and retrieves the results.
-\end{itemize}
-
-\vspace{11pt}
-\textbf{Parser and Rewriter}
-\vspace{11pt}
-
-The Query Parser converts a query into an internal representation format. It validates the query for syntactical and semantical correctness using the database catalog. It also generates errors if the query is incorrect.
-
-Meanwhile, the Query Rewriter simplifies the query using predefined rules and heuristics. It optimizes the query independently of the current database state. For example, in RDBMS, nested queries may be reformulated or flatted into join queries for better performance.
-
-\vspace{11pt}
-\textbf{Optimizer and Executor}
-\vspace{11pt}
-
-The Query Optimizer is a crucial component that enhances DBMS performance. It optimizes the query based upon the current database state (e.g., existing indexes). It generates multiple query execution plans and evaluates their cost in terms of number of I/O operations, CPU processing, and execution time. It combines catalog-based estimates with statistical inference to determine the most efficient execution plan.
-
-The Query Executor executes the final execution plan generated by the optimizer. It interacts with the storage manager to retrieve the required data. It ensures the query is processed correctly and returns the desired results.
-
-\vspace{11pt}
-\subsection{Storage Manager}
-\vspace{11pt}
-
-The \textbf{Storage Manager} manages physical file access and ensures correct and efficient storage of data.
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{7.jpg}
-\end{center}
-
-There are four main components of the Storage Manager:
-\begin{itemize}
-    \item Transaction Manager: Ensure ACID properties for database transactions.
-    \item Buffer Manager: Handles cache memory for efficient data retrieval and minimizes disk I/O.
-    \item Lock Manager: Manages concurrency control to prevent conflicts in multi-user environments.
-    \item Recovery Manager: Ensures data integrity by handling failures and supporting rollback/recovery mechanisms.
-\end{itemize}
-
-\vspace{11pt}
-\textbf{Transaction Manager}
-\vspace{11pt}
-
-The Transaction Manager supervises the execution of database transactions. \textit{A transaction is a sequence of read/write operations treated as a single unit}. It creates a schedule with interleaved read/write operations for efficient execution.
+\begin{aside}
+   \textbf{Quiz:} What is the pattern? Fill in the blanks in the following statement: at each level j = 0,1,2,.., \(log_2n\), there are <blank> subproblems, each of size <blank>.
 
-The transaction manager also ensures ACID properties: Atomicity (All operations complete or none do), Consistency (Preserves database integrity), Isolation (Prevents interference among concurrent transactions), and Durability (Committed results persist after failures). 
+   $\to$ \(2^j\) subproblems \& each the size of \(n / 2^j\).
 
-The Transaction Manager commits successful transactions and rolls back failed ones.
+   \textbf{Proof of claim (assuming n = power of 2):} 
+   
+   $\leq$ \(2^j * 6(n/2^j) = 6n\), where $6$ is the work per level-j subproblem.
 
-\vspace{11pt}
-\textbf{Buffer Manager}
-\vspace{11pt}
-
-The Buffer Manager manages the buffer memory of the DBMS for efficient data retrieval. It caches data intelligently to reduce disk I/O operations. Additionally, it implements smart replacement strategies when the buffer is full. For example, the data locality principle is applied, where recently retrieved data is likely to be accessed again. The Buffer Manager also interacts with lock manager to handle concurrent access safely.
-
-\vspace{11pt}
-\textbf{Lock Manager}
-\vspace{11pt}
-
-The Lock Manager ensures concurrency control to maintain data integrity at all times. It manages assigning, releasing, and recoridng locks in the catalog. Two types of locks are supported based on data operation type:
-\begin{itemize}
-    \item Read Lock --- Allow multiple transactions to read simultaneously.
-    \item Write Lock --- Ensure exclusive access for modifying data.
-\end{itemize}
-
-The Lock Manager uses a locking protocol to define locking rules. It also maintains a lock table to track lock information.
-
-\vspace{11pt}
-Recovery Manager
-\vspace{11pt}
-
-The Recovery Manager ensures the correct execution of database transactions and maintains database integrity. It maintains a log file to keep track of all database operations. It supports transaction rollback by undoing actions of aborted transactions. Additionally, the Recovery Manager performs crash recovery, ensuring data consistency after system failures.
-
-\vspace{11pt}
-\subsubsection{DBMS Utilities}
-\vspace{11pt}
-
-Database utility tools improve performance and simplify database maintenance. A \textbf{Loading Utility} facilitates data loading from various sources, including other DBMS systems, text files, Excel files, and other structured/unstructured data formats.
-
-A \textbf{Reorganization Utility} automatically optimizes data storage for better performance. It enhances query efficiency by restricting data organization.
-
-\textbf{Performance Monitoring Utilities} track key performance indicators to monitor DBMS performances, including storage space consumption, query response times, and transactions throughput rates.
-
-\textbf{User Management Utilities} facilitate user and group account management. It supports the assignment of privileges and access control to ensure security.
-
-\textbf{Backup and Recovery Utilities} provide database backup and recovery mechanisms to protect against data loss. It ensures data consistency after system failures or unexpected crashes.
-
-\vspace{11pt}
-\subsubsection{DBMS Interfaces}
-\vspace{11pt}
-
-To support different user roles, including database designers, administers, applications, and end-users, a DBMS provides multiple user interfaces such as:
-\begin{itemize}
-    \item Command line interface (CLI)
-    \item Graphical user interface (GUI)
-    \item Web-based interface
-    \item Admin interface
-    \item Stand-alone query language interface
-    \item Forms-based interface
-    \item Natural Langage interface
-    \item Network Interface
-\end{itemize}
-
-An example of an DBMS Interface is presented in the image below:
-
-\vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.6\textwidth]{8.png}
-\end{center}
-\vspace{11pt}
-
-\subsection{Categorization of DBMSs}
-\vspace{11pt}
+   If there is $6n$ work per level, and there are \(log_2n + 1\) levels, then the total Big-O time complexity is:
 
-DBMSs can be classified along multiple, largely independent dimensions, reflecting differences in data representation, system architecture, workload, and usage patterns.
-
-\vspace{11pt}
-\subsubsection{Categorization by Data Model}
-\vspace{11pt}
-
-From a Conceptual/Logical Level:
-\begin{itemize}
-    \item Hierarchical DBMSs
-    \item Network DBMSs
-    \item Relational DBMSs
-    \item Object-Oriented DBMSs
-    \item Object-Relational DBMSs
-    \item XML DBMSs
-    \item NoSQL DBMSs (key-value, document, column, graph)
-\end{itemize}
-
-\newpage
-\textbf{Evolution Timeline}
-\vspace{11pt}
-
-\begin{table}[ht]
-    \centering
-    \begin{tabular}{|p{2.2cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
-        \hline
-        \textbf{Time} & \textbf{Database Technology / Data Management Paradigm} & \textbf{Products} & \textbf{Description} \\ \hline
-        1960s--1970s & \textbf{File-based processing} & VMS/VSAM & Managed records, not relationships \\ \hline
-        1970s & \textbf{Hierarchical} & IMS, ADABS, IDS-II & Early DBMS with tree-structured data \\ \hline
-        1970s & \textbf{Network} & IDS, CODASYL & Navigation-based access \\ \hline
-        Mid-1970s -- present & \textbf{Relational} & DB2, Oracle, MS SQL-Server & Conceptual simplicity, ER modeling \\ \hline
-        \multirow{2}{2.2cm}{Mid-1980s -- present} & \textbf{Object-oriented} & Versant, Objectivity/DB & \multirow{2}{3.5cm}{Support complex data Extended data types} \\ \cline{2-3}
-        & \textbf{Object-relational} & DB2 UDB, Oracle, PostgreSQL & \\ \hline
-        Present & \textbf{Semi-structured and complex data models} & dbXML, Tamino, MarkLogic. DB2 UDB, Oracle, PostgreSQL & Support XML and complex data types \\ \hline
-        Present & \textbf{NoSQL} & MongoDB, Cassandra, Hbase, Redis, Riak & High scalability and flexible schema \\ \hline
-    \end{tabular}
-\end{table}
-
-\vspace{11pt}
-\subsubsection{Categorization by Degree of Simultaneous Access}
-\vspace{11pt}
-
-From a concurrency perspective, there are:
-\begin{itemize}
-    \item Single-user DBMSs
-    \item Multi-user DBMSs
-\end{itemize}
-
-This is simple but important for transactions and concurrency control.
-
-\vspace{11pt}
-\textbf{Single-User vs. Multi-User Databases}
-\vspace{11pt}
-
-Single-User DBMSs allows only one user at a time to interact with the DBMS. This is not suitable for a networked environment where multiple users need simultaneous access.
-
-Multi-User DBMSs support multiple users interacting with the database simultaneously. They are commonly used in distrubyted environments to facilitate concurrent data access.
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{9.png}
-
-    In this figure, mutliple client requests are handled concurrently by multiple server instances or threads accessing a shared database.
-\end{center}
-
-\vspace{11pt}
-\subsubsection{Categorization by System Architecture}
-\vspace{11pt}
-From a Physical/Deployment Perspective:
-\begin{itemize}
-    \item Centralized DBMSs
-    \item Client-Server DBMSs
-    \item Distributed DBMSs
-    \item Cloud-based DBMSs
-\end{itemize}
-
+   O(\(6n(log_2n + 1)\))
+\end{aside}
 \vspace{11pt}
-\textbf{Centralized DBMS Architecture}
-\vspace{11pt}
-
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{10.png}
-\end{center}
 
-In a Centralized DBMS Architecture, all data is stored and maintained on a centralized server. Users access the database remotely, with all processing happening on the central system.
-
+\subsection{Guiding Principles for Analysis of Algorithms}
 \vspace{11pt}
-\textbf{Client-Server DBMS Architecture}
+\textbf{Guiding Principle \#1}
 \vspace{11pt}
 
-\begin{center}
-    \includegraphics[width=0.5\textwidth]{11.png}
-\end{center}
-\vspace{11pt}
+"Worst-case analysis": Our running time bound holds for every input of length n. This is particularly appropriate for "general-purpose" routines, as opposed to "average-case" analysis and benchmarks.
 
-In a Client-Server DBMS Architecture, active clients send requests to passive servers, which process database queries. There are two variants:
-\begin{itemize}
-    \item Fat Server --- Most processing occurs on the server side.
-    \item Fat Client --- Clients handle more processing, reducing server load time.
-\end{itemize}
+In fact, the worst-case analysis is usually easier to analyze, making our job easier.
 
 \vspace{11pt}
-N-Tier DBMS Architecture
+\textbf{Guiding Principle \#2}
 \vspace{11pt}
 
-An n-Tier DBMS Architecture consists of multiple layers for scalability and modularity:
-\begin{itemize}
-    \item Client Layer --- Provides GUI functionality for users.
-    \item Application Server --- Hosts business logic and applications.
-    \item Database Server --- Runs the DBMS and stores the database
-    \item Web Server --- Enables web-based access to the database.
-\end{itemize}
+Constant factors and lower-order terms do not need to be paid much attention to. The justifications for this include making algorithms easier to analyze, the fact that constants depend on architecture, compiler, and/or programmer anyways, and that the reduction of constants lose only very little predictive power (as we will see).
 
-For example, here is a three-tiered Client/Server Database Architecture:
-
-\vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.7\textwidth]{12.png}
-    
-    \includegraphics[width=0.6\textwidth]{13.png}
-\end{center}
-
 \vspace{11pt}
-\textbf{Distributed DBMSs}
+\textbf{Guiding Principle \#3}
 \vspace{11pt}
-
-A Distributed DBMS manages a single logical database whose data is physically distributed across multiple networked sites. Key features include location transparency and data independence, support for distributed queries and transactions, and data fragmentation and replication across sites.
 
-The benefits of a Distributed DBMS is scalability, availability, and improved performance. However, some challenges include consistency, coordination, and fault tolerance.
+\textbf{Asymptotic Analysis:} Focus on running time for large input size $n$.
 
 \vspace{11pt}
 \begin{aside}
-    Note: Distributed DBMSs underpin (act as a fundamental foundation) cloud DBMSs, federated DBMSs, and many NoSQL systems.
+    \textbf{For example}: \(6nlog_2n + 6n\) [merge sort] may be worse than \((1/2)n^2\) [insertion sort] for very small n. This can lead to wrong conclusions that insertion sort is better, but at a small enough n, the difference in performance is extremely minimal (nanoseconds).
 \end{aside}
-
-\vspace{11pt}
-\textbf{Cloud DBMSs}
 \vspace{11pt}
 
-Cloud DBMSs are database management systems hosted in the cloud, eliminating the need for on-premise infrastructure. These cloud sites are managed by third-party cloud providers, offering scalability, reliability, and cost-efficiency. Cloud DBMSs supports distributed storage and processing, making it ideal for big data and high-availability applications.
-
-Examples of Cloud DBMSs include Apache Cassandra --- A distributed NoSQL database designed for scalability and fault tolerance. Another is Google Bigtable --- A fully managed, high-performance NoSQL database for large-sale applications.
+Really, only big problems with large n are interesting, as different Big-O functions involving n have different growth rates.
 
 \vspace{11pt}
-\subsubsection{Categorization Based on Usage Workload}
-\vspace{11pt}
-
-From a Query and access pattern perspective:
-\begin{itemize}
-    \item Transaction databases (OLTP)
-    \item Analytical databases (OLAP)
-    \item Hybrid Transaction/Analytical Processing (HTAP)
-\end{itemize}
+\includegraphics[width=0.7\textwidth]{1.png}
 
 \vspace{11pt}
-\textbf{Transaction Databases}
-\vspace{11pt}
-
-\textbf{Online Transaction Processing (OLTP)} Databases focus on managing operational or transactional data. The database server must process a high volume of simple transactions efficiently. The DBMS must have fast response time for short, frequent queries.
+\includegraphics[width=0.7\textwidth]{2.png}
 
 \vspace{11pt}
-\textbf{Analytical Databases}
+\textbf{What is a "Fast" Algorithm?}
 \vspace{11pt}
 
-\textbf{Online Analytical processing (OLAP)} Databases use operational data for tactical or strategical decision-making. A limited number of users execute complex queries for business intelligence. The DBMS must efficiently handle complex queries, often in lower frequency.
-
-\vspace{11pt}
-\textbf{Hybrid Transaction/Analytical Processing}
-\vspace{11pt}
-
-\textbf{Hybrid Transaction/Analytical Processing (HTAP)} systems are designed to support both transactional (OLTP) and analytical (OLAP) workloads on the same database, in near real time.
-
-Key characteristics include a unified data platform for transactions and analytics. HTAPs also eliminates data movement between OLTP and OLAP systems, and it supports real-time or near-real-time analytical queries.
-
-The Benefits of HTAPs include fresh analytics on operational data, simplified system architecture, and reduced data latency and redundancy. Meanwhile, the challenges of HTAPs include balancing performance isolation between OLTP and OLAP and complex concurrency control and query optimization.
+A fast algorithm is one where the worst case running time grows slowly with input size. An example being O(\(log_2n\)) or even O(1), although that is rare.
 
 \vspace{11pt}
 \begin{aside}
-    HTAP is increasingly important in modern cloud and in-memory database systems.
+    A good goal is usually keeping an algorithm as close to \(O(n)\) as possible.
 \end{aside}
-
-\vspace{11pt}
-\subsubsection{DBMSs Span Multiple Dimensions}
 \vspace{11pt}
 
-Modern DBMSs cannot be classified using a single criterion.
-
-Example 1: A modern cloud-based NoSQL DBMS may simultaneously be: Non-relational in its data model, distributed in architecture, multi-user, and designed for OLTP or HTAP workloads.
-
-Example 2: NewSQL DBMS is a relational data model, distributed architecture, multi-user, and OLTP-oriented.
-
-The takeaway is that no single taxonomy fully captures modern DBMSs. Real-world systems occupy multiple points in the design space.
-
 \vspace{11pt}
-\section{Lecture 3 - Conceptual Data Modeling --- Using UML Class Diagram}
+\textbf{For-Free Primitives}
 \vspace{11pt}
 
-\subsection{Origin and Recap of Object Orientation}
-\vspace{11pt}
+An algorithm with a linear or near-linear running time acts as a primitive that can be used essentially "for free". In other words, the amount of time required barely exceeds what you need to read the input.
 
-\textbf{Origin of UML}
-\vspace{11pt}
-
-\textbf{Unified Modeling Language (UML)} is a standardized modeling language for specifying, visualizing, constructing, and documenting software systems. UML was standardized by the Object Management Group (OMG) in 1997 and later approved as an International Organization for Standardization (ISO) standard in 2005. The most recent major version is UML 2.5, released in 2017.
-
-UML includes multiple diagram types: Use cases, sequence, package, deployment, and others. From a database modeling perspective, the class diagram is the most relevant.
-
-\textbf{UML class diagrams} are widely used to represent ER-style concepts --- such as entities, attributes, and relationships in many commercial database design tools.
-
-Here is an example of a UML Class Diagram:
-\vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.65\textwidth]{14.png}
-\end{center}
+An example of this can be sorting. It is important to put these for-free primitive algorithms into your toolbox.
 
 \newpage
-\textbf{Recap of Object Orientation}
+\section{Lecture 2 - Asymptotic Notation}
 \vspace{11pt}
 
-A class is a blueprint that defines a set of objects (comparable to an entity type in the ER model). An object is an instance of a class (Comparable to an entity in the ER model). An object is characterized by Variables (attributes) and Methods (operations.
+In the last lecture, we talked about the Integer multiplication problem (x*y). However, using traditional methods, for an n-digit number, the runtime is O($n^2$). Can we do better?
 
-Variables correspond to attribute types, and variable values correspond to attributes in ER. Methods have no direct equivalent in ER models.
+Can we use divide-and-conquer? What about $n/2 \to n/4 \to ...\to 1$.
 
-For example, there is a Student class. Objects include Bart, Wilfried, and Seppe. Variables include name, gender, and birthdate. Methods include calcAge(), isBirthday(), and hasPassed(courseID).
+For example, say $x=5678, y=1234$, then cut in half such that $a=56,b=78,c=12,d=34$.
 
-\textbf{Information Hiding (Encapsulation)} is where object variables are accessed only through getter and setter methods. A \textit{getter} retrieve the value of the variable while a \textit{setter} assigns or updates the value of a variable.
+Then, $x=100a+b, y=100c+d$
 
-\textbf{Inheritance} is where a superclass can have one or more subclasses. Subclasses inherit both variables and methods from the superclass.
+$x*y=(100a+b)(100c+d)$.
 
-\textbf{Method Overloading} is where multiple methods in the same class may share the same name. Methods are distinguished by different numbers or types of input parameters (method signature).
+$= 10^4ac + 100ad + 100bc + bd$. Now, given this, we are turning this into 4 $n/2$ digit product. We can keep going recursively by dividing in half. However, this does not make life easier. In fact, the running time complexity is still $O(n^2)$.
 
-\vspace{11pt}
-\subsection{Classes, Variables, and Access Modifiers}
-\vspace{11pt}
-
-\textbf{Classes in UML}
-\vspace{11pt}
-
-In a UML class diagram, a class is represented as a rectangle with three sections. The Top is the class name, the middle are variables (attributes), and the bottom are methods (operations).
+If we look at $(a+b)(c+d)=ac+ad+bc+bd$. We can get $(ad+bc)$ using $ac+ad+bc+bd - ac - bd = ad+bc$. Now, instead of four operations per level, we can do three operations instead. It is 3 $n/2$ digit multiplication. This does better than the elementary school multiplication algorithm.
 
 \vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.3\textwidth]{15.png}
-\end{center}
+\subsection{Merge Sort}
 \vspace{11pt}
 
-\textbf{Variables in UML}
-\vspace{11pt}
+We then began talking about \textbf{Merge Sort}. Given an array, we split the array in half and then recursively sort both halves. Once both halves are sorted, we then merge them together.
 
-UML provides primitive data types such as String, Integer, and Boolean. UML also allows user-defined data types (domains).
+If we assume that there are $m$ total elements in the array, and each half has $m/2$ elements. For the merge, $2m \geq 2$ and the time complexity is $\leq 4m + 2m = 6m$.
 
-UML also supports \textbf{Composite variables} and\textbf{ Multi-valued variables}. Composite variables may decompose into components (e.g., first name, last name) or they define and reuse a custom domain (e.g., Name\_Domain). Multi-valued variables use multiplicity to indicate how many values a variable may have for one object. (e.g., email: String [0.. 4], email: String [*] (unbounded)).
+In a recursive tree, we divide each node into two sub-arrays until we have single-element arrays. Each level has $2^j$ nodes per level. There are $n$ nodes at the end. Given that $j = log_2n$, then there are $log_2n+1$ levels. For each node (sub-array), there are $n/2^j$ nodes.
 
-\textbf{Derived Variables} are indicated by a leading forward slash (e.g., /age).
-
-\textbf{Variables with Unique Values}: UML does not explicitly model key attributes as in ER. UML assumes an object-oriented DBMS (OODBMS) implementation. 
-
-Each object is assigned a unique, \textbf{Immutable Object Identifier (OID)}. The OID uniquely identifies objects throughout their lifetime. Therefore, no separate key variables are required in UML.
+Then, for each level there are $n/2^j * 6 * 2^j$ steps. With $log_2n+1$ levels, the overall runtime complexity is $O(6nlog_2n + 6n)$.
 
 \vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.3\textwidth]{16.png}
-\end{center}
-
-\vspace{11pt}
-\textbf{Access Modifiers}
+\subsection{Asymptotic Notation}
 \vspace{11pt}
 
-Access modifiers specify who can access a class's variables or methods. There are three primary access levels:
-\begin{itemize}
-    \item Private (denoted by '-'): Accessible only within the class.
-    \item Public (denoted by '+'): Accessible by any other class.
-    \item Protected (denoted by '\#'): Accessible by the class and subclasses.
-\end{itemize}
+The goal is to identify a sweet spot of granularity for reasoning about algorithms. We want to suppress second-order details like constant factors and lower-order terms and introduce Big-O notation.
 
-As a general design guideline, it is important to declare all variables as private to support information hiding.
+In seven words, asymptotic notation \textbf{suppresses constant factors and lower-order terms}. Constant factors are too system-dependent. For example, a programming language, architecture, or compiler. Additionally, lower-order terms are irrelevant for large inputs. For example, having $3n^2+2n$, we can just write it as $O(n^2)$. The "big-O notation" buckets algorithms into groups according to their asymptotic worst-case running time.
 
 \vspace{11pt}
-\textbf{Associations}
+\textbf{Examples:}
+
+Input: array A of n integers, and an integer t. Output is whether or not A contains t. $\to$ $O(n)$
+
+Input: arrays A and B of n integers each, and an integer t. The output whether or not A or B contains t. $\to$ $O(n)$
+
+Input: arrays of A and B of n integers each. Output: Whether or not there is an integer t contained in both A and B. $\to$ $O(n^2)$
+
+Input: an array of A of n integers. Output: Whether or not A contains an integer more than once. Note, assume that we are using two for loops. $\to$ $O(n^2)$. Another way is $n$ choose $2$ permutations which equates to $\frac{n(n-1)}{2}$.
+
+\vspace{11pt}
+\subsection{Big-O Notation [Asymptotic Upper Bound]}
 \vspace{11pt}
 
-An association in UML corresponds to a relationship type in ER. Multiple associations may exist between the same pair of classes. A specific instance of an association is called a \textbf{link}. Association is also characterized by its multiplicities, which corresponds to cardinalates in ER.
+Let $T(n)=$ function on $n = 1, 2, 3, ...$ [usually, the worst-case running time of an algorithm, or the real running time of an algorithm]. A big question is \textbf{when is $T(n)=O(f(n))$?} If eventually (for all sufficiently large $n$), $T(n)$ is bounded above by a constant multiple of $f(n)$.
+
+In other words, $O(f(n))$ is a way to categorize or "bound" the runtime. It describes the "shape" of the growth as $n$ becomes very large.
+\vspace{11pt}
+
+The formal definition states that $T(n)=O(f(n))$ if and only if there exists constants such that $c, n_0 > 0$:
 
 \vspace{11pt}
 \begin{center}
-\begin{tabular}{|c|c|}
-    \hline
-    \textbf{UML Multiplicity} & \textbf{ER Cardinality} \\ \hline
-    * & 0..N \\ \hline
-    0..1 & 0..1 \\ \hline
-    1..* & 1..N \\ \hline
-    1 & 1..1 \\ \hline
-\end{tabular}
+    $T(n) \leq c * f(n)$
 \end{center}
+\vspace{11pt}
+
+for all $n \geq n_0$. Also $c, n_0$ cannot depend on $n$.
+
+\vspace{11pt}
+\begin{aside}
+    \textbf{Note:} $c$ is the constant multiple (positive) that scales the function $f(n)$. Its purpose allows us to ignore specific implementation details like hardware speed or compiler optimizations. It matters because even if an algorithm takes $3n^2$ steps, we can say it is $O(n^2)$ because we can just pick $c=3$ (or any higher number) to satisfy the inequality. It focuses on the analysis on the rate of growth rather than the exact number of operations.
+
+    Meanwhile, $n_0$ is the threshold or starting point. It is the value of the input size $n$ where the upper bound starts to kick in. Big-O notation is interested in asymptotic behavior, meaning what happens as $n$ grows to infinity. For very small inputs, an algorithm might be slow due to initialization or overhead (e.g., 100 + n is larger than $n^2$ when $n=2$). The $n_0$ value says to ignore those small cases. Eventually, $c*f(n)$ will always be greater than or equal to $T(n)$ for every value of $n$ from this point onward.
+\end{aside}
+\vspace{11pt}
+
+\textbf{A Picture Illustrating When $T(n)=O(f(n))$}
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{3.png}
+\end{center}
+\vspace{11pt}
 
 \newpage
-\textbf{Association Class}
-\vspace{11pt}
-
-When an association has its own variables and/or methods, it can be modeled as an association class. An association class represents properties that belong to the relationship itself, not to either class.
+Note, in the image above, $3*f(n)$ is used as an upper bound to show that $T(n)=O(f(n))$.
 
 \vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.75\textwidth]{17}
-\end{center}
+\textbf{Example 1:}
 
-\vspace{11pt}
-\textbf{Unidirectional vs. Bidirectional Association}
-\vspace{11pt}
+Claim: If $T(n)=a_kn^k+\dots+a_1n+a_0$, then $T(n)=O(n^k)$
 
-Associations may include navigation arrows to indicate direction. The arrow specifies the allowed direction of access or querying.
+Proof: Choose $n_0=1$ and $c=|a_k| + |a_{k-1}| + \dots + |a_1| + |a_0|$. We need to show that $\forall n \geq 1,T(n) \leq c*n^k$.
 
-In a Unidirectional Association, navigation is possible in one directly own and is shown using a single arrow. Meanwhile, in a Bidirectional Association, navigation is possible in both directions and no arrow is shown.
-
-For example, all purchase orders can be retrieved from a supplier object. It is not possible to navigate from a purchase order to its supplier.
-
-\vspace{11pt}
-\textbf{Qualified Association}
-\vspace{11pt}
-
-A qualified association is a special type of binary association. It uses a qualifier to further restrict or refine the association. The qualifier consists of one or more key variables that index a subset of related objects. The qualifier acts like a key, selecting a specific related object and thereby reducing the effective multiplicity. A qualifier is shown as a small rectangle attached to the association end.
+We have, for every $n \geq 1$:
 
 \vspace{11pt}
 \begin{center}
-    \includegraphics[width=.65\textwidth]{18.png}
+$T(n) \leq |a_k|n^k + \dots + |a_{1}|n+|a_0|$
+
+$\leq |a_k|n^k + \dots + |a_1|n^k + |a_0|$
+
+$= c*n^k$
 \end{center}
 
-In a navigation context, a qualifier is used to select a specific related object from all objects participating in the association. In an implementation context, each qualifier value references a unique target object. When an application requires data retrieval based on search keys, qualified associations are generally appropriate.
-
-For example, in the diagram above, the association \texttt{PLAYS AT} Connects \texttt{Team} and \texttt{Player}. The association is qualified by the attribute \texttt{position}. This qualifier acts a an index or key: Given a team and a position, at most one player is identified.
-
-As a result, the effective multiplicity on the player side is \texttt{0..1}. The small rectangle labeled position visually represents the qualifier.
-
 \vspace{11pt}
-\textbf{Qualified Association: ER vs. UML Example}
-\vspace{11pt}
+\textbf{Example 2:}
 
-ER Model: There exists a 1:N relationship between TEAM and PLAYER. A team can have zero to many players. A player is always related to exactly one team.
+Claim: For every $k \geq 1$, $n^k$ is not $O(n^{k-1})$
 
-UML (Qualified Association): The association is qualified by position. For a given team and position, there are zero or one players. A player still belongs to exactly one team.
-
-\vspace{11pt}
-\textbf{Qualified Association for Weak Entity Types}
-\vspace{11pt}
-
-Qualified associations in UML can be used to model weak entity types in ER.
+Proof: By contradiction. Suppose $n^k=O(n^{k-1})$. Then, there exists constants $c,n_0$ such that:
 
 \vspace{11pt}
 \begin{center}
-    \includegraphics[width=0.7\textwidth]{19.png}
+    $n^k \leq c*n^{k-1}$ for $\forall n \geq n_0$
+
+    But then [canceling $n^{k-1}$ from both sides]:
+
+    $n \leq c$ for $\forall n \geq n_0$
+
+    Which is clearly false [Contradiction]
 \end{center}
 
+\vspace{11pt}
+\textbf{Example 3:}
 
-ER Model: ROOM is a weak entity that depends on HOTEL. The room number is a partial key, and a room belongs to exactly one hotel.
+Claim: $2^{n+10}=O(2^n)$
+
+Proof: We need to pick constants $c,n_0$ such that:
 
 \vspace{11pt}
 \begin{center}
-    \includegraphics[width=0.6\textwidth]{20.png}
+    (*) $2^{n+10} \leq c * 2^n$ for $\forall n \geq n_0$
+
+    Note: $2^{n+10}=2^{10}*2^n=(1024)*2^n$.
 \end{center}
-
-In the UML model, The association between Hotel and Room is qualified by room number. The qualifier acts as an index (partial key). Essentially, a hotel + room number identifiers zero or one room. Each room always belongs to exactly one hotel.
-
-\vspace{11pt}
-\subsection{Specialization and Generalization}
 \vspace{11pt}
 
-Similar to the EER model, UML supports specialization and generalization relationships. A superclass represents a general concept, while subclasses represent specialized versions of the superclass.
+So, if we choose $c \geq 1024,n_0=1$, then (*) holds.
 
-The symbol is an empty (or filled) triangle that points from the subclass to the superclass. UML allows specialization constraints such as total/partial and disjoint/overlapping.
+\vspace{11pt}
+\textbf{Example 4:}
+
+Claim: $2^{10n} \neq O(2^n)$
+
+Proof: By contradiction, if $2^{10n}=O(2^n)$ then there exist constants $c,n_0 > 0$ such that:
 
 \vspace{11pt}
 \begin{center}
-    \includegraphics[width=0.5\textwidth]{21.png}
+    $2^{10n} \leq c*2^n$ for $n \geq n_0$
+
+    But then [canceling $2^n$]:
+
+    $2^{9n} \leq c$ for $\forall n \geq n_0$,
+
+    which is certainly false.
 \end{center}
 \vspace{11pt}
-
-Another example is included in the UML diagram below:
-
-\vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.75\textwidth]{22.png}
-\end{center}
-
-
-\vspace{11pt}
-\textbf{Aggregation}
-\vspace{11pt}
-
-Aggregation represents a whole-part (composite-part) relationship between classes. The composite class is made up of two types of aggregation: Shared aggregation (aggregation) and composite aggregation (composition).
-
-\vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.6\textwidth]{23.png}
-\end{center}
-
-\vspace{11pt}
-\textbf{Shared Aggregation (Aggregation)}
-\vspace{11pt}
-
-A part object may belong to multiple composite objects. The maximum multiplicity at the composite side is not fixed.\textbf{ A part object may exist independently of any composite}. This represents a loose coupling between the composite and part classes.
-
-For example, a consultant may work for multiple companies. When a company is removed, its consultants remain in the database.
-
-\vspace{11pt}
-\textbf{Composite Aggregation (Composition)}
-\vspace{11pt}
-
-A part object can belong to only one composite. The maximum multiplicity at the composite side is 1. The minimum multiplicity may be 0 or 1.\textbf{ This represents a tight coupling between the composite and part classes}. When the composite object is removed, all associated part objects are also removed.
-
-For example, Engine---Car, Engine---Boat. An Account belongs to exactly one Bank. \textit{Thus, removing the bank removes all associated accounts}.
-
-\vspace{11pt}
-\subsection{Changeability Property}
-\vspace{11pt}
-
-The changeability property specifies the type of operations that are allowed on either variable values or links.
-
-There are three common choices:
-\begin{itemize}
-    \item default --- allows any type of edit
-    \item addOnly --- only allows additional values or links to be added (no deletions)
-    \item frozen --- allows no further changes once the value or link is established
-\end{itemize}
-
-\vspace{11pt}
-\begin{center}
-    \includegraphics[width=0.6\textwidth]{24.jpg}
-\end{center}
 
 \newpage
-
-For example, the frozen property on the supplier number and the purchase order number specifies that once a value is assigned, it cannot be changed.
-
-The language variable of the SUPPLIER class represents the set of languages the supplier can understand. It is defined as addOnly, meaning languages may be added but not removed. 
-
-\textbf{The addOnly property on the ON\_ORDER association} specifies that, for a given supplier, purchase orders can be added but not deleted.
-
-
-\vspace{11pt}
-\textbf{Object Constraint Language (OCL)}
+\subsection{Big-Omega Notation [Asymptotic Lower Bound]}
 \vspace{11pt}
 
-Object Constraint Language (OCL) is used to specify constraints in UML models. OCL constraints are declarative, meaning they specify what must be true rather than how it is enforced. Additionally, OCL contains no control flow or procedural code.
+The formal definition is $T(n)=\Omega(f(n))$ if and only if there exists constants $c,n_0 > 0$ such that:
 
-Typical uses of OCL include
+\vspace{11pt}
+\begin{center}
+    $T(n) \geq c *f(n)$ for $\forall n \geq n_0$
+\end{center}
+\vspace{11pt}
+
+In other words, the inequality $T(n) \geq c * f(n)$ means that for all sufficiently large inputs $(n \geq n_0)$, the actual runtime $T(n)$ will always be greater than or equal to a constant multiple of $f(n)$. This implies that the algorithm will never run faster than that bound once the input size is large enough.
+
+Again, $c,n_0$ cannot depend on $n$.
+
+\vspace{11pt}
+\subsection{Big-Theta Notation [Asymptotic Tight Bound]}
+\vspace{11pt}
+
+The formal definition is $T(n)=\theta(f(n))$ if and only if there exist constants $c_1,c_2,n_0$ such that:
+
+\vspace{11pt}
+\begin{center}
+    $c_1*f(n)\leq T(n) \leq c_2 *f(n)$ for $\forall n \geq n_0$
+\end{center}
+\vspace{11pt}
+
+In other words, $T(n)=\theta(f(n))$ does not specify an average running time, but rather a tight bound for whatever runtime function $(T(n))$ is being analyzed. $c_1*f(n)$ acts as the lower bound (the floor): The function cannot grow any slower than this. Meanwhile, $c_2*f(n)$ acts as the upper bound (ceiling): The function cannot grow any faster than this.
+
+Again, $c_1,c_2,n_0$ cannot depend on $n$.
+
+Mean: $T(n)=O(f(n))$ ($(T(n)$ does not grow faster than $f(n)$) and $T(n)=\Omega(f(n))$ ($T(n)$ does not grow slower than $f(n)$).
+
+\vspace{11pt}
+\textbf{A Quiz}
+\vspace{11pt}
+
+Let $T(n)=\frac12n^2+3n$. Which of the following statements are true? (There might be more than one correct answer.)
 \begin{itemize}
-    \item Class invariants
-    \item Preconditions and postconditions for methods
-    \item Navigation across associations
-    \item Constraints on operations and attributes
+    \item $T(n)=O(n)$. False! $\frac{1}{2}n+3 \not\leq c$.
+    \item $T(n)=\Omega(n)$. True! $\frac12n+3 \geq c$. A quadratic function always grows faster than a linear one. Therefore, the quadratic function will always be "at least" as large as a linear function for large values of $n$, $n^2$ is bounded below by $n$.
+    \item $T(n)=\Theta(n^2)$. True! $c_1 \leq \frac12+\frac3n \leq c_2$. To prove this, $T(n)=\Omega(n^2),T(n)=O(n^2)$.\textbf{ The function must satisfy the function using the same $f(n)$.}
+    \item $T(n)=O(n^3)$. True! $\frac12+\frac3n \leq c*n$.
 \end{itemize}
 \vspace{11pt}
 
-OCL is standardized by the Object Management Group (OMG)
+\textbf{Example on Big-Theta Notation}
 
-\vspace{11pt}
-\textbf{OCL: Class Invariant and Pre/Post Conditions}
-\vspace{11pt}
-
-Class Invariant --- a class invariant is a constraint that must hold for \textbf{all objects} of a class. For example, SUPPLIER: SUPSTATUS > 100 (The status of every supplier must be greater than 100).
-
-Preconditions and Postconditions --- Preconditions must be true before a method is executed, while postconditions must be true after the method completes. For example, (Pre) before withdrawal, the balance must be positive. For Post, after withdrawal, the balance must still be positive.
+Claim: for every pair of positive function $f(n)$ and $g(n)$:
 
 \vspace{11pt}
 \begin{center}
-    \includegraphics[width=0.6\textwidth]{25.jpg}
-
-    This image shows two associations: Which employee works in which department and which employee manages which department.
+    $\max\{f,g\}=\theta(f(n)+g(n))$
 \end{center}
 \vspace{11pt}
 
-An example constraint for the UML diagram above is that a manager of a department must have at least 10 years of employment.
-
-\newpage
-\begin{lstlisting}
-    Context: Department
-    inv: self.managed_by.yearsemployed > 10
-\end{lstlisting}
-\vspace{11pt}
-
-The context of the constraint is the DEPARTMENT class. The keyword \textbf{inv} defines a class invariant. The self keyword refers to a DEPARTMENT object. The role name \textbf{managed\_by} is used to navigate to the \textbf{EMPLOYEE}. The attribute \textbf{yearsemployed} is then evaluated.
-\vspace{11pt}
-
-Example Constraint \#2: A department should have at least 20 employees.
-
-\begin{lstlisting}
-    Context: Department
-    Invariant: self.workers->size() >= 20
-\end{lstlisting}
-\vspace{11pt}
-
-The context is the DEPARTMENT class. self.workers navigates to the set of employees working in the department. The size() operation computes the number of examples.
-\vspace{11pt}
-
-Example Constraint \#3: A manager of a department must also work in that department.
-
-\begin{lstlisting}
-    Context: Department
-    Invariant: self.managed_by_works_in = self
-\end{lstlisting}
-\vspace{11pt}
-
-\textbf{Dependency Relationship}
-\vspace{11pt}
-
-\begin{center}
-    \includegraphics[width=0.6\textwidth]{26.jpg}
-\end{center}
-\vspace{11pt}
-
-In UML, dependency defines a \textbf{"using"} relationship. Changes in one element may affect another element that depends on it.
-
-Dependencies are shown using \textbf{dashed arrows} in UML. A dependency exists when one class uses another class temporarily and/or the used object is not stored as a member variable.
-
-For example, the EMPLOYEE class defines a method \texttt{tookCourse(CNR)}. This method uses a \texttt{Course} object to check course information. Since the \texttt{COURSE} object is used only within the method, a dependency exists between \texttt{EMPLOYEE} and \texttt{COURSE}.
-
-\vspace{11pt}
-\textbf{Association vs. Dependency (Conceptual Difference)}
-\vspace{11pt}
-
-Association --- Represents a structural, long-term relationship between classes. Object are linked persistently and one object typically stores a reference to the other. Associations exist independently of method execution and are shown as a solid line. For example, a Department has Employees.
-
-Dependency --- Represents a temporary "uses" relationship between classes. One object uses another within a method. No stored reference is maintained. A dependency only exists during method execution. Dependencies are shown as a dashed arrow in UML. An example is an Employee temporarily using a Course object.
+Proof: For every $n$, we have:
 
 \vspace{11pt}
 \begin{center}
-    \begin{tabular}{|c|c|c|}
-        \hline
-        Aspect & Association & Dependency \\ \hline
-         Relationship Strength & Strong & Weak \\ \hline
-         Lifetime & Long-term & Temporary \\ \hline
-         Store references & Yes & No \\ \hline
-         UML notion & Solid line & dashed line \\ \hline
-    \end{tabular}
+    $\max\{f(n),g(n)\} \leq f(n)+g(n) $
 \end{center}
 \vspace{11pt}
 
-From a database perspective, Associations often map to foreign keys or relationship tables. This affects the database schema design. Meanwhile, dependencies do not usually affect database schema and reflect application logic, not data structure.
+and
 
 \vspace{11pt}
-\subsection{UML Class Diagram vs. EER}
-\vspace{11pt}
-
 \begin{center}
-    \begin{tabular}{|c|c|}
-        \hline
-        UML Class Diagram & EER Model \\ \hline
-         Class & Entity Type \\ \hline
-         Object & Entity \\ \hline
-         Variable & Attribute Type \\ \hline
-         Variable value & Attribute \\ \hline
-         Method & --- \\ \hline
-         Association & Relationship type \\ \hline
-         Link & Relationship \\ \hline
-    \end{tabular}
+    $2*\max\{f(n),g(n)\} \geq f(n)+g(n) = \max\{f(n),g(n)\} \geq \frac12(f(n)+g(n))$
 \end{center}
 \vspace{11pt}
 
-% in your document body:
+Thus
 
+\vspace{11pt}
 \begin{center}
-    \begin{tabular}{|l|l|l|}
-        \hline
-        \textbf{UML class diagram} & \textbf{EER model} \\ \hline
-        
-        Qualified Association & Weak entity type \\ \hline
-        
-        Specialization/Generalization & Specialization/Generalization \\ \hline
-        
-        Aggregation & Aggregation (Composite/Shared) \\ \hline
-        
-        OCL & --- \\ \hline
-        
-        \multicolumn{1}{|l|}{\textbf{Multiplicity}} & \multicolumn{1}{l|}{\textbf{Cardinality}} \\ \hline
-        
-        *      & 0..N \\ \hline
-        0..1   & 0..1 \\ \hline
-        1..*   & 1..N \\ \hline
-        1      & 1..1 \\ \hline
-    
-    \end{tabular}
+    $\frac12 * (f(n)+g(n)) \leq \max\{f(n),g(n)\} \leq f(n)+g(n)$ for $\forall n > 1$
+
+    $=> \max\{f,g\} = \theta(f(n)+g(n))$ [where $n_0=1,c_1=\frac12,c_2=1$]
 \end{center}
+\vspace{11pt}
 
+\textbf{Little-O Notation [Mathematical Version]}
+\vspace{11pt}
 
+Definition: $T(n)=o(f(n))$ if and only if for all constants $c>0$, there exists a constant $n_0$ such that:
 
+\vspace{11pt}
+\begin{center}
+    $T(n) \leq c * f(n)$ for $\forall n \geq n_0$
+\end{center}
+\vspace{11pt}
 
-
-
-
-
-
-
-
-
-
+Exercise: $\forall k \geq1,n^{k-1}=o(n^k)$
 
 
 
@@ -1198,4 +582,3 @@ From a database perspective, Associations often map to foreign keys or relations
 
 
 \end{document}
-
