@@ -1,29 +1,4 @@
-\documentclass[11pt]{article}
-\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
-\usepackage[english]{babel}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\usepackage{fancyhdr} % Headings
-\usepackage{listings} % Code
-\usepackage{parskip} % Spacing for Paragraphs
-\usepackage{mdframed} % Asides
-\usepackage{caption}
-\usepackage{graphicx}
-\usepackage{amsmath}
-
-% Asides
-\newenvironment{aside}
-  {\begin{mdframed}[style=0,%
-      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
-          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
-      skipabove=7pt,skipbelow=7pt]\small}
-  {\end{mdframed}}
-
-\renewcommand{\headrulewidth}{.2mm} % header line width
-
-\rhead{\today}
-\lhead{\textbf{Maxwell Klema}}
+d{\textbf{Maxwell Klema}}
 \cfoot{\thepage}
 
 
@@ -57,7 +32,31 @@
 
 \section{Lecture 1 - Algorithms Introduction}
 \vspace{11pt}
-\textbf{Merge Sort} is sort of like the "hello world" for advanced algorithms. In a merge sort, you keep splitting the array in half until there are only chunks of one element, then you merge back up. This means that you take two single elements and merge them from smallest to largest. Then, you take that shorted chunk of some size \textit{m}, and merge it with another sorted array of some size \textit{m}, until the whole array with \textit{n} elements is sorted.
+\\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr} % Headings
+\usepackage{listings} % Code
+\usepackage{parskip} % Spacing for Paragraphs
+\usepackage{mdframed} % Asides
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+% Asides
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+
+\renewcommand{\headrulewidth}{.2mm} % header line width
+
+\rheatextbf{Merge Sort} is sort of like the "hello world" for advanced algorithms. In a merge sort, you keep splitting the array in half until there are only chunks of one element, then you merge back up. This means that you take two single elements and merge them from smallest to largest. Then, you take that shorted chunk of some size \textit{m}, and merge it with another sorted array of some size \textit{m}, until the whole array with \textit{n} elements is sorted.
 
 A good example to try a merge sort on is \textit{[5, 4, 1, 8, 7, 2, 6, 3]}.
 
@@ -566,7 +565,7 @@ Thus
 \textbf{Little-O Notation [Mathematical Version]}
 \vspace{11pt}
 
-Definition: $T(n)=o(f(n))$ if and only if for all constants $c>0$, there exists a constant $n_0$ such that:
+Definition: $T(n)=o(f(n))$ if and only if \textbf{for all} constants $c>0$, there exists a constant $n_0$ such that:
 
 \vspace{11pt}
 \begin{center}
@@ -574,7 +573,297 @@ Definition: $T(n)=o(f(n))$ if and only if for all constants $c>0$, there exists 
 \end{center}
 \vspace{11pt}
 
-Exercise: $\forall k \geq1,n^{k-1}=o(n^k)$
+Exercise: $\forall k \geq1,n^{k-1}=o(n^k)$. Simplifying both sides yields $1 \leq c*n$. This showcases little-o since for any constant $c>0$, the inequality still holds.
+
+\vspace{11pt}
+In asymptotic notation, Big-O and little-o both describe upper bounds, but with different strength.
+
+Big-O --- Grows as most as fast as (allowing the same growth rate)
+
+Little-o --- grows strictly slower than (must be asymptotically smaller).
+
+Therefore, Little-o is a much stronger upper-bound than big-O.
+
+\vspace{11pt}
+\textbf{Where does Notation Come From?}
+\vspace{11pt}
+
+"On the basis of the issues discussed here, I propose that members of SIGACT, and editors of computer science and mathematics journals, adopt the $O,\Omega,\Theta$ notations as defined above, unless a better alternative can be found reasonably soon". --- \textit{D.E. Knuth, 
+"Big Omicron and Big Omega and Big Theta", SIGACT News, 1976. Reprinted in "Selected Papers on Analysis of Algorithms"}
+
+\vspace{11pt}
+\textbf{Summary}
+\vspace{11pt}
+
+It is important to remember asymptotic notation in seven words: "Suppress constant factors and lower-order terms." It is important to understand Big-O, Big-Omega, Big-Theta, and Little-O Notations.
+
+It should also be a goal to understand how to find constants to show Big-O and to understand how to apply contradiction to show not Big-O.
+
+\newpage
+\section{Lecture 4 - Divide and Conquer}
+\vspace{11pt}
+
+The goal is to provide practice with the divide-and-conquer algorithm design paradigm through applications to two basic problems.
+
+\vspace{11pt}
+\subsection{Divide-and-Conquer Paradigm}
+\vspace{11pt}
+
+The overall goal of the divide-and-conquer paradigm is to divide the input into smaller subproblems. The next step is to conquer the subproblems recursively, and finally, to combine the solutions for the subproblems into a solution for the original problem.
+
+An example is Merge Sort.
+\begin{itemize}
+    \item 1) Divide: Splits the input array into its left and right halves.
+    \item 2) Conquer: Uses two recursive calls to sort the left and right sub-arrays.
+    \item 3) Combine: Implemented by the Merge subroutine.
+\end{itemize}
+\vspace{11pt}
+
+\textbf{When to Apply the Divide-and-Conquer Paradigm?}
+
+\vspace{11pt}
+In general, this design paradigm is well-suited to computational problems for which there is an obvious way to split the input into smaller subproblems that do not interfere with each other.
+
+\vspace{11pt}
+\subsection{Counting Inversions}
+\vspace{11pt}
+
+Input: array A containing the numbers $1, 2, 3, \dots, n$ in some arbitrary order.
+
+Output: \textbf{number of inversions = number of pairs $(i,j)$ of array indices with $i<j$ and $A[i]>A[j]$}.
+
+For example, given an array $[1,3,5,2,4,6]$: there are three inversions: $(3,2), (5,2), (5,4)$.
+
+\vspace{11pt}
+\textbf{Quiz:} What is the largest possible number of inversions that a 6-element array can have?
+\vspace{11pt}
+
+$\to$ Assuming a completely unsorted array like $[6,5,4,3,2,1]$, the maximum number of inversions is given by 6 choose 2, or $\binom{n}{2} = \frac{n!}{r!(n-r)!}$. Therfore, $\binom{6}{2} = \frac{6!}{2!(6-2)!} = 15$.
+
+Note: permutations is not used because that counts every possible pair, which may include $(i,j)$ that are not inversions. Therefore, we do not care about order, so combinations are used.
+
+\vspace{11pt}
+\textbf{Why Study This Problem?}
+\vspace{11pt}
+
+One reason is to compute a numerical similarity measure that quantifies how close two ranked lists are to each other. Another is collaborative filtering: a technique for generating recommendations. 
+
+The smaller number of inversions, the more similar the rankings: $0 \leq \# \leq \binom{n}{2} = \frac{n(n-1)}{2}$.x
+
+\vspace{11pt}
+\textbf{Different Ways of Finding the Number of Inversions}
+\vspace{11pt}
+
+A naive approach would be an exhaustive search for counting inversions in $O(n^2)$ running time.
+
+Input: Array A of n distinct integers.
+Output: the number of inversions of A.
+
+\vspace{11pt}
+\begin{lstlisting}
+numInv := 0
+for i := 1 to n - 1 do
+    for j := i + 1 to n do
+        if A[i] > A[j] then
+            numInv := numInv + 1
+return numInv
+\end{lstlisting}
+\vspace{11pt}
+
+A \textbf{Divide-and-Conquer Approach} is similar to the MergeSort algorithm, with one recursive call for the left half of the array and the other for the right half. There are three types of inversions
+\begin{itemize}
+    \item Left inversion: an inversion with $i,j$ both in the first half of the array (i.e, $i,j < \frac{n}{2}$).
+    \item Right inversion: an inversion with $i,j$ both in the second half of the array (i.e., $i,j > \frac{n}{2}$).
+    \item Split inversion: an inversion with $i$ in the left half and $j$ in the right half (i.e., $i \leq \frac{n}{2} \leq j$).
+\end{itemize}
+\vspace{11pt}
+
+A high-Level Algorithm of this is \texttt{CountInv}.
+
+Input: array A of $n$ distinct integers.
+
+Output: the number of inversions in A
+
+\vspace{11pt}
+\begin{lstlisting}
+if n = 0 or n = 1 then
+    return 0
+else
+    leftInv := CountInv(first half of A)
+    rightInv := CountInv(second half of A)
+    splitInv := CountSplitInv(A)
+    return leftInv + rightInv + splitInv
+\end{lstlisting}
+\vspace{11pt}
+
+A key idea is having the recursive calls both count inversions and sort [i.e., piggyback on MergeSort]. The motivation for this is that the merge subroutine naturally uncovers split inversions as we will see.
+
+To revise this High-Level Algorithm, we include the \texttt{Sort-and-CountInv} algorithm.
+
+Input: array A of $n$ distinct integers.
+
+Output: sorted array B with the same integers, and the number of inversions of A.
+
+\vspace{11pt}
+\begin{lstlisting}
+if n = 0 or n = 1 then //base case
+    return (A, 0)
+else
+    (C, leftInv) := Sort-and-CountInv(first half of A)
+    (D, rightInv) := Sort-and-CountInv(second half of A)
+    (B, splitInv) := Merge-and-CountSplitInv(C,D)
+    return (B, leftInv + rightInv + splitInv)
+\end{lstlisting}
+\vspace{11pt}
+
+It is important to re-visit the \texttt{merge} sort algorithm.
+
+Input: sorted Arrays C and D (length $n/2$ each)
+
+Output: Sorted Array B (length $n$)
+
+\vspace{11pt}
+\begin{lstlisting}
+i := 1, j := 1
+for k := 1 to n do
+    if C[i] < D[j] then
+        B[k] := C[i], i := i + 1
+    else // D[j] < C[i] (inversion)
+        B[k] := D[j], j := j + 1
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Quiz:} Suppose the input array $A$ has no split inversions. What is the relationship between the sorted sub arrays $C$ and $D$? => All the elements of $C$ are less than all elements of $D$.
+
+As an example, consider merging the arrays $[1,3,5]$ and $[2,4,6]$ to produce an output of $[1,2,3,4,5,6]$. When 2 copied to the output, you discover the split inversion $(3,2)$ and $(5,2)$. When 4 is copied to output, $(5,4)$ is discovered.
+
+Lemma: Let $A$ be an array, and $C$ and $D$ sorted versions of the first and second halves of $A$. An element $x$ from the first of $A$ and $y$ from the second half of $A$ form a split inversion if and only if, in the Merge subroutine with inputs $C$ and $D$, $y$ is copied to the output array before $x$.
+
+\vspace{11pt}
+In the \texttt{Merge-and-COuntSplitInv}, method:
+
+Input: sorted arrays $C$ and $D$ (length of $n/2$ each).
+
+Output: Sorted Array $B$ (length $n$) and the number of split inversions.
+
+\vspace{11pt}
+\begin{lstlisting}
+i = 1, j = 1, splitInv = 0
+for k = 1 to n do
+    if C[i] < D[j] then
+        B[k] = C[i], i = i + 1
+    else
+        B[k] = D[j], j = j + 1
+        splitInv = splitInv + ((n/2) - i + 1)
+return (B, splitInv)
+\end{lstlisting}
+\vspace{11pt}
+
+The Running Time for \texttt{Merge-and-CountSplitInv}, according to Theorem 3.2 (Counting Inversions): For every input array A of length $n \geq 1$, the Sort-and-CoutnInv algorithm computes the number of inversions of A and runs in $O(nlogn)$ time.
+
+\vspace{11pt}
+\subsection{Matrix Multiplication}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{4.jpg}
+
+    Where $z_{ij} = (i^{th}$ row of $X$) * ($j^{th}$ columns of $Y$)
+
+    $= \sum_{k=1}^{n}X_{ik}*Y_{kj}$ Note: input size = $\theta(n^2)$
+\end{center}
+
+\newpage
+For example (n = 2):
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{5.jpg}
+\end{center}
+\vspace{11pt}
+
+A Straightforward, Naive Algorithm would be:
+
+Input: $n * n$ integer matrices $X$ and $Y$.
+
+Output: $Z = X * Y$
+
+\vspace{11pt}
+\begin{lstlisting}
+for i = 1 to n do
+    for j = 1 to n do
+        Z[i][j] = 0
+        for k = 1 to n do
+            Z[i][j] = X[i][k] + Y[k][j]
+return Z
+\end{lstlisting}
+\vspace{11pt}
+
+So, what is the asymptotic running time of the straightforward algorithm for matrix multiplication, as a function of dimension $n$? Assume that the addition or multiplication of two matrix entries is a constant-time operation. $\to \Theta(n^3)$.
+
+As a Review of the Divide-and-Conquer Paradigm:
+\begin{itemize}
+    \item 1) DIVIDE into smaller subproblems
+    \item 2) CONQUER subproblems recursively.
+    \item 3) COMBINE solutions of subproblems into one for the original problem.
+\end{itemize}
+\vspace{11pt}
+
+To Apply the Divide and Conquer algorithm to Matrix Multiplication:
+
+Write $X=\begin{pmatrix}
+A & B \\
+C & D
+\end{pmatrix}$ and Y = $X=\begin{pmatrix}
+E & F \\
+G & H
+\end{pmatrix}$, where $A$ through $H$ are all $n/2$ by $n/2$ matrices.
+
+Then, you check $X*Y=\begin{pmatrix}
+    AE + BG & AF + BH \\
+    CE + DG & CF + DH
+\end{pmatrix}$.
+
+A recursive approach would be to compute the 8 necessary products and then do the necessary additions ($\theta(n^2)$ time). Note: The $\theta(n^2)$ time for addition comes from the fact that each block has $n/2*n/2$ entries, so the number of entries per block is $\frac{n^2}{4}$. Each entry requires one addition, so $\frac{n^2}{4}$ additions per block * 4 blocks = $n^2$ additions.
+
+The overall runtime is:
+
+\vspace{11pt}
+\begin{center}
+    $T(n) \leq 8T(\frac{n}{2})+O(n^2)$
+    
+    $=\theta(n^3)$
+\end{center}
+\vspace{11pt}
+
+\textbf{Strassen's Algorithm (1969)}
+\vspace{11pt}
+
+Strassen's matrix multiplication algorithm recursively computes only 7 (cleverly chosen) products. You still need to do the necessary (clever) additions + subtractions, which is still $\theta(n^2)$ time. But, it is better than cubic time!
+
+\vspace{11pt}
+\begin{center}
+    $T(n) \leq 7T(\frac{n}{2})+O(n^2)$
+    
+    $=\theta(n^{log_27})$
+\end{center}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{6.jpg}
+\end{center}
+\vspace{11pt}
+
+Important topics from this lecture include:
+\begin{itemize}
+    \item Understanding divide-and-conquer design paradigm.
+    \item Understanding how to count inversions in $O(nlogn)$ time.
+    \item Understanding the idea of designing a new algorithm by piggybacking on an existing algorithm.
+    \item Understanding Strassen's matrix multiplication algorithm.
+\end{itemize}
+\vspace{11pt}
+
+
 
 
 
