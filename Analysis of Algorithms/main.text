@@ -1,4 +1,71 @@
-d{\textbf{Maxwell Klema}}
+\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr} % Headings
+\usepackage{listings} % Code
+\usepackage{parskip} % Spacing for Paragraphs
+\usepackage{mdframed} % Asides
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+% Asides
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+
+\renewcommand{\headrulewidth}{.2mm} % header line width
+
+
+\newcommand{\myeq}[1]{
+    \vspace{11pt}
+    \begin{center}
+        ${#1}$
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\myeqfol}[1]{
+    \begin{center}
+        ${#1}$
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\img}[2][0.6]{
+    \vspace{11pt}
+    \begin{center}
+        \includegraphics[width=#1\textwidth]{#2}
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\topsec}[1]{
+    \vspace{11pt}
+    \section{#1}
+    \vspace{11pt}
+}
+
+\newcommand{\boldsec}[1]{
+    \vspace{11pt}
+    \textbf{#1}
+    \vspace{11pt}
+}
+
+
+\newcommand{\boldsecbottom}[1]{
+    \textbf{#1}
+    \vspace{11pt}
+}
+
+\rhead{\today}
+\lhead{\textbf{Maxwell Klema}}
 \cfoot{\thepage}
 
 
@@ -32,31 +99,7 @@ d{\textbf{Maxwell Klema}}
 
 \section{Lecture 1 - Algorithms Introduction}
 \vspace{11pt}
-\\documentclass[11pt]{article}
-\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
-\usepackage[english]{babel}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\usepackage{fancyhdr} % Headings
-\usepackage{listings} % Code
-\usepackage{parskip} % Spacing for Paragraphs
-\usepackage{mdframed} % Asides
-\usepackage{caption}
-\usepackage{graphicx}
-\usepackage{amsmath}
-
-% Asides
-\newenvironment{aside}
-  {\begin{mdframed}[style=0,%
-      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
-          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
-      skipabove=7pt,skipbelow=7pt]\small}
-  {\end{mdframed}}
-
-\renewcommand{\headrulewidth}{.2mm} % header line width
-
-\rheatextbf{Merge Sort} is sort of like the "hello world" for advanced algorithms. In a merge sort, you keep splitting the array in half until there are only chunks of one element, then you merge back up. This means that you take two single elements and merge them from smallest to largest. Then, you take that shorted chunk of some size \textit{m}, and merge it with another sorted array of some size \textit{m}, until the whole array with \textit{n} elements is sorted.
+\textbf{Merge Sort} is sort of like the "hello world" for advanced algorithms. In a merge sort, you keep splitting the array in half until there are only chunks of one element, then you merge back up. This means that you take two single elements and merge them from smallest to largest. Then, you take that shorted chunk of some size \textit{m}, and merge it with another sorted array of some size \textit{m}, until the whole array with \textit{n} elements is sorted.
 
 A good example to try a merge sort on is \textit{[5, 4, 1, 8, 7, 2, 6, 3]}.
 
@@ -131,7 +174,7 @@ However, this algorithm does not do better! Why? Because, eventually, the time c
 
     \(log_24 = 2\) shows that each additional level does 2 times more work. By the time you reach 1-digit numbers, you perform exactly \(n^2\) multiplications - the same as grade-school.
 
-    Therefore, O(\(n^{log_24})\)) = O(\(n^2)\).
+    Therefore, O(\(n^{log_24})\) = O(\(n^2)\).
 \end{aside}
 \vspace{11pt}
 \subsubsection{Karatsuba Multiplication}
@@ -600,7 +643,7 @@ It is important to remember asymptotic notation in seven words: "Suppress consta
 It should also be a goal to understand how to find constants to show Big-O and to understand how to apply contradiction to show not Big-O.
 
 \newpage
-\section{Lecture 4 - Divide and Conquer}
+\section{Lecture 3 - Divide and Conquer}
 \vspace{11pt}
 
 The goal is to provide practice with the divide-and-conquer algorithm design paradigm through applications to two basic problems.
@@ -862,6 +905,621 @@ Important topics from this lecture include:
     \item Understanding Strassen's matrix multiplication algorithm.
 \end{itemize}
 \vspace{11pt}
+
+\vspace{11pt}
+\section{Lecture 4 - The Master Method}
+\vspace{11pt}
+
+The goal of this lecture is to present a "black-box" method for determining the running time or recursive algorithms. By plugging in a few key characteristics of the algorithm, we can pop out an upper bound on the algorithm's running time.
+
+\vspace{11pt}
+\subsection{Integer Multiplication Revisited}
+\vspace{11pt}
+
+It is true that potentially useful algorithmic ideas often need mathematical analysis to evaluate. Remember from lecture 1 the grade school multiplication algorithm? It uses $\theta(n^2)$ operations to multiply two $n$-digit numbers.
+
+A recursive approach is to write
+
+\myeq{x=10^{n/2}a+b, y=10^{n/2}c+d}
+
+where [a, b, c, d] are $\frac{n}{2}$ digit numbers. The first algorithm uses this to recursively compute $ac,ad,bc,bd$, then compute ($*$) in the obvious way.
+
+Let $T(n)$ be the maximum number of operations this algorithm needs to multiply two $n$-digit numbers.
+
+Recurrence: We want to express $T(n)$ in terms of running time of recursive calls.
+
+Base Case: $T(1)\leq$ a constant.
+
+For all $n > 1$,
+
+\myeq{T(n) \leq 4T(\frac{n}{2})+O(n)}
+
+However, a better recursive algorithm is the Karatsuba Algorithm, where you recursively compute $ac,bd,(a+b)(c+d)$ where $ad+bc=((a+b)(c+d))-bd-ac$
+
+The new recurrence still has a base case of $T(1) \leq $ a constant. Yet, for $n > 1$, the new running time can be expressed as
+
+\myeq{T(n) \leq 3*T(\frac{n}{2})+O(n)}
+
+\begin{aside}
+\textbf{Note}: The $O(n)$ for each recursive level represents the work done outside of the recursive calls. Specifically, this includes additions and subtractions (i.e., to calculate (a+b)(c+d) and then find ad + bc). This includes several operations of n-bit or n/2 bit numbers, each taking linear $O(n)$ time.
+
+Additionally, shifting and combining is also included in this upper bound, where once the three recursive multiplications are complete, the results must be shifted (multiplied by powers of the base) and added together to form the final product. Bit-shifting and adding these results also takes $O(n)$ time.
+\end{aside}
+
+\vspace{11pt}
+\subsection{The Master Method}
+\vspace{11pt}
+
+Traditionally, it was hard to see the exact performance boost from Karatsuba multiplication over the elementary method, but the master method provides a "black box" for solving these types of recursive problems. \textbf{An assumption for recursive problems is that all subproblems have equal size}.
+
+In the Recurrence format, it is assumed that the base case is $T(n) \leq $ a constant for all sufficiently small $n$.
+
+For all larger $n$:
+
+\myeq{T(n) \leq aT(\frac{n}{b}) + O(n^d)}
+
+where
+\begin{itemize}
+    \item $a = $ number of recursive calls ($\geq 1$).
+    \item $b = $ input size shrinkage factor ($>1$).
+    \item $d = $ exponent in running time of "combine step" $( \geq 0$).
+\end{itemize}
+\vspace{11pt}
+
+\begin{aside}
+    Note that $a,b,d$ are all independent of $n$.
+\end{aside}
+\vspace{11pt}
+
+\newpage
+Formally, the master method is defined as
+
+\vspace{11pt}
+\begin{center}
+    $T(n) = \begin{cases} 
+    O(n^d \log n) & \text{if } a = b^d \text{ (Case 1)} \\
+    O(n^d) & \text{if } a < b^d \text{ (Case 2)} \\
+    O(n^{\log_b a}) & \text{if } a > b^d \text{ (Case 3)}
+    \end{cases}$    
+\end{center}
+\vspace{11pt}
+
+\begin{aside}
+    Note that in Case 3, the base matters in the logarithm, but same is not true in Case 1.
+\end{aside}
+\vspace{11pt}
+
+Six example problems using the Master Method are presented in a worksheet distributed in class. This worksheet will be located in the Brightspace course or in my folder for this topic and will not be included in this document.
+
+\vspace{11pt}
+\subsection{Proof of the Master Method}
+\vspace{11pt}
+
+\textbf{Preamble}
+\vspace{11pt}
+
+Assume: Recurrence is
+\begin{itemize}
+    \item I. $T(1) \leq c$ (for some constant $c$ and small input size $n$)
+    \item II. $T(n) \leq aT(n/b) + cn^d$ (we know that $cn^d$ should be bounded above $O(n^2)$.
+\end{itemize}
+\vspace{11pt}
+And $n$ is a power of $b$. The general case is similar, but more tedious. Additionally, let $n = b^k$, and similarly, $k = log_bn$.
+
+Idea: Generalize MergeSort analysis (i.e., use a recursion tree).
+
+\vspace{11pt}
+\textbf{A Quiz}: What is the pattern? Fill in the blanks in the following statement: at each level $j = 0, 1, 2, \dots$ of the recursion tree, there are [blank] subproblems, each operating on a subarray of length [blank].
+
+$\to a^j$ and $\frac{n}{b^j}$
+
+\vspace{11pt}
+\begin{aside}
+    Let $a^j$ be the number of recursive calls per each level, and on the last level, $a^k$ is the number of leaves. Meanwhile, $log_bn + 1$ is the number of levels. $n/b^j$ is the size of the subarray at each level $j$.
+\end{aside}
+\vspace{11pt}
+
+\textbf{Recursion Tree}
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{7.png}
+\end{center}
+
+\newpage
+\textbf{Level (j)}: $0,1,2,\dots,j,\dots,log_bn$ where $k = log_bn$, so $k+1$ levels.
+
+\textbf{Sub-Problems}: $a^0, a^1, a^2, \dots, a^j, \dots, a^{log_bn} = a^k$.
+
+\textbf{Input Size}: $n/b^0, n/b^1,n/b^2, \dots, n/b^j, \dots, n/b^{log_bn}=n/b^k$. 
+
+\vspace{11pt}
+\begin{aside}
+    At the last level, the input size of each subproblem is $=n/b^k=1$. Multiplying both sides by $b^k$ gives $n=b^k$, and from this we get $k=log_bn$.
+\end{aside}
+\vspace{11pt}
+
+Remember, at each level, there are $a^j$ sub-problems (nodes) and $\frac{n}{b^j}$ elements per subarray.
+
+From this information, we can calculate the work at each level and thus, the total work:
+
+Work at a single level:
+\vspace{11pt}
+\begin{center}
+    $lvl(j)\leq c(\frac{n}{b^j})d*a^j$ sub-problems
+
+    Simplifying: $lvl(j) \leq c*a^j*\frac{n^d}{b^{jd}}$
+
+    $lvl(j) \leq c*n^d*(\frac{a}{b^d})^j$
+\end{center}
+\vspace{11pt}
+
+Given this amount of work at a single level, we can calculate the total amount of work:
+
+\vspace{11pt}
+\begin{center}
+    total work $\leq \Sigma_{j=0}^{log_bn}c*a^j*(\frac{n}{b^j})^d$
+
+    Simplifying: total work $\leq c*n^d *\Sigma_{j=0}^{log_bn}(\frac{a}{b^d})^j$
+\end{center}
+\vspace{11pt}
+
+From this, we can see that our upper bound at any level $j$ is $c*n^d*(\frac{a}{b^d})^j$.
+
+Importantly, we can conclude that since the term $b^d$ is in the denominator, the larger its value, the less work per level $j$. Therefore, $b^d$ can be referred to as the \textbf{Rate of Work Shrinkage (RWS)} per sub-problem.
+
+Similarly, since the term $a$ is in the numerator, the larger its value, the more work per level $j$. Therefore, $a$ can be referred to as the \textbf{Rate of Sub-problem Proliferation (RSP)} per sub-problem. 
+
+Now, we will examine three possibilities among the relationship between $a$ and $b^d$.
+
+\vspace{11pt}
+\textbf{Case 1 (RSP = RWS)}: When $b^d=a$, the amount of work performed is the same at each recursive level.
+
+\vspace{11pt}
+\begin{center}
+    $\leq c*n^d *\Sigma_{j=0}^{log_bn}(\frac{a}{b^d})^j$
+
+    $\to c*n^d *\Sigma_{j=0}^{log_bn}(1)^j$
+\end{center}
+\vspace{11pt}
+
+\textbf{Case 2 (RWS < RSP)}: When $a < b^d$, the amount of work performed decreases with the recursion level $j$.
+
+\vspace{11pt}
+\textbf{Case 3 (RSP > RWS)}: When $a > b^d$, the amount of work performed increases with recursion level $j$.
+
+\newpage
+
+\begin{center}
+\begin{tabular}{|c|c|c|l|}
+    \hline
+    Case & Relationship & Big-O & Significance \\ \hline
+    1 & $a=b^d$ & $O(n^d \log n)$ & Same amount of work each level \\ \hline
+    2 & $a < b^d$ & $O(n^d)$ & Work decreases at each level (Root heavy) \\ \hline
+    3 & $a > b^d$ & $O(n^{\log_b a})$ & Work increases at each level (Leaf heavy) \\ \hline
+\end{tabular}
+\end{center}
+\vspace{11pt}
+
+Now, let's examine the math behind each case more closely:
+
+\vspace{11pt}
+\textbf{Case 1 ($a=b^d$)}:
+
+\vspace{11pt}
+\begin{center}
+    $\leq c*n^d *\Sigma_{j=0}^{log_bn}(\frac{a}{b^d})^j$
+
+    where $\frac{a}{b^d}$ is $1$ for all $j$.
+
+    Therefore, $\leq c *n^d(log_bn+1) = O(n^dlogn)$.
+\end{center}
+\vspace{11pt}
+
+Before looking at Case 2 and Case 3, let's understand some basic sum facts:
+
+\vspace{11pt}
+\begin{center}
+    $s = 1 + r+r^2+ \dots + r^k$
+
+    $sr = r + r^2 + r^3 + \dots + r^k + r^{k+1}$
+
+    $s-sr = s(1-r)=1-r^{k+1}$
+    
+    $s = \frac{1-r^{k+1}}{1-r}$
+\end{center}
+\vspace{11pt}
+
+Now, let's look at two different cases of $r$:
+\vspace{11pt}
+
+$r < 1$ is a constant:
+
+\vspace{11pt}
+\begin{center}
+   $s \leq \frac{1}{1-r}$ is an upper bound where $r$ is a constant.
+
+  \textbf{The first term dominates}.
+\end{center}
+\vspace{11pt}
+
+$r > 1$ is a constant:
+
+\vspace{11pt}
+\begin{center}
+    $s=\frac{r^{k+1}-1}{r-1} < \frac{r^{k+1}}{r-1} = r^k*\frac{r}{r-1}$
+
+    $\frac{r}{r-1} = \frac{(r-1)+1}{r-1}$
+
+    $r^k(\frac{r-1}{r-1}+\frac{1}{r-1}) \leq r^k(1+\frac{1}{r-1})$
+    
+    \textbf{The last term dominates}.
+\end{center}
+\vspace{11pt}
+
+\begin{aside}
+    \textbf{Note:} Both $\frac{1}{1-r}$ and $1+\frac{1}{r-1}$ are independent of $k$
+\end{aside}
+\vspace{11pt}
+
+\textbf{Case 2 ($a < b^d$)}:
+
+\vspace{11pt}
+\begin{center}
+    total work $\leq c*n^d*\Sigma_{j=0}^{log_bn}(\frac{a}{b^d})^j$
+
+    $\frac{a}{b^d}$ is $r < 1$ and $\Sigma_{j=0}^{log_bn}r^j \leq$ a constant $\frac{1}{1-r}$.
+
+    $=O(n^d)$.
+
+    The total work is dominated by the top level.
+\end{center}
+\vspace{11pt}
+
+\textbf{Case 3 ($a > b^d$)}:
+
+\vspace{11pt}
+\begin{center}
+    total work $\leq c*n^d*\Sigma_{j=0}^{log_bn}(\frac{a}{b^d})^j$
+
+    $\frac{a}{b^d}$ is $r > 1$ and $\Sigma_{j=0}^{log_bn}r^j \leq$ a constant $(1+\frac{1}{1-r}) * $ the largest term $r^k$.
+
+    $=O(n^d*(\frac{a}{b^d})^{log_bn})$
+
+    Note: $b^{-dlog_nb} = (b^{log_nb})^{-d}=n^{-d}$ since $b^{log_bn}=b^k$ and $b^k=n$.
+
+    So, $(*) =O(a^{log_bn}) = O(\# \space leaves)$.
+
+    $=O(n^{log_ba})$
+
+    The total work is dominated by the bottom level.
+\end{center}
+\vspace{11pt}
+
+\subsection{Summary: The Master Method}
+\vspace{11pt}
+
+If $T(n) \leq aT(\frac{n}{b})+O(n^d)$
+
+then:
+
+\vspace{11pt}
+\begin{center}
+    $T(n) = \begin{cases} 
+    O(n^d \log n) & \text{if } a = b^d \text{ (Case 1)} \\
+    O(n^d) & \text{if } a < b^d \text{ (Case 2)} \\
+    O(n^{\log_b a}) & \text{if } a > b^d \text{ (Case 3)}
+    \end{cases}$    
+\end{center}
+\vspace{11pt}
+
+It is important to apply the master method to determine the running time of recursive algorithms. Additionally, you should apply the intuition to understand the master method.
+
+\vspace{11pt}
+\section{Lecture 5 - Quick Sort}
+\vspace{11pt}
+
+\boldsecbottom{Why QuickSort?}
+
+In homework two, we implemented merge sort, which was $O(nlogn)$, so why do we need another sorting algorithm?
+
+The truth is that both Merge Sort and QuickSort are both widely used.
+
+QuickSort is definitely a "greatest hit" algorithm. In other words, it is considered one of the top algorithms ever derived. It is also very prevalent in practice. 
+
+The analysis is also beautiful, too. We will skip it in this class, however.
+
+In QuickSort, we do not use merge, so there is less extra space. Instead of taking two arrays to merge, \textbf{QuickSort swaps two elements}. On average, it is an $O(nlogn)$ algorithm that works in place (i.e., minimal extra memory needed).
+
+We can also use QuickSort to introduce a randomization algorithm.
+
+\newpage
+\subsection{QuickSort Overview}
+\vspace{11pt}
+
+\boldsecbottom{The Sorting Problem}
+
+We have unsorted data, and we want to sort it from the smallest element to the largest element. It is pretty straight forward.
+
+Given an input of an array of $n$ numbers, unsorted, we want the output to be the same numbers, sorted in increasing order.
+
+\vspace{11pt}
+$[4,2,6,1, \dots] \to [1,2,3,4,5,6,7,8]$.
+
+\vspace{11pt}
+We will assume that all array entries are \textbf{distinct}. However, in QuickSort, there could be a possibility that two elements have an identical value. We need to extend QuickSort to handle duplicate entries.
+
+\boldsec{Partitioning Around a Pivot}
+
+The key idea of QuickSort is to have a partition array around a pivot array. We pick a random element of the array. Then, we want to rearrange the array so that the left of the pivot is less than the pivot and that the right of the pivot is greater than the pivot. Therefore, this puts the pivot in its "rightful position."
+
+\vspace{11pt}
+$[3,8,2,5,1,4,7,6] \to [2,1,3,6,7,4,5,8]$
+
+\vspace{11pt}
+
+If we choose $3$ as the pivot, then all elements to the left of it are less than the pivot and all the elements to the right of it are greater than it.
+
+\vspace{11pt}
+What is the runtime of a partition? $O(n)$.
+
+\boldsec{Two Cool Facts About Partition}
+
+\begin{itemize}
+    \item Linear $O(n)$ time, no extra memory.
+    \item Reduces problem size. After the partition is in the right position, there are two sub-arrays that are reduced in size. Ideally, they are half and half, but this might not be true as they may not be equal sizes.
+\end{itemize}
+
+\boldsec{QuickSort: High-Level Description}
+
+\texttt{QuickSort(Array A, length n)}
+
+The base case is if $n = 1$, then return since its already sorted. Then, we choose $p$, a pivot value using ChoosePivot($A$, $n$). We then partition $A$ around $p$. Then recursively sort the first and second part.
+
+\myeq{[<p,p,>p]}
+
+We keep doing this until the sub-array size is one.
+
+\boldsecbottom{MergeSort vs. QuickSort}
+
+A big similarity is that both algorithms use a divide-and-conquer approach.  
+
+However, for Quick Sort, the first step is partitioning (pivot and put it in correct position) and then divide, and then conquer recursively. There is also \textbf{no} \textbf{combine} step for Quick Sort. In fact, \textbf{recursive calls occur after partitioning}.
+
+\boldsec{Three Questions}
+\begin{itemize}
+    \item How to implement the partition subroutine?
+    \item How to choose the pivot element?
+    \item What is the running time of QuickSort?
+\end{itemize}
+
+\vspace{11pt}
+\subsection{QuickSort Implementation}
+\vspace{11pt}
+
+\boldsecbottom{The Easy Way Out [Naive Approach]}
+
+What is the "easiest" way to complete the partitioning?
+
+\myeq{[3,8,2,5,1,4,7,6]}
+
+We can choose the first element in the array as the pivot. In this case: 3. We then look at the next element, which is 8. Since $8 > 3$, we put 8 at the end. We then get to $2$, put it on the left. Then right, left, right, right, and right for the remaining elements.
+
+This uses $O(n)$ extra memory, making it easy to partition around pivot in $O(n)$.
+
+However, can we do better and get rid of this $O(n)$ extra memory requirement? Yes.
+
+\boldsec{In-Place Implementation}
+
+We still assume that we are going to choose the pivot as the first element of the array. If not, we can swap the pivot with the first element of the array as a pre-processing step.
+
+After choosing a pivot element, the high level idea is:
+
+\myeq{[p, <p, >p, ?]}
+
+We scan through the array once. Invariant means that everything looked at so far is partitioned.
+
+Again, say we have:
+
+\myeq{[3,8,2,5,1,4,7,6]}
+
+We have the pivot element of 3, but everything else to the right is un-partitioned. We have two indices, $i,j$ that initially point to the position right after the pivot. We look at 8, $8 > 3$, we then keep the $i$ here without changing since $i$ indicates the boundary between less than pivot and greater than pivot. However, $j$ moves to point to the element after 8 as un-partitioned.
+
+Now, lets consider 2. Is $2 > 3$, no, its less than 3. So, we have 8 and 2 swap places:
+
+\myeq{[3,2,8, \dots]}
+
+$i$ increases by one to the element after 2. $j$ increases to the element after 8. Now lets consider 5. $5 > 3$, so we keep $i$ in place and move $j$ to the element after 5. Now for the next one $1 < 3$, so we need to swap 1 with the number 8. We then increase $i$ to point to the position after 1 and move j to move to the position after 8 (post swap). 
+
+The rest of the elements are greater and eventually $j$ will point at the very end of the array. 
+
+However, we still need to place the pivot in the correct position. We replace the pivot, 3, with the value at the $i - 1$ index.
+
+\boldsec{Pseudo code for Partition}
+
+\begin{lstlisting}[language=python, breaklines=true]
+Partition(A,l,r) # A[l, ..., r]
+    p = A[l] 
+    i = l + 1
+    for j=l+1 to r
+        if A[j] < p  # [if A[j] > p, do nothing]
+            swap A[j] and A[i]
+            i = i + 1
+    swap A[l] and A[i-1]
+    return i - 1
+\end{lstlisting}
+\vspace{11pt}
+
+The runtime for this partition is $O(n)$, where $n = r - l + 1$ is the length of the input (sub) array. The reason is that there is $O(1)$ work per array entry. It also clearly works in place (repeated swaps).
+
+\boldsec{Correctness}
+
+Claim: The for loop maintains the invariants:
+
+\begin{itemize}
+    \item $A[l+1],..,A[i-2]$ are all less than the pivot.
+    \item $A[i], ..., A[j-1]$ are all greater than the pivot.
+\end{itemize}
+\vspace{11pt}
+
+We can check this by induction. We check $k + 1$ element.
+
+The consequence is that at the end of the for loop, we have an array partitioned around a pivot.
+
+\boldsec{Pseudo code for QuickSort}
+
+Input: Array $A$ of $n$ distinct integers, left and right endpoints $l,r \in [1,2,\dots,n]$.
+Post condition: elements of the subarray $A[l],A[l+1],\dots,A[r]$ are sorted from smallest to largest.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+if l >= r then # 0 or 1 element subarray
+    return
+i := ChoosePivot(A,l,r) # To be implemented
+swap A[l] and A[i] # make pivot first
+j := Partition(A,l,r) # j = new pivot position
+QuickSort(A,l,j-1) # recurse on first part
+QuickSort(A,j+1,r) # recurse on second part
+
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsecbottom{The Importance of a Good Pivot}
+
+What is the running time of QuickSort? It depends on the quality of the pivot.
+
+\boldsec{Naive Implementation of Choose Pivot}
+
+\texttt{ChoosePivot(Naive Implementation)}
+
+Input: array $A$ of $n$ distinct integers, left and right endpoints $l,r \in [1,2,\dots,n]$.
+
+Output: an index $i \in [l,l+1,\dots,r]$.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+return l
+\end{lstlisting}
+
+\boldsec{Quiz [1]}
+
+What is the running time fo the QuickSort algorithm, with the naive implementation of \texttt{ChoosePivot}, when the $n-$element input array is already sorted.
+$\to \Theta(n^2)$.
+
+\vspace{11pt}
+Given
+
+\myeq{[1,2,3,4,5,6,7,8]}
+
+If we constantly choose the first element as the partition, we never do any swapping since everything is already sorted. So $n + (n-1) + (n-2) + \dots + 1 = \frac{(1+n)*n}{2} = \Theta(n^2)$ ($\Theta$ to represent a tight bound).
+
+\boldsec{Overkill Implementation of ChoosePivot}
+
+\texttt{ChoosePivot(Overkill Implementation)}
+
+Input: Array $A$ of $n$ distinct integers, left and right endpoints $l, r \in [1,2,\dots,n]$.
+
+Output: an index $i \in [l,l+1,\dots,r]$.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+return position of the median element of {A[l],...,A[r]}
+\end{lstlisting}
+
+\boldsec{Quiz [2]}
+
+What is the running time of the QuickSort algorithm, with the overkill implementation of ChoosePivot, on an arbitrary $n-element$ input array? Assume that the ChoosePivot subroutine runs in $\Theta(n)$ time.
+
+$\to \Theta(nlogn)$. Using the master method: $T(n) \leq 2T(n/2)+O(n)$. We have $a=2,b=2,d=1$. We have case 1 so $\Theta(nlogn)$.
+
+\boldsec{Random Pivots}
+
+The key question is how to choose pivots? BIG IDEA: RANDOM PIVOTS!
+
+That is, in every recursive call, we choose the pivot randomly (each element equally likely). The hope is that a random pivot is "pretty good" or "often enough".
+
+The intuition is that if we always get a 25-75 split, that is good enough for $O(nlog(n))$ running time. This is a non-trivial exercise proven using a recursion tree. In fact, half of the elements give a 25-75 split or better.
+
+\boldsec{Randomized Algorithm}
+
+A randomized algorithm is one that "flips coins" as it proceeds and can make decisions based on the outcomes of these coin flips. All of the major programming languages include libraries that make it easy to pick random numbers at will, and randomization is a tool that should be in the toolbox of every serious algorithm designer.
+
+As it turns out, there are hundreds of computational problems for which randomized algorithms are faster, more effective, or easier to code than their deterministic counterparts.
+
+\boldsec{Randomized Implementation of ChoosePivot}
+
+\texttt{ChoosePivot(Randomized Implementation)}
+
+Input: Array $A$ of $n$ distinct integers, left and right endpoints $l,r\in[1,2,\dots,n]$.
+
+Output: An index $i \in [l,l+1,\dots,r]$.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+Returns: An element of [l,l+1,...,r] chosen uniformly at random    
+\end{lstlisting}
+
+\boldsec{Average Running Time of QuickSort}
+
+The QuickSort Theorem states that for every input array of length $n$, the average running time of QuickSort (with random pivots) is $O(nlog(n))$.
+
+Note: This holds for every input, and there are no assumptions on the data. Recall our guiding principle, we only consider for every possible input array and consider the worst case.
+
+The "average" is over random choices made by the algorithm (i.e., the pivot choices).
+
+\boldsec{Sorting Requires $O(nlogn)$ Comparisons}
+
+Theorem 5.5 (Lower Bound for Sorting) states there is a constant $c > 0$ such that, for every $n \geq 1$, every comparison-based sorting algorithm performs at least $c *nlog_2n$ operations on some length$-n$  input array.
+
+However, there are faster sorting strategies under strong assumptions that are not comparison based:
+\begin{itemize}
+    \item BucketSort
+    \item CountingSort
+    \item RadixSort
+\end{itemize}
+
+\boldsec{Summary}
+
+It is important to understand how to implement QuickSort, especially considering it is a first-ballot hall-of-fame algorithm. It is also important to understand how to apply randomization in an algorithm (i.e. a randomized QuickSort).
+
+Remember that sorting requires $O(nlogn)$ comparisons.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
