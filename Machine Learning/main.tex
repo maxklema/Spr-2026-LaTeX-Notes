@@ -1,34 +1,4 @@
-der line width
-
-\rhead{\today}
-\lhead{\textbf{Maxwell Klema}}
-\cfoot{\thepage}
-
-
-\title{Machine Learning}
-\date{Spring 2026, Purdue University Fort Wayne}
-\author{Maxwell Klema | Professor Mehrdad Hajiarbabi}
-
-\lstset{
-    frame=single, % Adds a single line frame around the code
-}
-
-\begin{document}
-
-\maketitle
-\pagestyle{fancy}
-
-\vspace{11pt}
-\section{Lecture 1 - Machine Learning : Learning Methodology}
-\vspace{11pt}
-
-"The best way to learn is to teach" - Frank Oppenheimer
-
-\vspace{11pt}
-\subsection{Learning Methodology}
-\vspace{11pt}
-
-It is important to learn from examples. Machine learning is all about "learning from the data". It is also important to compare with something you are familiar with. For example, when picking up C language after knowing anoth\documentclass[11pt]{article}
+\documentclass[11pt]{article}
 \usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
 \usepackage[english]{babel}
 \usepackage[T1]{fontenc}
@@ -51,7 +21,78 @@ It is important to learn from examples. Machine learning is all about "learning 
       skipabove=7pt,skipbelow=7pt]\small}
   {\end{mdframed}}
 
-\renewcommand{\headrulewidth}{.2mm} % heer language, like Java, or C\#, or C++, it is easier than learning it as your first language. In deep learning, transfer learning is when you build a model for one task and then use it for another task. It can be expensive, takes a lot of money, but once you have one model for a certain task, you can use it for another task using transfer learning.
+\renewcommand{\headrulewidth}{.2mm} % header line width
+
+\rhead{\today}
+\lhead{\textbf{Maxwell Klema}}
+\cfoot{\thepage}
+
+
+\title{Machine Learning}
+\date{Spring 2026, Purdue University Fort Wayne}
+\author{Maxwell Klema | Professor Mehrdad Hajiarbabi}
+
+\lstset{
+    frame=single, % Adds a single line frame around the code
+}
+
+\newcommand{\myeq}[1]{
+    \vspace{11pt}
+    \begin{center}
+        ${#1}$
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\myeqfol}[1]{
+    \begin{center}
+        ${#1}$
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\img}[2][0.6]{
+    \vspace{11pt}
+    \begin{center}
+        \includegraphics[width=#1\textwidth]{#2}
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\topsec}[1]{
+    \vspace{11pt}
+    \section{#1}
+    \vspace{11pt}
+}
+
+\newcommand{\boldsec}[1]{
+    \vspace{11pt}
+    \textbf{#1}
+    \vspace{11pt}
+}
+
+
+\newcommand{\boldsecbottom}[1]{
+    \textbf{#1}
+    \vspace{11pt}
+}
+
+\begin{document}
+
+\maketitle
+\pagestyle{fancy}
+
+\vspace{11pt}
+\section{Lecture 1 - Machine Learning : Learning Methodology}
+\vspace{11pt}
+
+"The best way to learn is to teach" - Frank Oppenheimer
+
+\vspace{11pt}
+\subsection{Learning Methodology}
+\vspace{11pt}
+
+It is important to learn from examples. Machine learning is all about "learning from the data". It is also important to compare with something you are familiar with. For example, when picking up C language after knowing another language, like Java, or C\#, or C++, it is easier than learning it as your first language. In deep learning, transfer learning is when you build a model for one task and then use it for another task. It can be expensive, takes a lot of money, but once you have one model for a certain task, you can use it for another task using transfer learning.
 
 It is also important to get your "hands dirty" and try out new projects through trial and error. In machine learning, this is known as reinforcement learning - try to get the agent to do something, and if it fails, give it a penalty to try something else until it "succeeds" or "learns".
 
@@ -619,6 +660,682 @@ with gr.Blocks() as demo:
 demo.launch(debug = True)
 \end{lstlisting}
 \vspace{11pt}
+
+
+\newpage
+
+\section{Lecture 4 - ML Landscape and End-to-End ML Project}
+\vspace{11pt}
+
+\textbf{How will you learn new things (e.g., machine learning)?}
+\vspace{11pt}
+
+Use ideas and techniques that you are already familiar with (i.e., programming language). Another way is to learn from examples, other projects, code samples, etc. Learning by doing is also very helpful, such as trial and error (reinforcement learning).
+
+\vspace{11pt}
+\textbf{Artificial Intelligence, Machine Learning, and Deep Learning}
+\vspace{11pt}
+
+Artificial Intelligence $\to$ Machine Learning $\to$ Deep Learning. AI is the largest and contains all other topics inside of it.
+
+\vspace{11pt}
+So, what is \textbf{Artificial Intelligence (AI)}? AI was born in the 1950s (around 70 years ago) and is defined as the effort to automate intellectual tasks normally performed by humans. It is not necessarily related to learning (as in machine learning). But, for a long time, people did not focus on machine learning. Instead, AI consisted of hard-coded rules by programmers (symbolic AI). 
+
+\vspace{11pt}
+What is \textbf{Machine Learning (ML)}? According to Andrew Ng, ML at its basic form is trying to find an unknown target function $f: x \to y$. For example, given $x$ and $y$ (target, label, or answer), what is the mapping or relationship between the variables? An ML system is trained rather than explicitly programmed. 
+
+In classical programming, given rules and data, you find out what the answer or result is. But instead, in ML, given the data and answers, we want to figure out the rules. It is the other way around.
+
+In many cases, ML models are all about finding appropriate representations for their input data --- transformations of the data that make it more amenable to the task at hand. Learning describes an automatic search process for data transformations that produce useful representations of some data, guided by some feedback signal (real answer, label) --- representations that are amenable to simpler rules to solve the task at hand.
+
+\vspace{11pt}
+What is \textbf{Deep Learning (DL)}? DL is a specific subfield of ML. A new take on learning representations from data that emphasizes learning successive layers of increasingly meaningful representations. For example, using an N-layer Neural Network to recognize numbers 0-9.
+
+\vspace{11pt}
+\subsection{Types of Machine Learning}
+\vspace{11pt}
+
+There are five major categories:
+\begin{itemize}
+    \item Supervised learning
+    \item Unsupervised Learning
+    \item Semi-supervised learning
+    \item Self-supervised Learning
+    \item Reinforcement Learning
+\end{itemize}
+
+\newpage
+\textbf{Supervised Learning}
+\vspace{11pt}
+
+The training set fed to the machine learning includes the desired solutions, called labels. It is sort of like "learning with a teacher". This is going to be our main focus. For example, spam classification. You provide the model with sample emails and tell the model whether it is spam or not spam. Then, give it a new instance and see what it predicts.
+
+\vspace{11pt}
+\textbf{Unsupervised Learning}
+\vspace{11pt}
+
+The training data is unlabeled. The system tries to learn without a teacher. This can still be very important. For example, we have a training set of people who belong to different groups, so the model can try to group the people into different clusters.
+
+\vspace{11pt}
+\textbf{Semi-supervised Learning}
+\vspace{11pt}
+
+The training data are partially labeled. Some input data is labeled, and some other data is not labeled.
+
+\vspace{11pt}
+\textbf{Self-Supervised Learning}
+\vspace{11pt}
+
+A model is trained on a task using the data itself to generate supervisory signals, rather than relying on external labels provided by humans. A popular example is ChatGPT training. Text solitaire may include the word 'I', then the model will output 'like', then 'like' is followed by 'machine', then 'learning', and so on and so forth. ChatGPT gets this data from the internet. They try to predict the next token.
+
+It is self-supervised learning because all the input data also contains the output labels.
+
+\vspace{11pt}
+\textbf{Reinforcement Learning}
+\vspace{11pt}
+
+The learning system, called an agent in this context, can observe the environment, select and perform actions, and get rewards in return (or penalties in the form of negative rewards). It must then learn by itself...
+
+For example, should the agent touch the water or the fire? If the agent tries to touch the fire, it gets a negative reward (-50 points). Then, next time, the agent will know that the fire is bad and will avoid it.
+
+\vspace{11pt}
+\textbf{Outputs}
+\vspace{11pt}
+
+There are two types
+\begin{itemize}
+    \item Classification --- Predict a class (e.g., digits 0, 1, ..., 9). Usually, finite classes.
+    \item Regression --- Try to predict a value (e.g., house prices). Can be infinite.
+\end{itemize}
+
+\newpage
+\subsection{Key Components for Machine Learning}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{10.jpg}
+\end{center}
+\vspace{11pt}
+
+A large part of machine learning is finding the correct weights and parameters to optimize some unknown target function $f$, as we mentioned when describing what machine learning was.
+
+A good way to visualize this is with supervised learning through a linear regression model. In a linear regression model, we have a collection of $(x_n,y_n)$ points. Our goal is to find a target function $y=ax+b$, where $a$ and $b$ are our weights. \textbf{Given any input $x$, we want to predict the output $y$.} We want to optimize these weights through training to build the most accurate model. We first start with random $a$ and $b$ weights, since we do not really have a good estimate.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{11.png}
+\end{center}
+\vspace{11pt}
+
+We start with these random weights $a$ and $b$, and using real input data $x_i$, we compute $\hat{y}=a_0x_i+b_0$. After computation, we will compare all $\hat{y}$ with $y_n$, which represents the actual expected output value given $x_n$. We can use a formula called the mean sqaure error (MSE) to calculate the difference between the expected $y_n$ value and the value that the model predicted, $\hat{y}$.
+
+\vspace{11pt}
+\begin{center}
+    $MSE = \frac1n\Sigma_{i=1}^n(\hat{y}_i-y_i)^2$
+\end{center}
+\vspace{11pt}
+
+We can also use another (more common) error calculation formula called Root Mean Square Error (RMSE), which is the square root of MSE:
+
+\vspace{11pt}
+\begin{center}
+    $RMSE = \sqrt{\frac1n\Sigma_{i=1}^n(\hat{y}_i-y_i)^2}$
+\end{center}
+\vspace{11pt}
+
+RSME can also be called our \textbf{loss function}, and represented by the variable $g$. In machine learning, a loss function, like RSME, measures the error between the model's predicted output and the true output.
+
+Using this loss function, we then go through an optimization process of updating our weights (in the example, $a$ and $b$) to (hopefully) make the target function $f$ that we are trying to model more accurate. One way to achieve this is through a process called \textbf{gradient descent}. Essentially, gradient descent is the process of finding the derivative of our weights relative to the loss function and applying a learning rate ($lr$) to update the weight. The goal is to find a minimum value for the loss function to optimize the model.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.4\textwidth]{12.jpeg}
+\end{center}
+\vspace{11pt}
+
+A general gradient descent optimization function may look something like
+
+\vspace{11pt}
+\begin{center}
+    $a_n=a_{n-1}-\frac{\partial g}{\partial a}|_{a=a_{n-1}} * lr$
+
+    $b_n=b_{n-1}-\frac{\partial g}{\partial b}|_{b=b_{n-1}} * lr$
+\end{center}
+\vspace{11pt}
+
+\begin{aside}
+    \textbf{Note}: We use a partial derivative $\partial$ because the loss depends on more than one weight (in this case, it depends on both $a$ and $b$).
+\end{aside}
+\vspace{11pt}
+
+After some amount of trials, the parameters will be minimized. How do you know this? You can repeat the training for some large $N$ number of iterations or create a tolerance $TOL$ where the training concludes when the descent of each iteration is below some $TOL$ value.
+
+In the end, machine learning depends on 3 components:
+\begin{itemize}
+    \item 1) What are the weights/parameters to be optimized?
+    \item 2) What is the Loss function?
+    \item 3) Optimization --- Update the weights/parameters to minimize the loss function.
+\end{itemize}
+\vspace{11pt}
+
+
+
+\subsection{End-to-End Machine Learning Project Steps}
+\vspace{11pt}
+
+When consider an end-to-end machine learning project, there are six main steps:
+\begin{itemize}
+    \item 1) Look at the big picture
+    \item 2) Get the data.
+    \item 3) Discover and visualize the data to gain insights.
+    \item 4) Prepare the data for ML algorithms.
+    \item 5) Select and train an ML model.
+    \item 6) Evaluate on the test set.
+\end{itemize}
+\vspace{11pt}
+
+\newpage
+\textbf{Looking at the Big Picture}
+\vspace{11pt}
+
+Let's say we are given the problem to predict the median housing price in any district, given all the other metrics (location, number of bedrooms, population, etc.). The first step is to frame the problem: What is exactly the business objective? What does the current solution look like (if any)? Is it supervised, unsupervised, or reinforcement learning? Is it a classification task, a regression task, or something else?
+
+We also want to select a performance measure (such as RMSE). Another potential performance measure (loss function) is the mean absolute error (MAE), defined as
+
+\vspace{11pt}
+\begin{center}
+    $MAE(X,h) = \frac1m\Sigma_{i=1}^m|h(x^{(i)})-y^{(i)}|$
+\end{center}
+\vspace{11pt}
+
+It is also important to check the assumptions -- listing and verifying the assumptions that have been made so far as this can help you catch serious issues early on.
+
+\vspace{11pt}
+\textbf{Get the Data}
+\vspace{11pt}
+
+A lot of times, you can download the data from the Internet. It is important once you find a data set to take a quick look at the data structure and create a test set (i.e. 80\% for training and 20\% for testing).
+
+\vspace{11pt}
+\textbf{Discover and Virtualize the Data to Gain Insights}
+\vspace{11pt}
+
+This step includes virtualizing data, looking for data correlations and independence between variables, and experimenting with attribute combinations.
+
+
+\vspace{11pt}
+\textbf{Prepare the Data for ML Algorithms}
+\vspace{11pt}
+
+Before we can train the model on our data, we need to prepare the data. It is important to check if there is any missing data or if any data needs cleaning. Additionally, it should be checked if the data is categorical data (e.g., car type instead of numerical) as that can influence training approaches. Feature scaling (rescaling numeric input features so they are on comparable ranges) and transformation pipelines (a sequence of preprocessing steps and a model, chained together into one object) should also be considered.
+
+\vspace{11pt}
+\textbf{Select and Train an ML Model}
+\vspace{11pt}
+
+Cross-validation is the process of spiting the training data into several folds (for example, 5 parts). You train and evaluate the model multiple times, each time using a different fold as validation and the rest as training. Averaging these results gives a more reliable estimate of how well the model will generalize, and helps you compare different models or hyperparameters more fairly.
+
+Fine-tuning the model occurs after choosing a model family (like linear regression, random forest, neural network) and adjusting its hyperparameters (like the learning rate) to improve performance. Cross validation is usually used here to decide which settings work best without overfitting.
+
+Lastly, analyzing the model (important features) is the process of inspecting the model to understand how its making predictions. This often includes looking at which features are most important for the model's decisions. For example, in a housing price model, you might find that median income or location are the most influential features. This gives insight into the problem, helps check for issues (like relying on the wrong signals), and can guide future feature engineering.
+
+\vspace{11pt}
+\textbf{Evaluate on the Test Set}
+\vspace{11pt}
+
+\textbf{Do not use the test set for model selection.} A test set should be used only once at the very end to estimate how well your final chosen model will perform on truly unseen data.
+
+If you do, the test set effectively becomes part of the training and selection process, and you will overfit to the test set: your reported performance looks great on that specific test data but is too optimistic and will not generalize as well to new real-world data.
+
+\vspace{11pt}
+\section{Lecture 5 - Machine Learning Template [End-to-End Project]}
+\vspace{11pt}
+
+This template is in my OneDrive Folder and also in Brightspace.
+
+\vspace{11pt}
+\subsection{Get the Data [Download the data from the Internet]}
+
+Put the data into a pandas dataFrame object.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# download the dataset from https://raw.githubusercontent.com/../..
+
+import tarfile
+import urlib.request
+
+download_url = "URL"
+housing_path = os.path.join("datasets", "housing")
+os.makedirs(housing_path, exist_ok=True)
+housing_url = download_url
+urllib.request.urlretrieve(housing_url, "datasets/housing/housing.tgz")
+
+housing_tgz = tarfile.open("datasets/housing/housing.tgz")
+housing_tgz.extractall(path="datasets/housing", filter="fully_trusted") # Filter out malicious data?
+housing_tgz.close()
+
+csv_path = os.path.join(housing_path, "housing.csv")
+housing = pd.read_csv(csv_path)
+
+housing.head() # shows top 5 rows in the data set
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Take a quick look at the data structure}
+\vspace{11pt}
+
+\texttt{head()} --- Returns the top five rows of the data.
+
+\texttt{info()} --- Get a quick description of the data, in particular the total number of rows, each attribute's type, and the number of non-null values.
+
+\texttt{value\_counts()} --- For a categorical attribute, find out what categories exist and how many districts belongs to each category.
+
+\texttt{describe()} --- Summary of the numerical attributes, include mean, std, percentiles, and max.
+
+\texttt{hist()} --- A histogram showing the number of instances that have a given value range.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+housing.info()
+
+housing['ocean_proximity'].value_counts() # distribution of ocean_proximity values
+housing[housing['ocean_proximity'] == 'INLAND'].value_counts() # filter by properties with an ocean proximity of 'INLAND'. 
+
+housing.describe() # gives statistics about each column or data type (count, mean standard deviation, minimum, maximum value, quarties, etc.)
+
+housing.hist(bins=50, figsize=(20,15))
+plt.show()
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Create a test set}
+
+Pick some instances randomly, typically 20\% of the dataset (or less if your dataset is very large), and set them aside.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# create test data with 20% data
+
+from sklearn.model_selection import train_test_split
+
+train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42) # why 42? meaning of life and the universe? lol
+
+test_set.head()
+\end{lstlisting}
+
+\subsection{Discover and Virtualize Data}
+\vspace{11pt}
+
+This next step of discovering and virtualizing the data is important.
+
+\texttt{corr()} method: Compute the standard correlation coefficient (also called Peterson's $r$) between every pair of attributes.
+
+\vspace{11pt}
+\begin{aside}
+    Note: The correlation coefficient only measures linear correlations. It may completely miss out on non-linear relationships.
+\end{aside}
+\vspace{11pt}
+
+Another way to check for the correlation between attributes is to use the Pandas \texttt{scatter\_matrix()} function, which plots every numerical attribute against every other numerical attribute.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# Convert the 'ocean_proximity' column to a numerical representation.
+housing_for_corr = pd.get_dummies(housing, columns=['ocean_proximity'])
+
+corr_matrix = housing_for_corr.corr()
+corr_matrix['median_house_value'].sort_values(ascending=False)
+
+from pandas.plotting import scatter_matrix
+attributes = ["median_house_value", "median_income", "total_rooms", "housing_median_age"]
+scatter_matrix(housing[attributes], figsize=(12,8))
+
+# Plot a single relationship betweenen two variables
+housing.plot(kind="scatter", x="median_income", y="median_house_value", alpha=0.1)
+plt.axis([0, 16, 0, 550000])
+\end{lstlisting}
+
+\img[0.8]{13.jpg}
+\img[0.7]{14.jpg}
+
+\subsection{Preparing the Data}
+\vspace{11pt}
+
+Feature Engineering.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+housing = train_set.drop("median_house_value", axis=1) # drop labels for training set
+housing_labels = train_set["median_housing_value"].copy() # This is what we want to approximate
+print(housing_labels)
+\end{lstlisting}
+
+\boldsec{Missing Data (or data cleaning)}
+
+What could we do with missing data? Fill in the median value for the rest of the data. We can also use a constant value. However, the median value is most commonly used. If data for an entire column is almost entirely missing, we can drop it.
+
+For an attribute that has some missing values, you have four options:
+\begin{itemize}
+    \item Get rid of the corresponding data samples by using the dropna() function.
+    \item Get rid of the whole attribute or column by using drop() function.
+    \item Set the values to some value (zero, the mean, the median, etc.) by using fillna() function or applying the Scikit-Learn SimpleImputer class. This method is called imputation.
+    \item Use approach (3) with considering which values were originally missing and making new columns indicating what will be imputed (refer to Kaggle Intermediate ML course).
+\end{itemize}
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# an example using option (3) with median
+from sklearn.impute import SimpleImputer
+
+imputer = SimpleImputer(strategy="median")
+housing_num = housing.drop("ocean_proximity", axis=1) # non-numeric data so drop it
+imputer.fit(housing_num) # look into housing_num and figure out for each column what the median is
+
+imputer.statistics_ # median of each column
+
+housing_num.median().values # median of each column (should be identical)
+
+X = imputer.transform(housing_num) # transform training data with missing data
+housing_tr = pd.DataFrame(X, columns=housing_num.columns, index=housing.index) # X is not a DataFrame object, so we need to put it back into a Pandas Dataframe.
+
+housing_tr.head()
+\end{lstlisting}
+\vspace{11pt}
+
+\newpage
+\boldsecbottom{Categorical Data}
+
+What do we do with non-numeric data? We can enumerate it. We can assign $1,2,\dots,n$ to different strings. However, doing this makes an assumption that low is 1, middle is $n/2$, and high is $n$. We call this ordinal encoding.
+
+Another way is that we can have three columns low, med, and high, such that $[0/1, 0/1, 0/1]$. If we have $n$ categories and $n$ elements in the vector, then only one element in this vector is 1.
+
+There are three options:
+\begin{itemize}
+    \item Drop categorical columns (not generally recommended).
+    \item Ordinal encoding: assign each unique value to a different integer by using Scikit-Learn's OrdinalEncoder class.
+    \item \textbf{One-hot encoding}: create new columns indicating the presence (or absence) of each possible value in the original data by using Scikit-Learn's OneHotEncoder class.
+\end{itemize}
+\vspace{11pt}
+
+\begin{lstlisting}[language=python, breaklines=true]
+housing_cat = housing[["ocean_proximity"]]
+housing_cat.head(10)
+
+# using OneHotEncoder class as an example
+
+from sklearn.preprocessing import OneHotEncoder
+cat_encoder = OneHotEncoder()
+housing_cat_1hot = cat_encoder.fit_transform(housing_cat)
+housing_cat_1hot
+
+housing_cat_1hot.toarray()
+
+cat_encoder.categories_
+\end{lstlisting}
+\vspace{11pt}
+
+\img[0.8]{15.jpg}
+
+For each possible category, make a column, and mark 1 in the column that matches this row's category, 0 in all others.
+
+\newpage
+\boldsecbottom{Feature Scaling}
+
+If we have some data between $0\dots10000$ and others between $0\dots100$, then these different scales can affect the results. We want to change all of these scales into a similar scale. Can we change this to between $[0,1]$? Yes.
+
+\myeq{0 \leq \frac{x-x_{min}}{x_{max}-x_{min}} \leq 1}
+
+With few exceptions, ML algorithms don't perform well when the input numerical attributes have very different scales. Note that scaling the target values is generally not required.
+
+There are two common ways to get all attributes to have the same scale: min-max scaling and standardization.
+\begin{itemize}
+    \item Min-max scaling (\textbf{normalization}) is the simplest: values are shifted and rescaled so that they end up ranging from 0 to 1. Scikit-Learn provides a transformer called \texttt{MinMaxScaler}.
+    \item Standardization: First, it subtracts the mean value (so standardization values always have a zero mean), and then it divides by the standard deviation so that the resulting distribution has unit variance. Standardization is much less affected by outliers. Scikit-Learn provides a transformer called \texttt{StandardScalar} for standardization.
+    \myeq{\frac{x-x_{mean}}{\sigma}}
+\end{itemize}
+
+As with all transformations, it is important to \textbf{fit the scalars to the training data only}, not to the full dataset (including the test set). Only then can you use them to transform the training set and the test set (and new data).
+
+\boldsec{Transformation Pipeline}
+
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScalar
+
+num_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy="median)),
+    ('std_scalar', StandardScalar()),
+])
+
+housing_num_tr = num_pipeline.fit_transform(housing_num)
+housing_num_tr
+\end{lstlisting}
+
+\img[0.7]{16.jpg}
+
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.compose import ColumnTransformer
+
+num_attribs = list(housing_num) # remember, this excludes ocean_proximity
+cat_attribs = ["ocean_proximity"]
+
+full_pipeline = ([
+    ("num", num_pipeline, num_attribs),
+    ("cat", OneHotEncoder(), cat_attribs)
+])
+
+housing_prepared = full_pipeline.fit_transform(housing)
+housing_prepared
+\end{lstlisting}
+
+\img[0.7]{18.jpg}
+
+\begin{lstlisting}[language=python, breaklines=true]
+housing_prepared.shape
+
+# => (16512, 13) # 16,512 rows (samples) across 13 columns (attributes)
+\end{lstlisting}
+
+\vspace{11pt}
+\subsection{Select and Train an ML Model}
+\vspace{11pt}
+
+\boldsecbottom{Select a Model}
+
+\begin{lstlisting}[language=python, breaklines=true]
+# linear regression model
+from sklearn.linear_model import LinearRegression
+
+lin_reg = LinearRegression()
+lin_reg.fit(housing_prepared, housing_labels)
+
+# Try a few training instances
+some_data = housing.iloc[:5]
+some_labels = housing_labels.iloc[:5]
+some_data_prepared = full_pipeline.transform_fit(some_data)
+print("Predictions: ", lin_reg.predict(some_data_prepared))
+print("Labels: ", list(some_labels))
+
+# Predictions:  [188628.0772436  290379.8948687  250985.48476349 146878.07878194
+ 165789.41368924]
+Labels:  [103000.0, 382100.0, 172600.0, 93400.0, 96500.0]
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{aside}
+    \textbf{Note}: \texttt{lin\_reg.fit(housing\_prepared, housing\_labels)} trains the Linear Regression model on our data. It is the learning step that looks at all the feature values in \texttt{housing\_prepared} and their corresponding targets in \texttt{housing\_labels} to train the model..
+\end{aside}
+\vspace{11pt}
+
+We want to compute the root mean squared error (RMSE) of the Linear Regression model on our data. The higher the RMSE, the worse the model is.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import mean_squared_error
+housing_predictions = lin_reg.predict(housing_prepared)
+lin_mse = mean_squared_error(housing_labels, housing_predictions)
+lin_rmse = np.sqrt(lin_mse)
+lin_rmse # => (root mean squared error) np.float64(68433.93736666226)
+
+from sklearn.metrics import mean_absolute_error
+lin_mae = mean_absolute_error(housing_labels, housing_predictions)
+lin_mae # => 49594.84209472437
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Note}: Underfitting the training data! It can mean that the features do not provide enough information to make good predictions, or that the model is not powerful enough.
+
+\textbf{Fix Underfitting}: Select a more powerful model to feed the training algorithm with better features, or to reduce the constraints on the model.
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# decision tree regression model
+from sklearn.tree import DecisionTreeClassifier
+tree_reg = DecisionTreeClassifier(random_state=42)
+tree_reg.fit(housing_prepared, housing_labels)
+
+housing_predictions = tree_reg.predict(housing_prepared)
+tree_mse = mean_squared_error(housing_labels, housing_predictions)
+tree_rmse = np.sqrt(tree_mse)
+tree_rmse # => 0.0 (overfitting!)
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsecbottom{Cross-Validation}
+
+Note: Cross-Validation allows you to get not only an estimate of the performance of your model, but also a measure of how precise this estimate is (i.e., its standard deviation).
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.model_selection import cross_val_score
+scores = cross_val_score(tree_reg, housing_prepared, housing_labels, scoring="neg_mean_squared_error", cv = 10) # cv is number of splits/folds (cells)
+tree_rmse_scores = np.sqrt(-scores)
+
+def display_score(scores):
+    print("Scores: ", scores)
+    print("Mean: ", scores.mean())
+    print("Standard deviation: ", scores.std())
+
+display_scores(tree_rmse_scores)
+\end{lstlisting}
+\vspace{11pt}
+
+Note: \texttt{neg\_mean\_squared\_error} scoring is used because scikit-learn's cross-validation API \textbf{assumes that higher scores are better}, even for loss functions where lower is actually better. \texttt{cross\_val\_scores} is designed so that it maximizes the \texttt{scoring} value.
+
+\img[0.7]{19.jpg}
+
+Note: A model works very well for training data, but fails to predict new data!
+
+Possible solutions for overfitting are:
+\begin{itemize}
+    \item Simplify the model.
+    \item Constrain it (e.g., regularize it).
+    \item Get a lot more training data.
+\end{itemize}
+\vspace{11pt}
+
+\begin{lstlisting}[language=python, breaklines=true]
+lin_scores = cross_val_scores(lin_reg, housing_prepared, housing_labels, scoring="neg_mean_squared_error", cv=10)
+lin_rmse_scores = np.sqrt(-lin_scores)
+display_scores(lin_rmse_scores)
+
+# => Mean:  68595.39608481781
+# => Standard deviation:  2496.5245371674655
+\end{lstlisting}
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+def model_cross_val_scores(model):
+    model_scores = cross_val_score(model, housing_prepared, housing_labels, scoring="neg_mean_squared_error", cv=10)
+    model_rmse_scores = np.sqrt(-model_scores)
+    display_scores(model_rmse_scores)
+\end{lstlisting}
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# random forest regression model
+from skearn.ensemble import RandomForestRegressor
+
+forest_reg = RandomForestRegressor(n_estimators=100, random_state=42)
+model_cross_val_scores(forest_reg)
+
+# => Mean:  48850.91667302309
+# => Standard deviation:  1675.7970043561863
+\end{lstlisting}
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+#XGB Boost Model
+import xgboost as xgb
+xgb_boost_model = xgb.XGBRegressor(n_estimators=100, random_state=42)
+model_cross_val_scores(xgb_boost_model)
+
+# => Mean:  48341.99233680024
+# => Standard deviation:  1205.0023462493477
+\end{lstlisting}
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+# SVR Model
+from sklearn.svm import SVR
+svm_reg = SVR(kernel="linear")
+model_cross_val_scores(svm_reg)
+
+# => Mean:  112259.90787449267
+# => Standard deviation:  1964.6304717367157
+\end{lstlisting}
+
+\boldsec{Fine-Tune the Model}
+
+Methods include Grid Search, Randomization Search, and Ensemble Methods.
+
+\boldsec{Analyze the Model}
+
+Such as important features. \texttt{feature\_importances\_} is a summary statistic XGBoost computes after training to indicate how useful each feature was to the model, according to some criterion (by default, things like how much a feature reduced loss across all the trees).
+
+\vspace{11pt}
+\begin{lstlisting}[language=python, breaklines=true]
+xgb_boost_model.fit(housing_prepared, housing_labels)
+features_importances = xgb_boost_model.feature_importances_
+feature_importances
+\end{lstlisting}
+
+\img[0.7]{20.jpg}
+
+\begin{lstlisting}[language=python, breaklines=true]
+cat_encoder = full_pipeline.named_transformers_["cat"]
+cat_one_hot_attribs = list(cat_encoder.categories_[0])
+attributes = num_attribs + cat_one_hot_attribs
+sorted(zip(feature_importances, attributes), reverse=True)
+\end{lstlisting}
+
+\img[0.7]{21.jpg}
+
+From the output above, we see that 'INLAND' is the most important feature for the model in terms of predicting a label.
+
+This output answers the question: \textbf{Which features does my trained XGBoost model rely on the most, and in what order?} by reconstructing the feature names and sorting them with their importance scores.
+
+\vspace{11pt}
+\subsection{Evaluate on the Test Set}
+\vspace{11pt}
+
+\boldsecbottom{Note: Do not use the test set for model selection!}
+\begin{lstlisting}[language=python, breaklines=true]
+final_model = xgb_boost_model
+
+X_test = test_set.drop("median_house_value", axis=1)
+Y_text = test_set["median_house_value"].copy()
+
+X_test_prepared = full_pipeline.transform(X_test)
+
+final_predictions = final_model.predict(X_test_prepared)
+
+final_mse = mean_squared_error(y_test, final_predictions)
+final_rmse = np.sqrt(final_mse)
+final_rmse # => np.float64(47612.81479613856)
+\end{lstlisting}
 
 
 
