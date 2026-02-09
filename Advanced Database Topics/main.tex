@@ -11,6 +11,7 @@
 \usepackage{caption}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{hyperref}
 
 % Asides
 \newenvironment{aside}
@@ -26,6 +27,58 @@
 \lhead{\textbf{Maxwell Klema}}
 \cfoot{\thepage}
 
+\newcommand{\myeq}[1]{
+    \vspace{11pt}
+    \begin{center}
+        ${#1}$
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\myeqfol}[1]{
+    \begin{center}
+        ${#1}$
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\img}[2][0.6]{
+    \vspace{11pt}
+    \begin{center}
+        \includegraphics[width=#1\textwidth]{#2}
+    \end{center}
+    \vspace{11pt}
+}
+
+\newcommand{\topsec}[1]{
+    \vspace{11pt}
+    \section{#1}
+    \vspace{11pt}
+}
+
+\newcommand{\subsec}[1]{
+    \vspace{11pt}
+    \subsection{#1}
+    \vspace{11pt}
+}
+
+\newcommand{\sssec}[1]{
+    \vspace{11pt}
+    \subsubsection{#1}
+    \vspace{11pt}
+}
+
+\newcommand{\boldsec}[1]{
+    \vspace{11pt}
+    \textbf{#1}
+    \vspace{11pt}
+}
+
+
+\newcommand{\boldsecbottom}[1]{
+    \textbf{#1}
+    \vspace{11pt}
+}
 
 \title{Advanced Database Topics}
 \date{Spring 2026, Purdue University Fort Wayne}
@@ -33,6 +86,7 @@
 
 \lstset{
     frame=single, % Adds a single line frame around the code
+    basicstyle=\ttfamily\small,
 }
 
 \begin{document}
@@ -356,6 +410,1896 @@ There are three general categories of data:
 \end{itemize}
 
 Modern DBMSs can store, manage, and query all three types.
+
+\vspace{11pt}
+\textbf{Managing Data Redundancy}
+\vspace{11pt}
+
+\textbf{Controlled Data Redundancy} means that some data duplication may be intentional, especially in distributed systems, to improve performance.
+
+\textbf{Consistency Management} means that the DBMS provides mechanisms to synchronize replicated data. This ensures data consistency across multiple copies.
+
+\textbf{Automatic Data Correctness}, unlike file-based systems, means that the DBMS automatically enforces data consistency. No manual intervention by users or applications is required.
+
+\vspace{11pt}
+\textbf{Specifying Integrity Rules}
+\vspace{11pt}
+
+Data integrity rules ensure the correctness and validity of stored data. Meanwhile, syntactical rules define how data is represented and stored. Examples may include customerID that must be an integer, or birthdate that is stored as month, day, and year.
+
+Semantic rules ensure the logical meaning of data. Examples may include customerID to be unique, Account balance must be greater than 0, and a customer cannot be deleted if pending invoices exist. Centralized enforcement means that integrity rules are part of the conceptual and logical data models and are stored in the catalog and enforced by the DBMS, not by applications.
+
+\vspace{11pt}
+\textbf{Concurrency Control}
+\vspace{11pt}
+
+DBMSs provide built-in support for concurrent and parallel database operations. Multiple users can simultaneously retrieve and update data. Read and write operations may be executed at the same time.
+
+A key concept is a transaction. A transaction is a sequence of read/write operations treated as an atomic unit. Either all operations are executed, or none are. The DBMS ensures data consistency and prevents inconsistencies during concurrent access.
+
+A DBMS must support ACID properties to ensure correct transaction processing.
+
+\begin{itemize}
+    \item Atomicity - A transaction is executed entirely or not at all.
+    \item Consistency - A transaction moves the database from one valid state to another.
+    \item Isolation - Concurrent transactions behave as if executed sequentially.
+    \item Durability - Once committed, transaction results are permanently stored, even after failures.
+\end{itemize}
+
+\vspace{11pt}
+\textbf{Backup and Recovery Facilities}
+\vspace{11pt}
+
+Backup and recovery facilities protect the database against data loss caused by hardware failures, network errors, and software bugs. Backup facilities support full backups and incremental backups. Recovery facilities restore the database to a previous consistent state.
+
+\vspace{11pt}
+\textbf{Data Security}
+\vspace{11pt}
+
+A DBMS enforces data security using access control mechanisms, where users are authenticated through logins and passwords.
+
+Role-based Access Control (RBAC) assigns different permission levels to users. Examples include read-only access and read-write access. Authorization rules are defined per user or role and are stored in the catalog and enforced by the DBMS. An example includes the Vendor Managed Inventory (VMI) systems, which restrict access based on roles.
+
+\vspace{11pt}
+\textbf{Performance Utilities}
+\vspace{11pt}
+
+Key Performance Indicators (KPIs) include \textbf{response time }(time between issuing a request and receiving a result), \textbf{throughput} (number of transactions processed per unit time), and \textbf{space utilization} (storage used for raw data and metadata).
+
+DBMS Performance Utilities optimize and distribute data storage, tune indexes for faster query execution, optimize queries to improve application performance, and improve buffer and memory management.
+
+\newpage
+\vspace{11pt}
+\section{Lecture 2 - Architecture and Categorization}
+\vspace{11pt}
+
+\subsection{Architecture of a DBMS}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.8\textwidth]{5.jpg}
+    \vspace{11pt}
+    \\
+    This diagram presents a high-level architecture of a DBMS.
+\end{center}
+
+\vspace{11pt}
+\subsection{Architecture of a DBMS - Design Principle \& Access Layer}
+\vspace{11pt}
+
+The design principle of a DBMS emphasizes separation of concerns between user interaction, query processing, and physical data management.
+
+In the User Access Layer, users and applications interact with the DBMS through DDL statements (schema definitions), Interactive SQL queries, Application programs, and Database tools. All access is mediated by DBMS interfaces, providing data independence and a uniform access mechanism.
+
+\vspace{11pt}
+\subsubsection{Architecture of a DBMS: Core Component (Query Processor)}
+\vspace{11pt}
+
+The DBMS consists of two main subsystems. The first is the query processor which interprets and executes SQL statements. Its key components include DDL and DML compilers, query parser and a query rewriter, a query optimizer, and a query executor. Essentially, the query processor translates high-level SQL into efficient execution plans.
+
+\vspace{11pt}
+\subsubsection{Architecture of a DBMS: Core Component (Storage Manager and Database Storage)}
+\vspace{11pt}
+
+The second main subsystem of a DBMS is the storage manager and database storage. The storage manager manages physical data storage and access. Its key components include a transaction manager, buffer manager, lock manager, and recovery manager. The storage manager and database storage ensures concurrency control, efficient memory use, and system reliability. The Database Storage stores raw data, indexes, and system catalog (metadata).
+
+\vspace{11pt}
+\subsubsection{Connection and Security Managers}
+\vspace{11pt}
+
+The Connect Manager established a database connection (locally or through a network) and verifies logon credentials and provides a connection handle.
+
+Meanwhile, the Security Manager ensures users have appropriate privileges. It manages access controls, including connection permissions and read vs. write access.
+
+\vspace{11pt}
+\subsubsection{DDL Compiler}
+\vspace{11pt}
+
+The DDL Compiler compiles the data definitions specified in \textbf{Data Definition Language (DDL)}. It performs the following steps:
+\begin{itemize}
+    \item Parsing: Checks the syntactical correctness of DDL statements.
+    \item Translation: Converts data definitions into an internal format and generates errors if required.
+    \item Registration: Upon successful compilation, store the data definitions in the database catalog.
+\end{itemize}
+
+\vspace{11pt}
+\subsubsection{Query Processor Components}
+\vspace{11pt}
+
+The \textbf{Query Processor} is a critical component of a DBMS that handles query execution efficiently.
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{6.jpg}
+\end{center}
+
+\vspace{11pt}
+\textbf{DML Compiler}
+\vspace{11pt}
+
+The DML Compiler compiles \textbf{Data Manipulation Language (DML)} statements, including INSERT, UPDATE, DELETE, and SELECT. If the DML statement is a query, it collaborates with:
+\begin{itemize}
+    \item Query Parser: Analyzes the query's syntax and structure.
+    \item Query Optimizer: Determines the most efficient execution plan.
+    \item Query Executor: Runs the query and retrieves the results.
+\end{itemize}
+
+\vspace{11pt}
+\textbf{Parser and Rewriter}
+\vspace{11pt}
+
+The Query Parser converts a query into an internal representation format. It validates the query for syntactical and semantical correctness using the database catalog. It also generates errors if the query is incorrect.
+
+Meanwhile, the Query Rewriter simplifies the query using predefined rules and heuristics. It optimizes the query independently of the current database state. For example, in RDBMS, nested queries may be reformulated or flatted into join queries for better performance.
+
+\vspace{11pt}
+\textbf{Optimizer and Executor}
+\vspace{11pt}
+
+The Query Optimizer is a crucial component that enhances DBMS performance. It optimizes the query based upon the current database state (e.g., existing indexes). It generates multiple query execution plans and evaluates their cost in terms of number of I/O operations, CPU processing, and execution time. It combines catalog-based estimates with statistical inference to determine the most efficient execution plan.
+
+The Query Executor executes the final execution plan generated by the optimizer. It interacts with the storage manager to retrieve the required data. It ensures the query is processed correctly and returns the desired results.
+
+\vspace{11pt}
+\subsection{Storage Manager}
+\vspace{11pt}
+
+The \textbf{Storage Manager} manages physical file access and ensures correct and efficient storage of data.
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{7.jpg}
+\end{center}
+
+There are four main components of the Storage Manager:
+\begin{itemize}
+    \item Transaction Manager: Ensure ACID properties for database transactions.
+    \item Buffer Manager: Handles cache memory for efficient data retrieval and minimizes disk I/O.
+    \item Lock Manager: Manages concurrency control to prevent conflicts in multi-user environments.
+    \item Recovery Manager: Ensures data integrity by handling failures and supporting rollback/recovery mechanisms.
+\end{itemize}
+
+\vspace{11pt}
+\textbf{Transaction Manager}
+\vspace{11pt}
+
+The Transaction Manager supervises the execution of database transactions. \textit{A transaction is a sequence of read/write operations treated as a single unit}. It creates a schedule with interleaved read/write operations for efficient execution.
+
+The transaction manager also ensures ACID properties: Atomicity (All operations complete or none do), Consistency (Preserves database integrity), Isolation (Prevents interference among concurrent transactions), and Durability (Committed results persist after failures). 
+
+The Transaction Manager commits successful transactions and rolls back failed ones.
+
+\vspace{11pt}
+\textbf{Buffer Manager}
+\vspace{11pt}
+
+The Buffer Manager manages the buffer memory of the DBMS for efficient data retrieval. It caches data intelligently to reduce disk I/O operations. Additionally, it implements smart replacement strategies when the buffer is full. For example, the data locality principle is applied, where recently retrieved data is likely to be accessed again. The Buffer Manager also interacts with lock manager to handle concurrent access safely.
+
+\vspace{11pt}
+\textbf{Lock Manager}
+\vspace{11pt}
+
+The Lock Manager ensures concurrency control to maintain data integrity at all times. It manages assigning, releasing, and recoridng locks in the catalog. Two types of locks are supported based on data operation type:
+\begin{itemize}
+    \item Read Lock --- Allow multiple transactions to read simultaneously.
+    \item Write Lock --- Ensure exclusive access for modifying data.
+\end{itemize}
+
+The Lock Manager uses a locking protocol to define locking rules. It also maintains a lock table to track lock information.
+
+\vspace{11pt}
+\textbf{Recovery Manager}
+\vspace{11pt}
+
+The Recovery Manager ensures the correct execution of database transactions and maintains database integrity. It maintains a log file to keep track of all database operations. It supports transaction rollback by undoing actions of aborted transactions. Additionally, the Recovery Manager performs crash recovery, ensuring data consistency after system failures.
+
+\vspace{11pt}
+\subsubsection{DBMS Utilities}
+\vspace{11pt}
+
+Database utility tools improve performance and simplify database maintenance. A \textbf{Loading Utility} facilitates data loading from various sources, including other DBMS systems, text files, Excel files, and other structured/unstructured data formats.
+
+A \textbf{Reorganization Utility} automatically optimizes data storage for better performance. It enhances query efficiency by restricting data organization.
+
+\textbf{Performance Monitoring Utilities} track key performance indicators to monitor DBMS performances, including storage space consumption, query response times, and transactions throughput rates.
+
+\textbf{User Management Utilities} facilitate user and group account management. It supports the assignment of privileges and access control to ensure security.
+
+\textbf{Backup and Recovery Utilities} provide database backup and recovery mechanisms to protect against data loss. It ensures data consistency after system failures or unexpected crashes.
+
+\vspace{11pt}
+\subsubsection{DBMS Interfaces}
+\vspace{11pt}
+
+To support different user roles, including database designers, administers, applications, and end-users, a DBMS provides multiple user interfaces such as:
+\begin{itemize}
+    \item Command line interface (CLI)
+    \item Graphical user interface (GUI)
+    \item Web-based interface
+    \item Admin interface
+    \item Stand-alone query language interface
+    \item Forms-based interface
+    \item Natural Langage interface
+    \item Network Interface
+\end{itemize}
+
+An example of an DBMS Interface is presented in the image below:
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{8.png}
+\end{center}
+\vspace{11pt}
+
+\subsection{Categorization of DBMSs}
+\vspace{11pt}
+
+DBMSs can be classified along multiple, largely independent dimensions, reflecting differences in data representation, system architecture, workload, and usage patterns.
+
+\vspace{11pt}
+\subsubsection{Categorization by Data Model}
+\vspace{11pt}
+
+From a Conceptual/Logical Level:
+\begin{itemize}
+    \item Hierarchical DBMSs
+    \item Network DBMSs
+    \item Relational DBMSs
+    \item Object-Oriented DBMSs
+    \item Object-Relational DBMSs
+    \item XML DBMSs
+    \item NoSQL DBMSs (key-value, document, column, graph)
+\end{itemize}
+
+\newpage
+\textbf{Evolution Timeline}
+\vspace{11pt}
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{|p{2.2cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+        \hline
+        \textbf{Time} & \textbf{Database Technology / Data Management Paradigm} & \textbf{Products} & \textbf{Description} \\ \hline
+        1960s--1970s & \textbf{File-based processing} & VMS/VSAM & Managed records, not relationships \\ \hline
+        1970s & \textbf{Hierarchical} & IMS, ADABS, IDS-II & Early DBMS with tree-structured data \\ \hline
+        1970s & \textbf{Network} & IDS, CODASYL & Navigation-based access \\ \hline
+        Mid-1970s -- present & \textbf{Relational} & DB2, Oracle, MS SQL-Server & Conceptual simplicity, ER modeling \\ \hline
+        \multirow{2}{2.2cm}{Mid-1980s -- present} & \textbf{Object-oriented} & Versant, Objectivity/DB & \multirow{2}{3.5cm}{Support complex data Extended data types} \\ \cline{2-3}
+        & \textbf{Object-relational} & DB2 UDB, Oracle, PostgreSQL & \\ \hline
+        Present & \textbf{Semi-structured and complex data models} & dbXML, Tamino, MarkLogic. DB2 UDB, Oracle, PostgreSQL & Support XML and complex data types \\ \hline
+        Present & \textbf{NoSQL} & MongoDB, Cassandra, Hbase, Redis, Riak & High scalability and flexible schema \\ \hline
+    \end{tabular}
+\end{table}
+
+\vspace{11pt}
+\subsubsection{Categorization by Degree of Simultaneous Access}
+\vspace{11pt}
+
+From a concurrency perspective, there are:
+\begin{itemize}
+    \item Single-user DBMSs
+    \item Multi-user DBMSs
+\end{itemize}
+
+This is simple but important for transactions and concurrency control.
+
+\vspace{11pt}
+\textbf{Single-User vs. Multi-User Databases}
+\vspace{11pt}
+
+Single-User DBMSs allows only one user at a time to interact with the DBMS. This is not suitable for a networked environment where multiple users need simultaneous access.
+
+Multi-User DBMSs support multiple users interacting with the database simultaneously. They are commonly used in distributed environments to facilitate concurrent data access.
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{9.png}
+
+    In this figure, mutliple client requests are handled concurrently by multiple server instances or threads accessing a shared database.
+\end{center}
+
+\vspace{11pt}
+\subsubsection{Categorization by System Architecture}
+\vspace{11pt}
+From a Physical/Deployment Perspective:
+\begin{itemize}
+    \item Centralized DBMSs
+    \item Client-Server DBMSs
+    \item Distributed DBMSs
+    \item Cloud-based DBMSs
+\end{itemize}
+
+\vspace{11pt}
+\textbf{Centralized DBMS Architecture}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{10.png}
+\end{center}
+
+In a Centralized DBMS Architecture, all data is stored and maintained on a centralized server. Users access the database remotely, with all processing happening on the central system.
+
+\vspace{11pt}
+\textbf{Client-Server DBMS Architecture}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{11.png}
+\end{center}
+\vspace{11pt}
+
+In a Client-Server DBMS Architecture, active clients send requests to passive servers, which process database queries. There are two variants:
+\begin{itemize}
+    \item Fat Server --- Most processing occurs on the server side.
+    \item Fat Client --- Clients handle more processing, reducing server load time.
+\end{itemize}
+
+\vspace{11pt}
+N-Tier DBMS Architecture
+\vspace{11pt}
+
+An n-Tier DBMS Architecture consists of multiple layers for scalability and modularity:
+\begin{itemize}
+    \item Client Layer --- Provides GUI functionality for users.
+    \item Application Server --- Hosts business logic and applications.
+    \item Database Server --- Runs the DBMS and stores the database
+    \item Web Server --- Enables web-based access to the database.
+\end{itemize}
+
+For example, here is a three-tiered Client/Server Database Architecture:
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{12.png}
+    
+    \includegraphics[width=0.6\textwidth]{13.png}
+\end{center}
+
+\vspace{11pt}
+\textbf{Distributed DBMSs}
+\vspace{11pt}
+
+A Distributed DBMS manages a single logical database whose data is physically distributed across multiple networked sites. Key features include location transparency and data independence, support for distributed queries and transactions, and data fragmentation and replication across sites.
+
+The benefits of a Distributed DBMS is scalability, availability, and improved performance. However, some challenges include consistency, coordination, and fault tolerance.
+
+\vspace{11pt}
+\begin{aside}
+    Note: Distributed DBMSs underpin (act as a fundamental foundation) cloud DBMSs, federated DBMSs, and many NoSQL systems.
+\end{aside}
+
+\vspace{11pt}
+\textbf{Cloud DBMSs}
+\vspace{11pt}
+
+Cloud DBMSs are database management systems hosted in the cloud, eliminating the need for on-premise infrastructure. These cloud sites are managed by third-party cloud providers, offering scalability, reliability, and cost-efficiency. Cloud DBMSs supports distributed storage and processing, making it ideal for big data and high-availability applications.
+
+Examples of Cloud DBMSs include Apache Cassandra --- A distributed NoSQL database designed for scalability and fault tolerance. Another is Google Bigtable --- A fully managed, high-performance NoSQL database for large-sale applications.
+
+\vspace{11pt}
+\subsubsection{Categorization Based on Usage Workload}
+\vspace{11pt}
+
+From a Query and access pattern perspective:
+\begin{itemize}
+    \item Transaction databases (OLTP)
+    \item Analytical databases (OLAP)
+    \item Hybrid Transaction/Analytical Processing (HTAP)
+\end{itemize}
+
+\vspace{11pt}
+\textbf{Transaction Databases}
+\vspace{11pt}
+
+\textbf{Online Transaction Processing (OLTP)} Databases focus on managing operational or transactional data. The database server must process a high volume of simple transactions efficiently. The DBMS must have fast response time for short, frequent queries.
+
+\vspace{11pt}
+\textbf{Analytical Databases}
+\vspace{11pt}
+
+\textbf{Online Analytical processing (OLAP)} Databases use operational data for tactical or strategical decision-making. A limited number of users execute complex queries for business intelligence. The DBMS must efficiently handle complex queries, often in lower frequency.
+
+\vspace{11pt}
+\textbf{Hybrid Transaction/Analytical Processing}
+\vspace{11pt}
+
+\textbf{Hybrid Transaction/Analytical Processing (HTAP)} systems are designed to support both transactional (OLTP) and analytical (OLAP) workloads on the same database, in near real time.
+
+Key characteristics include a unified data platform for transactions and analytics. HTAPs also eliminates data movement between OLTP and OLAP systems, and it supports real-time or near-real-time analytical queries.
+
+The Benefits of HTAPs include fresh analytics on operational data, simplified system architecture, and reduced data latency and redundancy. Meanwhile, the challenges of HTAPs include balancing performance isolation between OLTP and OLAP and complex concurrency control and query optimization.
+
+\vspace{11pt}
+\begin{aside}
+    HTAP is increasingly important in modern cloud and in-memory database systems.
+\end{aside}
+
+\vspace{11pt}
+\subsubsection{DBMSs Span Multiple Dimensions}
+\vspace{11pt}
+
+Modern DBMSs cannot be classified using a single criterion.
+
+Example 1: A modern cloud-based NoSQL DBMS may simultaneously be: Non-relational in its data model, distributed in architecture, multi-user, and designed for OLTP or HTAP workloads.
+
+Example 2: NewSQL DBMS is a relational data model, distributed architecture, multi-user, and OLTP-oriented.
+
+The takeaway is that no single taxonomy fully captures modern DBMSs. Real-world systems occupy multiple points in the design space.
+
+\vspace{11pt}
+\section{Lecture 3 - Conceptual Data Modeling --- Using UML Class Diagram}
+\vspace{11pt}
+
+\subsection{Origin and Recap of Object Orientation}
+\vspace{11pt}
+
+\textbf{Origin of UML}
+\vspace{11pt}
+
+\textbf{Unified Modeling Language (UML)} is a standardized modeling language for specifying, visualizing, constructing, and documenting software systems. UML was standardized by the Object Management Group (OMG) in 1997 and later approved as an International Organization for Standardization (ISO) standard in 2005. The most recent major version is UML 2.5, released in 2017.
+
+UML includes multiple diagram types: Use cases, sequence, package, deployment, and others. From a database modeling perspective, the class diagram is the most relevant.
+
+\textbf{UML class diagrams} are widely used to represent ER-style concepts --- such as entities, attributes, and relationships in many commercial database design tools.
+
+Here is an example of a UML Class Diagram:
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.65\textwidth]{14.png}
+\end{center}
+
+\newpage
+\textbf{Recap of Object Orientation}
+\vspace{11pt}
+
+A class is a blueprint that defines a set of objects (comparable to an entity type in the ER model). An object is an instance of a class (Comparable to an entity in the ER model). An object is characterized by Variables (attributes) and Methods (operations.
+
+Variables correspond to attribute types, and variable values correspond to attributes in ER. Methods have no direct equivalent in ER models.
+
+For example, there is a Student class. Objects include Bart, Wilfried, and Seppe. Variables include name, gender, and birthdate. Methods include calcAge(), isBirthday(), and hasPassed(courseID).
+
+\textbf{Information Hiding (Encapsulation)} is where object variables are accessed only through getter and setter methods. A \textit{getter} retrieve the value of the variable while a \textit{setter} assigns or updates the value of a variable.
+
+\textbf{Inheritance} is where a superclass can have one or more subclasses. Subclasses inherit both variables and methods from the superclass.
+
+\textbf{Method Overloading} is where multiple methods in the same class may share the same name. Methods are distinguished by different numbers or types of input parameters (method signature).
+
+\vspace{11pt}
+\subsection{Classes, Variables, and Access Modifiers}
+\vspace{11pt}
+
+\textbf{Classes in UML}
+\vspace{11pt}
+
+In a UML class diagram, a class is represented as a rectangle with three sections. The Top is the class name, the middle are variables (attributes), and the bottom are methods (operations).
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.3\textwidth]{15.png}
+\end{center}
+\vspace{11pt}
+
+\textbf{Variables in UML}
+\vspace{11pt}
+
+UML provides primitive data types such as String, Integer, and Boolean. UML also allows user-defined data types (domains).
+
+UML also supports \textbf{Composite variables} and\textbf{ Multi-valued variables}. Composite variables may decompose into components (e.g., first name, last name) or they define and reuse a custom domain (e.g., Name\_Domain). Multi-valued variables use multiplicity to indicate how many values a variable may have for one object. (e.g., email: String [0.. 4], email: String [*] (unbounded)).
+
+\textbf{Derived Variables} are indicated by a leading forward slash (e.g., /age).
+
+\textbf{Variables with Unique Values}: UML does not explicitly model key attributes as in ER. UML assumes an object-oriented DBMS (OODBMS) implementation. 
+
+Each object is assigned a unique, \textbf{Immutable Object Identifier (OID)}. The OID uniquely identifies objects throughout their lifetime. Therefore, no separate key variables are required in UML.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.3\textwidth]{16.png}
+\end{center}
+
+\vspace{11pt}
+\textbf{Access Modifiers}
+\vspace{11pt}
+
+Access modifiers specify who can access a class's variables or methods. There are three primary access levels:
+\begin{itemize}
+    \item Private (denoted by '-'): Accessible only within the class.
+    \item Public (denoted by '+'): Accessible by any other class.
+    \item Protected (denoted by '\#'): Accessible by the class and subclasses.
+\end{itemize}
+
+As a general design guideline, it is important to declare all variables as private to support information hiding.
+
+\vspace{11pt}
+\textbf{Associations}
+\vspace{11pt}
+
+An association in UML corresponds to a relationship type in ER. Multiple associations may exist between the same pair of classes. A specific instance of an association is called a \textbf{link}. Association is also characterized by its multiplicities, which corresponds to cardinalates in ER.
+
+\vspace{11pt}
+\begin{center}
+\begin{tabular}{|c|c|}
+    \hline
+    \textbf{UML Multiplicity} & \textbf{ER Cardinality} \\ \hline
+    * & 0..N \\ \hline
+    0..1 & 0..1 \\ \hline
+    1..* & 1..N \\ \hline
+    1 & 1..1 \\ \hline
+\end{tabular}
+\end{center}
+
+\newpage
+\textbf{Association Class}
+\vspace{11pt}
+
+When an association has its own variables and/or methods, it can be modeled as an association class. An association class represents properties that belong to the relationship itself, not to either class.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{17}
+\end{center}
+
+\vspace{11pt}
+\textbf{Unidirectional vs. Bidirectional Association}
+\vspace{11pt}
+
+Associations may include navigation arrows to indicate direction. The arrow specifies the allowed direction of access or querying.
+
+In a Unidirectional Association, navigation is possible in one directly own and is shown using a single arrow. Meanwhile, in a Bidirectional Association, navigation is possible in both directions and no arrow is shown.
+
+For example, all purchase orders can be retrieved from a supplier object. It is not possible to navigate from a purchase order to its supplier.
+
+\vspace{11pt}
+\textbf{Qualified Association}
+\vspace{11pt}
+
+A qualified association is a special type of binary association. It uses a qualifier to further restrict or refine the association. The qualifier consists of one or more key variables that index a subset of related objects. The qualifier acts like a key, selecting a specific related object and thereby reducing the effective multiplicity. A qualifier is shown as a small rectangle attached to the association end.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=.65\textwidth]{18.png}
+\end{center}
+
+In a navigation context, a qualifier is used to select a specific related object from all objects participating in the association. In an implementation context, each qualifier value references a unique target object. When an application requires data retrieval based on search keys, qualified associations are generally appropriate.
+
+For example, in the diagram above, the association \texttt{PLAYS AT} Connects \texttt{Team} and \texttt{Player}. The association is qualified by the attribute \texttt{position}. This qualifier acts a an index or key: Given a team and a position, at most one player is identified.
+
+As a result, the effective multiplicity on the player side is \texttt{0..1}. The small rectangle labeled position visually represents the qualifier.
+
+\vspace{11pt}
+\textbf{Qualified Association: ER vs. UML Example}
+\vspace{11pt}
+
+ER Model: There exists a 1:N relationship between TEAM and PLAYER. A team can have zero to many players. A player is always related to exactly one team.
+
+UML (Qualified Association): The association is qualified by position. For a given team and position, there are zero or one players. A player still belongs to exactly one team.
+
+\vspace{11pt}
+\textbf{Qualified Association for Weak Entity Types}
+\vspace{11pt}
+
+Qualified associations in UML can be used to model weak entity types in ER.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.7\textwidth]{19.png}
+\end{center}
+
+
+ER Model: ROOM is a weak entity that depends on HOTEL. The room number is a partial key, and a room belongs to exactly one hotel.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{20.png}
+\end{center}
+
+In the UML model, The association between Hotel and Room is qualified by room number. The qualifier acts as an index (partial key). Essentially, a hotel + room number identifiers zero or one room. Each room always belongs to exactly one hotel.
+
+\vspace{11pt}
+\subsection{Specialization and Generalization}
+\vspace{11pt}
+
+Similar to the EER model, UML supports specialization and generalization relationships. A superclass represents a general concept, while subclasses represent specialized versions of the superclass.
+
+The symbol is an empty (or filled) triangle that points from the subclass to the superclass. UML allows specialization constraints such as total/partial and disjoint/overlapping.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.5\textwidth]{21.png}
+\end{center}
+\vspace{11pt}
+
+Another example is included in the UML diagram below:
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{22.png}
+\end{center}
+
+
+\vspace{11pt}
+\textbf{Aggregation}
+\vspace{11pt}
+
+Aggregation represents a whole-part (composite-part) relationship between classes. The composite class is made up of two types of aggregation: Shared aggregation (aggregation) and composite aggregation (composition).
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{23.png}
+\end{center}
+
+\vspace{11pt}
+\textbf{Shared Aggregation (Aggregation)}
+\vspace{11pt}
+
+A part object may belong to multiple composite objects. The maximum multiplicity at the composite side is not fixed.\textbf{ A part object may exist independently of any composite}. This represents a loose coupling between the composite and part classes.
+
+For example, a consultant may work for multiple companies. When a company is removed, its consultants remain in the database.
+
+\vspace{11pt}
+\textbf{Composite Aggregation (Composition)}
+\vspace{11pt}
+
+A part object can belong to only one composite. The maximum multiplicity at the composite side is 1. The minimum multiplicity may be 0 or 1.\textbf{ This represents a tight coupling between the composite and part classes}. When the composite object is removed, all associated part objects are also removed.
+
+For example, Engine---Car, Engine---Boat. An Account belongs to exactly one Bank. \textit{Thus, removing the bank removes all associated accounts}.
+
+\vspace{11pt}
+\subsection{Changeability Property}
+\vspace{11pt}
+
+The changeability property specifies the type of operations that are allowed on either variable values or links.
+
+There are three common choices:
+\begin{itemize}
+    \item default --- allows any type of edit
+    \item addOnly --- only allows additional values or links to be added (no deletions)
+    \item frozen --- allows no further changes once the value or link is established
+\end{itemize}
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{24.jpg}
+\end{center}
+
+\newpage
+
+For example, the frozen property on the supplier number and the purchase order number specifies that once a value is assigned, it cannot be changed.
+
+The language variable of the SUPPLIER class represents the set of languages the supplier can understand. It is defined as addOnly, meaning languages may be added but not removed. 
+
+\textbf{The addOnly property on the ON\_ORDER association} specifies that, for a given supplier, purchase orders can be added but not deleted.
+
+
+\vspace{11pt}
+\textbf{Object Constraint Language (OCL)}
+\vspace{11pt}
+
+Object Constraint Language (OCL) is used to specify constraints in UML models. OCL constraints are declarative, meaning they specify what must be true rather than how it is enforced. Additionally, OCL contains no control flow or procedural code.
+
+Typical uses of OCL include
+\begin{itemize}
+    \item Class invariants
+    \item Preconditions and postconditions for methods
+    \item Navigation across associations
+    \item Constraints on operations and attributes
+\end{itemize}
+\vspace{11pt}
+
+OCL is standardized by the Object Management Group (OMG)
+
+\vspace{11pt}
+\textbf{OCL: Class Invariant and Pre/Post Conditions}
+\vspace{11pt}
+
+Class Invariant --- a class invariant is a constraint that must hold for \textbf{all objects} of a class. For example, SUPPLIER: SUPSTATUS > 100 (The status of every supplier must be greater than 100).
+
+Preconditions and Postconditions --- Preconditions must be true before a method is executed, while postconditions must be true after the method completes. For example, (Pre) before withdrawal, the balance must be positive. For Post, after withdrawal, the balance must still be positive.
+
+\vspace{11pt}
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{25.jpg}
+
+    This image shows two associations: Which employee works in which department and which employee manages which department.
+\end{center}
+\vspace{11pt}
+
+An example constraint for the UML diagram above is that a manager of a department must have at least 10 years of employment.
+
+\newpage
+\begin{lstlisting}
+    Context: Department
+    inv: self.managed_by.yearsemployed > 10
+\end{lstlisting}
+\vspace{11pt}
+
+The context of the constraint is the DEPARTMENT class. The keyword \textbf{inv} defines a class invariant. The self keyword refers to a DEPARTMENT object. The role name \textbf{managed\_by} is used to navigate to the \textbf{EMPLOYEE}. The attribute \textbf{yearsemployed} is then evaluated.
+\vspace{11pt}
+
+Example Constraint \#2: A department should have at least 20 employees.
+
+\begin{lstlisting}
+    Context: Department
+    Invariant: self.workers->size() >= 20
+\end{lstlisting}
+\vspace{11pt}
+
+The context is the DEPARTMENT class. self.workers navigates to the set of employees working in the department. The size() operation computes the number of examples.
+\vspace{11pt}
+
+Example Constraint \#3: A manager of a department must also work in that department.
+
+\begin{lstlisting}
+    Context: Department
+    Invariant: self.managed_by_works_in = self
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{Dependency Relationship}
+\vspace{11pt}
+
+\begin{center}
+    \includegraphics[width=0.6\textwidth]{26.jpg}
+\end{center}
+\vspace{11pt}
+
+In UML, dependency defines a \textbf{"using"} relationship. Changes in one element may affect another element that depends on it.
+
+Dependencies are shown using \textbf{dashed arrows} in UML. A dependency exists when one class uses another class temporarily and/or the used object is not stored as a member variable.
+
+For example, the EMPLOYEE class defines a method \texttt{tookCourse(CNR)}. This method uses a \texttt{Course} object to check course information. Since the \texttt{COURSE} object is used only within the method, a dependency exists between \texttt{EMPLOYEE} and \texttt{COURSE}.
+
+\vspace{11pt}
+\textbf{Association vs. Dependency (Conceptual Difference)}
+\vspace{11pt}
+
+Association --- Represents a structural, long-term relationship between classes. Object are linked persistently and one object typically stores a reference to the other. Associations exist independently of method execution and are shown as a solid line. For example, a Department has Employees.
+
+Dependency --- Represents a temporary "uses" relationship between classes. One object uses another within a method. No stored reference is maintained. A dependency only exists during method execution. Dependencies are shown as a dashed arrow in UML. An example is an Employee temporarily using a Course object.
+
+\vspace{11pt}
+\begin{center}
+    \begin{tabular}{|c|c|c|}
+        \hline
+        Aspect & Association & Dependency \\ \hline
+         Relationship Strength & Strong & Weak \\ \hline
+         Lifetime & Long-term & Temporary \\ \hline
+         Store references & Yes & No \\ \hline
+         UML notion & Solid line & dashed line \\ \hline
+    \end{tabular}
+\end{center}
+\vspace{11pt}
+
+From a database perspective, Associations often map to foreign keys or relationship tables. This affects the database schema design. Meanwhile, dependencies do not usually affect database schema and reflect application logic, not data structure.
+
+\vspace{11pt}
+\subsection{UML Class Diagram vs. EER}
+\vspace{11pt}
+
+\begin{center}
+    \begin{tabular}{|c|c|}
+        \hline
+        UML Class Diagram & EER Model \\ \hline
+         Class & Entity Type \\ \hline
+         Object & Entity \\ \hline
+         Variable & Attribute Type \\ \hline
+         Variable value & Attribute \\ \hline
+         Method & --- \\ \hline
+         Association & Relationship type \\ \hline
+         Link & Relationship \\ \hline
+    \end{tabular}
+\end{center}
+\vspace{11pt}
+
+% in your document body:
+
+\begin{center}
+    \begin{tabular}{|l|l|l|}
+        \hline
+        \textbf{UML class diagram} & \textbf{EER model} \\ \hline
+        
+        Qualified Association & Weak entity type \\ \hline
+        
+        Specialization/Generalization & Specialization/Generalization \\ \hline
+        
+        Aggregation & Aggregation (Composite/Shared) \\ \hline
+        
+        OCL & --- \\ \hline
+        
+        \multicolumn{1}{|l|}{\textbf{Multiplicity}} & \multicolumn{1}{l|}{\textbf{Cardinality}} \\ \hline
+        
+        *      & 0..N \\ \hline
+        0..1   & 0..1 \\ \hline
+        1..*   & 1..N \\ \hline
+        1      & 1..1 \\ \hline
+    
+    \end{tabular}
+\end{center}
+
+\newpage
+
+\topsec{Lecture 4 --- Extended Relational Databases (Object-Relational Databases)}
+
+\subsec{Success of the Relational Model}
+
+The relational model is highly effective for managing well-structured numerical and alphanumerical data. It has a strong mathematical foundation and simplicity.
+
+There are two core concepts related to it:
+\begin{itemize}
+    \item Tuple: A tuple represents a set of attribute values describing one entity instance.
+    \item Relation: A relation is a mathematical set of tuples describing similar entities.
+\end{itemize}
+\vspace{11pt}
+
+\textbf{Value Based Model}: Relationships are defined using data values. ($\leftrightarrow$ identity based OO model).
+
+The relational model also used a descriptive, non-navigational query language (SQL).
+
+\subsec{Limitations of the Relational Model}
+
+The relational model requires data to be fully normalized. Information about a single entity may be fragmented across multiple relations.
+
+Relations are connected only through primary-foreign key values. Additionally, Value-based relationships lead to frequent and expensive joins.
+
+There is also limited support for specialization, categorization, and aggregation (These concepts require additional tables and complex queries).
+
+\vspace{11pt}
+Other limitations include:
+\begin{itemize}
+    \item Relations stores only atomic values.
+    \item Composite and multi-valued attributes cannot be directly represented.
+    \item \textbf{No direct support of modeling behavior or methods}.
+    \item Limited support for stored functions to reduce network traffic and code duplication (Applications often retrieve large amounts of raw data and perform filtering, aggregation, or computation on the client side $\to$ More round trips between application and the DB).
+    \item \textbf{Difficult to represent complex objects} (e.g., multimedia, spatial data, genomics, time series and IOT data).
+    \item Weak support for unstructured or semi-structured data (audio, video, text).
+\end{itemize}
+\vspace{11pt}
+
+\subsec{Object-Relational DBMS}
+
+\boldsecbottom{DBMS and OO Paradigm}
+
+The object-oriented (OO) paradigm originated in languages such as C++ and Smalltalk. Additionally, \textbf{Object-Oriented DBMSs (OODBMS)} evolved from OO programming languages.
+
+Database features were later added, including querying, concurrency control, and transaction management.
+
+OODBMSs \textbf{stores persistent objects directly}, without mapping to relational tables. OODBMSs also supported \textbf{ACID properties}. However, OODBMSs are complex and lack a widely accepted standard query language such as SQL.
+
+\boldsec{Object-Relational RDBMS Extensions}
+
+\textbf{Object-Relational DBMSs (ORDBMSs)} retain \textbf{relations as the fundamental building structure}. SQL also remains the core language for DDL and DML.
+
+The relational model is \textbf{extended with object-oriented features}:
+\begin{itemize}
+    \item User-Defined Types (UDTs)
+    \item User-Defined Functions (UDFs)
+    \item Inheritance
+    \item Encapsulated behavior (methods)
+    \item Polymorphism
+\end{itemize}
+\vspace{11pt}
+
+\begin{aside}
+    Note on Extended SQL Syntax: Extended SQL syntax may vary across different ORDBMSs. However, the core object-relational concepts are largely consistent. For Oracle-specific syntax and features, refer to the Oracle Object-Relational Developer's Guide (\href{https://docs.oracle.com/en/database/oracle/oracle-database/26/adobj/index.html}{Oracle OR Guide}).
+\end{aside}
+
+\sssec{User-Defined Types (UDTs)}
+
+The Standard SQL data types include \texttt{CHAR}, \texttt{VARCHAR}, \texttt{INT}, \texttt{FLOAT}, \texttt{DOUBLE}, \texttt{DATE}, \texttt{TIME}, etc.
+
+These built-in types are insufficient for modeling complex real-world objects. Therefore, \textbf{User-Defined Types (UDTs)} allows users to define customized data types with specific structure and properties, enabling richer data modeling in ORDBMSs.
+
+\boldsec{UDTs}
+
+The General Syntax:
+
+\vspace{11pt}
+\texttt{CREATE TYPE <typename> AS ( <list of attributes, similar to CREATE TABLE> );}
+\vspace{11pt}
+
+For example:
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE BarType AS (
+    name CHAR(20),
+    addr CHAR(20)
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Oracle Specific Syntax: Oracle requires the keyword \texttt{OBJECT}.
+
+\vspace{11pt}
+\texttt{CREATE TYPE <typename> AS OBJECT ( <list of attributes, similar to CREATE TABLE> );}
+\vspace{11pt}
+
+\boldsecbottom{Constructor, Generator, and Mutator}
+
+Each UDT has a type constructor with the same name as the type. The constructor creates (wraps) an object of that UDT. In SQL-1999, each attribute of a UDT has:
+\begin{itemize}
+    \item A Generator method (to retrieve the attribute).
+    \item a Mutator method (to modify the attribute value).
+\end{itemize}
+\vspace{11pt}
+
+For an attribute A:
+\begin{itemize}
+    \item \texttt{Generator: A()}.
+    \item \texttt{Mutator: A(v) where v is the new value}.
+\end{itemize}
+\vspace{11pt}
+
+\boldsecbottom{UDT Usage as Table Type}
+
+Define a UDT
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE BarType AS OBJECT (
+    name CHAR(20),
+    addr CHAR(20)
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Create a table of the UDT: \texttt{CREATE TABLE Bars OF BarType;}
+
+Insert a row using the constructor: \texttt{INSERT INTO Bars VALUES( BarType('Joe''s Bar', 'Maple St.'));}
+
+Query attributes using generators: 
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT b.name, b.addr
+FROM bars b
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsecbottom{UDT Usage as Column Type}
+
+Define a UDT:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE BeerType AS OBJECT (
+    name CHAR(20),
+    manf CHAR(20)
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Use the UDT as a column type:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE Drinks (
+    name CHAR(30),
+    addr CHAR(50),
+    favBeer BeerType
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Inserting data using the constructor: \texttt{INSERT INTO Drinkers VALUES ('Smith', '2101 Coliseum Blvd, Chicago, 4444', BeerType('Miler', 'OBBBB'));}
+
+\boldsec{Different Types of UDTs}
+
+\begin{itemize}
+    \item \textbf{Distinct Data Types}: Extend existing SQL data types.
+    \item \textbf{Opaque Data Types}: Define completely new data types with hidden internal structure.
+    \item \textbf{Unnamed row types}: Use unnamed tuples as attribute values.
+    \item \textbf{Named row types}: Named row types: Use named tuples as attribute values.
+    \item \textbf{Table data types}: define tables as instances of table types.
+\end{itemize}
+\vspace{11pt}
+
+\begin{aside}
+    NOTE: Not all ORDMBS products support every type of UDT. Always verify which UDT features are supported by a specific ORDBMS.
+\end{aside}
+
+\vspace{11pt}
+\boldsec{UDT --- Distinct Data Type}
+
+A distinct data type is a user-defined data type derived from an existing SQL base type. It shares the same underlying representation but represents a \textbf{semantically different domain}.\textbf{ Distinct types improve type safety and semantic clarity}.
+
+\vspace{11pt}
+Define distinct data types:
+
+\texttt{CREATE DISTINCT TYPE us-dollar AS DECIMAL(8,2)}
+
+\texttt{CREATE DISTINCT TYPE euro AS DECIMAL(8,2)}
+
+\vspace{11pt}
+Use distinct data types
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE account(
+    accountno SMALLINT PRIMARY KEY NOT NULL,
+    amount-in-dollar us-dollar,
+    amount-in-euro euro
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Distinct data types enforce strong typing. The value of a distinct type cannot be directly compared with base type values.
+
+For example:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT *
+FROM account
+WHERE amount-in-euro > 1000 # Error! Type incompatibility
+
+SELECT *
+FROM account
+WHERE amount-in-euro > euro(1000) # Corret usage with explicit cast
+\end{lstlisting}
+\vspace{11pt}
+
+ORDBMSs may automatically support casting between a distinct type and it base type when explicitly requested.
+
+\boldsec{UDT --- Opaque Data Type}
+
+An \textbf{opaque data type} is a completely new user-defined data type. It is not based on any existing SQL base type. The internal structure is hidden from users and the DBMS. 
+
+These types are commonly used for complex or non-traditional data (e.g., image, audio, video, fingerprints, text, spatial data, RFID tags, QR codes, etc.).
+
+\vspace{11pt}
+Defining Opaque Data Types:
+
+\texttt{CREATE OPAQUE TYPE image AS <\dots>}
+
+\texttt{CREATE OPAQUE TYPE fingerprint AS <\dots>}
+
+Using an opaque data type:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE employee
+(
+    ssn SMALLINT NOT NULL,
+    name CHAR(25) NOT NULL,
+    ...
+    empFingerprint fingerprint,
+    photogrph image
+);
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{UDT --- Unnamed Row Type}
+
+An \textbf{unnamed row type} represents a composite value using the \texttt{ROW} keyword. The row structure is defined inline and has no explicit type name. Attributes can be built-in types, distinct types, or opaque types.
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE employee
+(
+    ssn SMALLINT NOT NULL,
+    name ROW(fname CHAR(25), lname CHAR(25)),
+    address ROW(streetAddress CHAR(20) NOT NULL, zipCode CHAR(8), city CHAR(15) NOT NULL),
+    empFingerprint fingerprint,
+    photograph image
+);
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{UDT --- Named Row Type}
+
+A \textbf{named row type} is a user-defined data type. It groups coherent set of attributes into a single structure. The composite structure is assigned a meaningful type name.
+
+The type can be reused in:
+\begin{itemize}
+    \item Table definitions
+    \item Queries
+    \item Any context where a standard SQL data type is allowed
+\end{itemize}
+\vspace{11pt}
+
+An Example of a Named Row Type (General Syntax)
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE ROW TYPE address AS (
+    streetAddress CHAR(20),
+    zipCode CHAR(8),
+    city CHAR(15) NOT NULL
+);
+
+CREATE TABLE employee (
+    ssn SMALLINT NOT NULL,
+    fname CHAR(25) NOT NULL,
+    lname CHAR(25) NOT NULL,
+    empAddress address
+    ...
+    empFingerprint fingerprint
+    photograph image
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Oracle Specific Syntax
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE address AS OBJECT (
+    streetAddress CHAR(20),
+    zipCode CHAR(8),
+    city CHAR(15) NOT NULL
+);
+
+CREATE TABLE employee (
+    ssn SMALLINT NOT NULL,
+    fname CHAR(25) NOT NULL,
+    lname CHAR(25) NOT NULL,
+    empAddress address
+    ...
+    empFingerprint fingerprint
+    photograph image
+);
+\end{lstlisting}
+\vspace{11pt}
+
+More examples of Named Row Type
+
+General Syntax:
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT lname, empaddress
+FROM employee
+WHERE empaddress.city = 'LEUVEN'
+\end{lstlisting}
+\vspace{11pt}
+
+Oracle Specific Syntax:
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT lname, empaddress
+FROM employee E1
+WHERE E1.empaddress.city = 'LEUVEN'
+
+SELECT E1.lname, E1.empaddress
+FROM employee E1, employee E2
+WHERE E1.empaddress.city = E2.empaddress.city and E2.ssn = '123456789'
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{UDT --- Table Data Type}
+
+A \textbf{table data type}, called a typed table, defines the type of a table. Similar to a class in object-oriented programming, each row in the table is an object of the specified type.
+
+Defining a table type:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE employeetype AS OBJECT
+(
+ssn SMALLINT,
+fname CHAR(25),
+lname CHAR(25),
+empAddress address
+empFingerprint fingerprint,
+photograph image
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Creating a typed table: \texttt{CREATE TABLE employee OF TYPE employeetype}
+
+Example Usage of Table Data Type (General Syntax):
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE employee of TYPE employeetype
+PRIMARY KEY (ssn);
+
+CREATE TABLE ex-employee OF TYPE employeetype
+PRIMARY KEY (ssn);
+\end{lstlisting}
+\vspace{11pt}
+
+Oracle-Specific Syntax
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE employee OF employeetype
+(ssn PRIMARY KEY);
+
+CREATE TABLE ex-employee OF employeetype
+(ssn PRIMARY KEY);
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Object Identifiers Using Reference Types}
+
+If $T$ is a type, then \textbf{REF} $T$ denotes a\textbf{ reference to an object of type $T$}. A reference acts like a pointer to an object. Reference provide object identity in ORDBMSs. They correspond to OIDs in Object-Oriented DBMSs.
+
+Unlike OIDs, however, references can be explicitly declared, queried, and displayed.
+
+For example:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE MenuType AS (
+    bar REF BarType,
+    beer REF BeerType,
+    price float
+);
+\end{lstlisting}
+\vspace{11pt}
+
+\img[0.5]{27.png}
+
+Example (General Syntax)
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE departmenttype (
+    dnr smallint not null,
+    dname char(25) not null,
+    dlocation address,
+    manager REF(employeetype)
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Oracle Specific Syntax
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE departmenttype (
+    dnr smallint not null,
+    dname char(25) not null,
+    dlocation address,
+    manager REF employeetype
+);
+\end{lstlisting}
+\vspace{11pt}
+
+\begin{aside}
+    \textbf{Note}: The manager attribute type will contain a reference or pointer to an employee type of a table whose type is \texttt{EMPLOYEE}. The assumes the ORDBMS supports row identifications.
+\end{aside}
+\vspace{11pt}
+
+\boldsec{Following REF}
+
+A reference (REF) can be de referenced to access the object it points to. The \texttt{DEREF()} function retrieves the actual object from a reference.
+
+Oracle Example:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT DEREF(ss.beer).name, DEREF(ss.beer).manufacture
+FROM Sells ss
+WHERE DEREF(ss.bar).name = 'Joe''s Bar';
+\end{lstlisting}
+\vspace{11pt}
+
+Equivalent query using dot notation:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT ss.beer.name, ss.beer.manufacture
+FROM Sells ss
+WHERE ss.bar.name = 'Joe''s Bar';
+\end{lstlisting}
+\vspace{11pt}
+
+\textbf{In Oracle, dot notation can be used as a shorthand for dereferncing}.
+
+\boldsec{REF and DEREF Examples with ORACLE}
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE address_obj AS OBJECT 
+(street varchar2 (20), city varchar2 (20), state char(2), zip char(5) );
+
+CREATE TABLE address_table OF address_obj; 
+INSERT INTO address_table VALUES (address_obj('1 A St.', 'Mobile', 'AL', '36608'));
+
+CREATE TABLE client (
+    name varchar2(20),
+    address REF address_obj SCOPE IS address_table, -- to reference a specific object table 
+    Permanent_add address_obj 
+);
+
+INSERT INTO client (name, address) 
+
+SELECT 'Walsh', ref(aa) 
+FROM address_table aa 
+WHERE aa.zip='36608';
+
+SELECT * FROM client;
+-- name: Walsh
+-- address: C##DBUSER.ADDRESS_OBJ('1 A St.','Mobile','AL','36608') 
+
+SELECT c.name, DEREF(c.address).city -- alternatively 'c.address.city'
+FROM cient c;
+-- name: Walsh
+-- city: Mobile
+\end{lstlisting}
+\vspace{11pt}
+
+\sssec{User-Defined Functions (UDFs)}
+
+RDBMSs provide many built-in functions (e.g., \texttt{MIN()}, \texttt{MAX()}, \texttt{AVG()}).
+
+\textbf{User-defined functions (UDFs)} allow users to define their own functions. UDFs extend the functionality of SQL. Each UDF consists of:
+\begin{itemize}
+    \item a function name.
+    \item input and output parameters.
+    \item An implementation.
+\end{itemize}
+\vspace{11pt}
+
+UDFs are stored and executed inside the ORDBMS. Additionally, UDF implementations are hidden from application programs.
+
+UDFs can be overloaded (same name, different parameters) and there are two main types of UDF implementations:
+\begin{itemize}
+    \item Sourced functions
+    \item External functions
+\end{itemize}
+\vspace{11pt}
+
+\newpage
+\boldsecbottom{UDF with Sourced Function}
+
+\textbf{A sourced-function} is a UDF that is based on an existing built-in function. It adapts a built-in function to work with a user-defined type. Source functions reuse existing DBMS functionality while preserving strong typing.
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE DISTINCT TYPE MONETARY AS DECIMAL (8,2);
+CREATE FUNCTION avg(monetary)
+RETURNS MONETARY
+SOURCE AVG(DECIMAL(8,2)) -- Indicates that this function is based on the existing built-in AVG function for the DECIMAL(8,2) type.
+
+SELECT dnr, avg(salary)
+FROM employee
+GROUP by dnr;
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsecbottom{UDF with External Function}
+
+\textbf{External functions} are UDFs implemented in an external host language. Common host languages include C/C++, Java, and Python.
+
+Unlike sourced functions, external functions do not rely on existing SQL built-in functions. External functions can return:
+\begin{itemize}
+    \item A single value (scalar function).
+    \item A set or table of values (table function).
+\end{itemize}
+\vspace{11pt}
+
+\boldsecbottom{Interface of UDFs}
+
+ORDBMSs can associate function interfaces (signatures) with data types and tables. Only the interface is exposed, but the implementation remains hidden. This separates what a function does from how it is implemented.
+
+This supports information hiding and encapsulation. Functions can also be declared as part of a type definition:
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE type-name (
+    <list of component attributes and their types>
+    <function (methods) declarations>
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Example --- Interface of UDF
+
+Define a type with a method interface
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE employeetype
+( ssn SMALLINT NOT NULL,
+fname CHAR(25) NOT NULL,
+lname CHAR(25) NOT NULL,
+empAddress INTERNATIONAL_ADDRESS,
+...
+empfingerprint FINGERPRINT,
+photograph IMAGE,
+FUNCTION age(employeetype) RETURNS integer
+);
+\end{lstlisting}
+\vspace{11pt}
+
+Create a typed table: \texttt{CREATE TABLE employee OF TYPE employeetype PRIMARY KEY (SSN);}
+
+Use the method in a query
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT ssn, fname, lname, photograph
+FROM employee
+WHERE age = 60
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsecbottom{UDF Example with Oracle}
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE demo_type2 AS OBJECT (
+    a1 NUMBER,
+    MEMBER FUNCTION get_square RETURN NUMBER
+);
+
+-- Define the method implementation
+CREATE TYPE BODY demo_type2 IS
+    MEMBER FUNCTION get_square RETURN NUMBER IS
+    x NUMBER;
+    BEGIN
+        SELECT c.col.a1*c.col.a1
+        INTO X
+        FROM demo_tab2 c;
+        return (x);
+    END;
+END;
+\end{lstlisting}
+\vspace{11pt}
+
+\begin{aside}
+    Oracle clearly separates the method interface from the method implementation, supporting encapsulation.
+\end{aside}
+\vspace{11pt}
+
+Example Use:
+
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE demo_tab2 (
+    col demo_type2
+);
+
+INSERT INTO demo_tab2 VALUES(demo_type2(2));
+
+SELECT t.col.get_square()
+FROM demo_tab2 t; 
+-- output: 4
+\end{lstlisting}
+\vspace{11pt}
+
+\sssec{Inheritance}
+
+Object-Relational DBMSs extend relational DBMSs with explicit support for inheritance. Inheritance is supported at
+\begin{itemize}
+    \item the data type level.
+    \item the typed table level.
+\end{itemize}
+\vspace{11pt}
+
+\boldsec{Inheritance at the Data Type Level}
+
+A \textbf{child data type} inherits all attributes of its parent data type. The child type can \textbf{specialize} the parent by adding new attributes.
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE ROW TYPE address AS (
+    streetAddress CHAR(20) NOT NULL,
+    zipCode CHAR(8),
+    city CHAR(15) NOT NULL
+);
+
+CREATE ROW TYPE international_address AS (
+    country CHAR(25) NOT NULL
+) UNDER address;
+\end{lstlisting}
+\vspace{11pt}
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE employee ( 
+    ssn SMALLINT NOT NULL,
+    fname CHAR(25) NOT NULL,
+    lname CHAR(25) NOT NULL,
+    empAddress international_address,
+    salary monetary,
+    ...
+    empfingerprint fingerprint,
+    photograph image
+);
+
+SELECT fname, lname, empaddress
+FROM employee
+WHERE empaddress.country = 'USA' AND empaddress.city LIKE 'Fort%'
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Inheritance at the Table Type Level}
+
+Inheritance can also be applied at the \textbf{table (type) level}. A subtype table inherits all attributes of its parent table type. The subtype can add its own specialized attributes.
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE employee ( 
+    ssn SMALLINT NOT NULL,
+    fname CHAR(25) NOT NULL,
+    lname CHAR(25) NOT NULL,
+    empAddress international_address,
+    salary monetary,
+    ...
+    empfingerprint fingerprint,
+    photograph image
+);
+
+CREATE TYPE engineertype AS (
+    degree CHAR(10) NOT NULL,
+    license CHAR(20) NOT NULL
+) UNDER employeetype;
+
+CREATE TYPE managertype AS (
+    startdate DATE,
+    title CHAR(20))
+) UNDER employeetype;
+
+-- Create tables using various table types.
+CREATE TABLE employee OF TYPE employeetype
+PRIMARY KEY (SSN);
+
+-- these new tables inherit the table structure, primary key, and participation in polymorphic queries.
+CREATE TABLE engineer of TYPE engineertype UNDER employee;
+CREATE TABLE manager OF TYPE managertype UNDER employee;
+\end{lstlisting}
+\vspace{11pt}
+
+Query Examples
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT ssn, fname, lname, startdate, title
+FROM manager;
+
+SELECT ssn, fname, lname
+FROM employee; -- Tuples added to a sub table are automatically visible to queries on the super table. This query retrieves all employees, including the managers and engineers.
+
+SELECT ssn, fname, lname
+FROM ONLY employee -- Include only rows of Employee (exclude the sub tables)
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Inheritance Example with Oracle}
+
+\img[0.7]{28.png}
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE person_t As OBJECT (
+    name VARCHAR(100), 
+    ssn NUMBER
+) NOT FINAL;
+
+CREATE TYPE employee_t UNDER person_t (
+    department_id NUMBER,
+    salary NUMBER
+) NOT FINAL;
+
+CREATE TYPE part_time_emp_t UNDER employee_t (
+    num_hrs NUMBER
+);
+\end{lstlisting}
+\vspace{11pt}
+
+\sssec{Polymorphism, Overloading, and Overriding}
+
+\boldsec{Polymorphism}
+
+A \textbf{subtype} inherits all attributes and functions of its \textbf{supertype}. A subtype may \textbf{override} inherited functions with specialized implementations. 
+
+\textbf{Polymorphism}: The same function call can invoke different implementations depending on the object's type. The \textbf{same function name} can have \textbf{different implementations} of different subtypes. The DBMS selected the appropriate implementations \textbf{based on the object's actual type}.
+
+This is similar to method overriding and dynamic dispatch in object-oriented programming.
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE FUNCTION total_salary(e EMPLOYEE)
+RETURN INTEGER
+AS RETURN e.salary;
+
+-- This query will retrieve the TOTAL_SALARY of managers.
+CREATE FUNCTION total_salary(m Manager)
+RETURN INTEGER
+AS RETURN m.salary + m.monthly_bonus
+
+-- This query will retrieve the TOTAL_SALARY of all employees, both managers and non-managers (a manager is an employee).
+SELECT total_salary(e) FROM EMPLOYEE e
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Overloading}
+
+\textbf{Overloading} functions(or subprograms) allows multiple subprograms to share the same name. The subprogram must differ in:
+\begin{itemize}
+    \item Number of parameters, or
+    \item Parameter order, or
+    \item Parameter data type
+\end{itemize}
+\vspace{11pt}
+
+\textbf{Overloading is a form of compile-time polymorphism}.
+
+Example [Oracle Syntax]: Define the inherited method \texttt{Enlarge()} to detail with different types of input parameters.
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE Shape_typ AS OBJECT (
+    ...
+    MEMBER PROCEDURE enLarge (x NUMBER),
+    ...
+) NOT FINALl
+
+CREATE TYPE Circle_typ UNDER Shape_type (
+    ...
+    MEMBER PROCEDURE Enlarge(x CHAR(1))
+);
+
+-- Oracle Example: Overloading
+DECLARE 
+    TYPE DateTabTyp IS TABLE OF DATE INDEX BY PLS_INTEGER; -- PLS_INTEGER type is a type for storing signed integers
+    TYPE NumTabTyp IS TABLE OF NUMBER INDEX BY PLS_INTEGER; 
+    hiredate_tab DateTabTyp; 
+    sal_tab NumTabTyp; 
+    PROCEDURE initialize (tab OUT DateTabTyp, n INTEGER) IS 
+        BEGIN 
+            FOR i IN 1..n LOOP 
+            tab(i) := SYSDATE; 
+        END LOOP; 
+    END initialize; 
+    PROCEDURE initialize (tab OUT NumTabTyp, n INTEGER) IS 
+    BEGIN 
+        FOR i IN 1..n LOOP 
+            tab(i) := 0.0; 
+        END LOOP; 
+    END initialize; 
+BEGIN 
+    initialize(hiredate_tab, 50); -- calls first (DateTabTyp) version 
+    initialize(sal_tab, 100); -- calls second (NumTabTyp) version 
+END; /
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Overriding}
+
+\textbf{Overriding} means defining two methods with the \textbf{same name and the same parameter list}. One method is defined in the \textbf{parent data type} and the other method is defined in the \textbf{child data types}. The child method provides a \textbf{specialized implementation}.
+
+Method selection is based on the runtime type of the object.
+\vspace{11pt}
+
+Example [Oracle]: Redefine an inherited method Area() to make it do something different
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE Shape_typ AS OBJECT (
+    ...,
+    MEMBER PROCEDURE Area(),
+    FINAL MEMBER FUNCTION id(x NUMBER),
+    ...
+);
+
+-- Circle_typ specializes Shape_typ
+CREATE TYPE Circle_typ UNDER Shape_typ (
+    ...,
+    OVERRIDING MEMBER PROCEDURE Area(),
+    ...
+);
+
+-- Oracle Example Overriding
+CREATE TYPE super_t AS OBJECT (
+    n NUMBER, 
+    MEMBER FUNCTION func RETURN NUMBER
+) NOT final;
+
+CREATE TYPE BODY super_t AS 
+    MEMBER FUNCTION func RETURN NUMBER IS 
+    BEGIN RETURN 1; END; 
+END;
+
+CREATE OR REPLACE TYPE sub_t UNDER super_t (
+    n2 NUMBER, 
+    OVERRIDING MEMBER FUNCTION func RETURN NUMBER
+) NOT final; 
+
+CREATE TYPE BODY sub_t AS 
+    OVERRIDING MEMBER FUNCTION func RETURN NUMBER IS 
+    BEGIN RETURN 2; END; 
+END;
+
+CREATE OR REPLACE TYPE final_t UNDER sub_t (
+    n3 NUMBER
+);
+
+DECLARE 
+    v super_t := final_t(100); -- v is an instance of super_t, but a value of sub_t to it. So,
+BEGIN
+    DBMS_OUTPUT.PUT_LINE(v.func); -- prints 2 (since v inherits sub_t func method)
+END;
+\end{lstlisting}
+\vspace{11pt}
+
+\sssec{Collection Types}
+
+\boldsec{Collection Types}
+
+Collection types allow attributes to store \textbf{multiple values}. Collections may contain
+\begin{itemize}
+    \item Standard SQL data types, or
+    \item User-defined types (UDTs)
+\end{itemize}
+\vspace{11pt}
+
+Common collection types include
+\begin{itemize}
+    \item \textbf{Set}: unordered collection, no duplicate elements.
+    \item \textbf{Multiset (Bag)}: unordered collection, duplicates allowed.
+    \item \textbf{List}: ordered collection, duplicates allowed
+    \item \textbf{Array}: ordered and indexed collection, duplicates allowed.
+\end{itemize}
+\vspace{11pt}
+
+\newpage
+\boldsecbottom{Collection Type --- Set}
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE employeetype (
+    ssn SMALLINT NOT NULL,
+    fname CHAR(25) NOT NULL,
+    lname CHAR(25) NOT NULL,
+    empAddress international_address,
+    ...
+    empFingerprint fingerprint,
+    photograph image,
+    telephone SET (CHAR(12)),
+    FUNCTION age(employeetype) RETURNS INTEGER
+);
+
+CREATE TABLE employee OF TYPE employeetype(PRIMARY KEY ssn);
+
+SELECT ssn, fname, lname
+FROM employee
+WHERE '2123375000' IN (telephone)
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Collection Type -- a SET of References}
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE departmenttype AS (
+    dnr CHAR(3) NOT NULL,
+    dname CHAR(25) NOT NULL,
+    manager REF(EMPLOYEETYPE),
+    personnel SET (REF(employeetype) -- personnel contains a set of references to the emplyoee working in the department
+);
+
+CREATE TABLE department OF TYPE departmenttype (PRIMARY KEY dnr)
+
+SELECT personnel
+FROM department
+WHERE dnr='123';
+
+SELECT DEREF(personnel).fname, DEREF(personnel).lname
+FROM department
+WHERE dnr = '123';
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsecbottom{Collection Type in Oracle --- VARRAY}
+
+\texttt{VARRAY (variable-sized arrays)} hold an ordered collection of elements.
+
+\texttt{CREATE TYPE ProjectList AS VARRAY(50) of VARCHAR2(16);}
+
+Each element has a fixed index position. A \texttt{VARRAY} is a fixed upper bound on the number of elements. Typically used for storing a small, bounded number of items.
+
+\img[0.6]{29.png}
+
+\boldsec{Oracle Example of a VARRAY Data Type}
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE phone_typ AS OBJECT (
+    country_code VARCHAR2(2),
+    area_code VARCHAR2(3),
+    ph_number VARCHAR(7)
+);
+
+CREATE TYPE phone_varray_typ as VARRAY(5) of phone_typ;
+
+CREATE TABLE dept_phone_list (
+    dept_no NUMBER(5), 
+    phone_list phone_varray_typ
+);
+
+INSERT INTO dept_phone_list
+    VALUES ( 100, 
+        phone_varray_typ( phone_typ ('01', '650', '5550123'), 
+            phone_typ ('01', '650', '5550148'), 
+            phone_typ ('01', '650', '5550192'))
+);
+
+SELECT * from dept_phone_list;
+\end{lstlisting}
+
+\img[1]{30.png}
+
+\boldsec{Oracle Collection Type --- Nested Table}
+
+Nested tables store an \textbf{unordered collection} of elements. All elements are of the \textbf{same data type}. A nested has \textbf{no fixed upper bound}. Elements are stored in a \textbf{separate storage table}. 
+
+This is well-suited for bulk insert, update, and delete operations.
+
+\img[0.7]{31.png}
+
+\newpage
+\boldsec{Example of Oracle Nested Table}
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+--Declare the table type used fr a nested table
+CREATE TYPE people_type AS TABLE OF person_type;
+
+-- Declare a nested table
+CREATE TABLE contacts (
+    contact people_type,
+    c_date DATE
+) NESTED TABLE contact STORE AS people_table_st;
+
+-- This NESTED TABLE clause identifies the nested table and specifies the name of the storage table where Oracle stores the nested table data.
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Oracle Example --- Nested Table}
+
+\vspace{11pt}
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TYPE person_typ AS OBJECT ( idno NUMBER, name VARCHAR2(30), phone VARCHAR2(20));
+CREATE TYPE people_typ AS TABLE OF person_typ;
+
+CREATE TABLE students ( 
+    graduation DATE, 
+    math_majors people_typ, -- nested tables (empty) 
+    chem_majors people_typ,
+    physics_majors people_typ)
+    NESTED TABLE math_majors STORE AS math_majors_nt -- storage tables 
+    NESTED TABLE chem_majors STORE AS chem_majors_nt
+    NESTED TABLE physics_majors STORE AS physics_majors_nt ;
+
+INSERT INTO students (graduation) VALUES ('01-JUN-03'); 
+
+UPDATE students SET math_majors = people_typ (person_typ(12, 'Bob Jones', '650-555-0130'), 
+        person_typ(31, 'Sarah Chen', '415-555-0120'), 
+        person_typ(45, 'Chris Woods', '415-555-0124')), 
+    chem_majors = people_typ (person_typ(51, 'Joe Lane', '650-555-0140'), 
+        person_typ(31, 'Sarah Chen', '415-555-0120'), 
+        person_typ(52, 'Kim Patel', '650-555-0135')), 
+    physics_majors = people_typ (person_typ(12, 'Bob Jones', '650-555-0130'), 
+        person_typ(45, 'Chris Woods', '415-555-0124')) 
+WHERE graduation = '01-JUN-03'; 
+
+SELECT m.idno math_id, c.idno chem_id, p.idno physics_id
+FROM students s, TABLE(s.math_majors) m, TABLE(s.chem_majors) c, TABLE(s.physics_majors) p;
+\end{lstlisting}
+\vspace{11pt}
+
+\boldsec{Large Objects (LOB)}
+
+\textbf{Large object (LOB)} data are typically stored outside the main table, often in a separate table space. LOBs are designed to handle very large, unstructured or semi-structured data. Types of LOB data include:
+\begin{itemize}
+    \item \textbf{BLOB (Binary Large Object)}: A variable-length binary data; interpretation is handled by the application.
+    \item \textbf{CLOB (Character Large Object)}: A variable-length character data (single-byte characters).
+    \item \textbf{DBCLOB (Double Byte Character Large Object)}: A variable-length character data using double-byte characters.
+\end{itemize}
+\vspace{11pt}
+
+Many ORDBMSs provide \textbf{specialized SQL functions} for LOBs (e.g., searching text, accessing portions of images or videos).
+
+
+
+
+
+
+
+
+
+
 
 
 
