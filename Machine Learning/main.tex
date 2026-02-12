@@ -71,6 +71,16 @@
     \vspace{11pt}
 }
 
+\newcommand{\ssec}[1]{
+    \vspace{11pt}
+    \subsection{#1}
+    \vspace{11pt}
+}
+
+\newcommand{\vs}[]{
+    \vspace{11pt}
+}
+
 
 \newcommand{\boldsecbottom}[1]{
     \textbf{#1}
@@ -1337,9 +1347,240 @@ final_rmse = np.sqrt(final_mse)
 final_rmse # => np.float64(47612.81479613856)
 \end{lstlisting}
 
+\newpage
 
+\topsec{Lecture 6 --- Classification}
 
+What is the classification problem? Whenever the output belongs to a finite number of categories, compared to a regression problem where there can be infinite categories (or real number values).
 
+\ssec{MNIST Dataset}
+
+70,000 small images of digits handwritten by high school students and employees of the US Census Bureau. Each image is 28 x 28 pixels (784 pixels).
+
+This is the "Hello World" example of Machine Learning. One source for this data is from OpenML.org.
+
+\img[0.3]{22.jpg}
+
+\ssec{Binary Classification}
+
+\boldsecbottom{An Example of Binary Classification}
+
+Our goal is to identify the number 5 in the MNIST dataset. There are only two classes: it is either a number five or not a number five. 
+
+Baseline Performance is $90\%$ (9 out of 10), because there is a $90\%$ change that an image does not depict a number 5. \textbf{We want to design a machine learning model to beat the baseline performance}. If it does not beat that, then it is useless!
+
+We can use the stochastic gradient descent (SGD) classifier as a starting model. We will come back to it later. For now, we use it as a library call from scikit-learn. We can compare the performance of the random forest classifier with that of SGD.
+
+\boldsec{Performance Measures}
+
+How do we evaluate the performance of a binary classifier? How about evaluating a regressor? Well, for that, we used the Root Mean Squared Error (RMSE) or the Mean Absolute Error (MAE).
+
+For binary search, we can use accuracy as the performance metric, which is the ratio of correct predictions on all cross-validation folds. But this is not enough, as it does not tell us the whole story about the model.
+
+For the baseline, we can use a dummy classifier, which has roughly 90\% accuracy.
+
+\boldsec{Confusion Matrices}
+
+In a Confusion Matrix, we count the number of times instances of class A are classified as class B, for all A/B pairs.
+
+\img[0.7]{23.jpg}
+
+\vs
+We have four categories:
+\begin{itemize}
+    \item True Negative (TN)
+    \item False Positive (FP)
+    \item False Negative (FN)
+    \item True Positive (TP)
+\end{itemize}
+
+\img[0.6]{24.jpg}
+
+So, what is the \textbf{true accuracy}?
+
+\myeq{= \frac{TN + TP}{TN+TP+FN+FP}}
+
+Additionally, the \textbf{TNR (True Negative Rate)} is
+
+\myeq{= \frac{TN}{TN + FP}}
+
+For the \textbf{FPR (False Positive Rate)}:
+
+\myeq{= \frac{FP}{TN + FP}}
+
+Additionally,
+
+\myeq{FNR = \frac{FN}{FN + TP}}
+
+\myeqfol{TPR = \frac{TP}{TP + FN}}
+
+The range for all of these is between 0 and 1.
+
+\vs
+\begin{aside}
+    \textbf{Note}: One helpful way to memorize these formulas is to remember that the denominator always spans horizontally across the Confusion Matrix. Additionally, $FP$ and $TN$ all represent actual negatives, while $TP$ and $FN$ all represent actual positives.
+\end{aside}
+\vs
+
+On the Y-axis of the Confusion Matrix, we can calculate \textbf{precision}, which is the accuracy of true positives defined as:
+
+\myeq{= \frac{TP}{TP + FP}}
+
+On the X-axis of the Confusion Matrix, we can calculate \textbf{recall} (the ratio of positive instances that are correctly detected by the classifier):
+
+\myeq{= \frac{TP}{TP+FN} = TPR}
+
+This is also called \textbf{sensitivity} or the true positive rate (TPR).
+\vs
+
+There are tradeoffs between recalls and precision. As one increases, the other tends to decrease. You cannot advance both at the same time (although sometimes both decrease at the same time). The \textbf{$F_1$ score} is the \textbf{harmonic mean} of precision and recall. The harmonic mean gives much more weight to low values:
+
+\myeq{\frac{2}{\frac{1}{precision} + \frac{1}{Recall}} = 2 * \frac{Precision*Recall}{Precision+Recall}=\frac{TP}{TP + \frac{FN+FP}{2}}}
+
+The $F_1$ Score favors classifiers that have similar precision and recall. \textbf{However, that is not always what you want}.
+
+The ratio of the $F_1$ is between 0 and 1. The best score is 1, which indicates it is a perfect classifier.
+
+\boldsec{Precision/Recall Trade-Off}
+
+When the precision of the classifier is increased, the recall decreases, and vice versa. SGD classifiers compute a score and then compare the score with a threshold. \textbf{They predict the input as a positive class if the score $>$ threshold}.
+
+\img[0.6]{25.jpg}
+
+\vs
+\begin{aside}
+    \textbf{Note}: See how as the precision increases (the accuracy of true positives), the recall (ratio of true positives that are accurately detected by the model) decreases. Another way to think about this is that the model is more likely to classify items as falsely positive (assumes more inputs belong to the class --- \textbf{over optimistic}) or falsely negative (assumes less inputs belong to the class --- \textbf{under optimistic}).
+\end{aside}
+\vs
+
+\img[0.5]{26.jpg}
+
+\boldsec{The ROC Curve}
+
+The \textbf{receiver operating characteristic (ROC)} curve is another common tool used with binary classifiers. This plots $TPR$ against $FPR$.
+
+Remember, $FPR$ stands for false positive rate and is the ratio of negative instances that are incorrectly classified as positive, also called \textbf{fall-out}.
+
+\myeq{FPR = \frac{FP}{FP+TN}=1-TNR=1-\text{specificity}}
+
+Meanwhile, the TPR (True Positive Rate) is the ratio of positive instances that are correctly classified as positive, also called \textbf{Recall or sensitivity}.
+
+\myeq{TPR=\frac{TP}{TP+FN}}
+
+\img[0.5]{27.jpg}
+
+\vs
+\begin{aside}
+\textbf{Note}: As the Recall, or $TPR$, decreases, the precision increases. As the $FPR$ (Fall-Out) increases, precision decreases.
+\end{aside}
+\vs
+
+\boldsec{ROC AUC}
+
+ROC AUC is the Area Under the Curve for ROC. The ROC AUC is used to compare classifiers, where the larger the area, the better the classifier.
+
+When is ROC AUC a perfect classifier? When it is equal to 1.
+
+What is the ROC AUC for a purely random classifier? Equal to 0.5.
+
+\vs
+\begin{aside}
+Note: A high false positive rate is not good, but the key is realizing that the ROC curve is not saying that high FPR is good. Instead, it's asking given a certain FPR, how high can the TPR be?
+
+For a binary classifier that outputs scores probabilities, you choose a threshold to decide what counts as "positive." Each threshold gives a TPR (recall), a fraction of actual targets you correctly catch to FPR (fall-out), the fraction of non-targets you mistakenly call targets.
+
+So, a single point on the ROC curve is "if I use this threshold, I get FPR = x and TPR = y". If you set a threshold very low (label almost everything as positive), TPR=1 and FPR = 1, then everything is almost labeled as positive, then that is a top-right point that is not good.
+
+On the other side, placing the threshold too high, labeling almost nothing as positive, then TPR = 0 and FPR = 0, that is near the bottom left and also not useful.
+
+The perfect classifier has a point near (0,1), where FPR = 0 (no false positives) and TPR = 1 (catch all positives).
+
+So, why does bigger area mean a better classifier? The ROC AUC answers that across all thresholds, how often can this classifier get high TPR for a given FPR, better than random guessing?
+
+A purely random classifier (like flipping a coin) gives a ROC curve $\approx$ a diagonal line from (0,0) to (1,1), with AUC = 0.5. A better-than-random classifier's curve bows above that diagonal, giving $AUC > 0.5$. A perfect classifier's curve hugs the left axis up to (0,1) and then the top, giving $AUC = 1$.
+
+So, larger area does not mean "we want a high FPR." Instead, it means that for any given FPR, we are willing to tolerate (say $FPR = 0.1$), a good classifier gives you a higher TPR than a bad one. Graphically, a curve with larger area spends more of its time near the top-left (high TPR, low FPR), not the top right.
+\end{aside}
+\vs
+
+\boldsec{ROC Curve Vs. Precision/Recall (PR) Curve}
+
+Both curves are similar. However, as a rule of thumb, you should prefer a PR curve whenever the positive class is rare or when you care more about false positives than the false negatives. Otherwise, use the ROC curve.
+
+\boldsec{PR Curves for Random Forest and SGD Classifiers}
+
+\img[0.5]{28.jpg}
+
+Clearly, Random Forest classifier is a lot better than SGD (precision stays high while recall rate also stays positive).
+
+\ssec{Multiclass Classification}
+
+A multiclass classification distinguishes between more than two classes. Some Scikit-Learn classifiers are capable of handling multiple classes natively, such as
+\begin{itemize}
+    \item LogisticRegression
+    \item RandomForestClassifier
+    \item GaussianNB
+\end{itemize}
+\vs
+
+Other classifiers are strictly binary classifiers, like
+\begin{itemize}
+    \item SGDClassifier
+    \item SVC (Support Vector Classification)
+\end{itemize}
+\vs
+
+\boldsecbottom{Multiclass Classification vs. Binary Classification}
+
+There are some strategies to perform multiclass classification with multiple binary classifiers.
+
+One is a \textbf{One-versus-the-rest (OvR)} strategy, or sometimes one-versus-all (OvA). In this strategy, if there is $n$ classes, then we train $n$ binary classifiers. We select the class whose classifier outputs the highest score.
+
+Another strategy is \textbf{One-versus-one (OvO)} strategy. If there are $n$ classes, then we train ($n$ choose 2), or $\frac{n(n-1)}{2}$ binary classifiers. We then select the class which wins the most duels ($\pm \space [-0.33,0.33]$ to break tie-breakers).
+
+Scikit-Learning automatically runs OvR or OvO for a binary classification algorithm.
+
+\boldsec{Error Analysis or Performance Evaluation}
+
+\img[0.6]{29.jpg}
+
+We can still use a Confusion Matrix, this time just $n*n$.
+
+\img[0.6]{30.jpg}
+
+The above figures are Confusion Matrix with Errors Only (they can be normalized by the row or by columns).
+
+\ssec{Multilabel Classification}
+
+A multilabel classifier \textbf{outputs multiple binary tags}. For example, in a face-recognition classifier, the model may recognize three faces: Alice, Bob, and Charlie. Then it would output [True, False, True]. For example, in a photo of Alice, the output may be $[T,F,F]$ whereas a photo of Charlie and Alice may output $[T,F,T]$.
+
+In the textbook, a code example is that there are two target labels for each digit image: whether or not the digit is greater than 6 and it is odd.
+
+Each position in the output corresponds to one label, and each is an \textbf{independent yes/no decision}, which is why its called multilabel(multiple binary tags) rather than multiclass (exactly one class chosen).
+
+To measure the performance of this model, you can measure the $F_1$ score for each individual label, then simply compute the average score across all model $F_1$ scores.
+
+\ssec{Multioutput Classification}
+
+A Multioutput classification, or a \textbf{Multioutput-multiclass classification}, is the generalization of multilabel classification. 
+
+Essentially, each label can be multiclass (have more than two possible values).
+
+For example, consider a program that removes noise from images. The user inputs a noise digit image and then output is a clean digit image. \textbf{Each label can have multiple values (say a pixel value from 0 to 255)}. For a 28 x 28 image, there are 784 pixels, so 784 independent multi-class labels are returned.
+
+\ssec{Summary}
+
+It is important to understand the concepts of binary classification, multiclass classification, multilabel classification, and Multioutput classification.
+
+It is also important to understand and apply performance measures, such as \textbf{Confusion matrices for binary classification and multiclass classification models}.
+
+For Binary Classification, it is important to understand
+\begin{itemize}
+    \item Precision and Recall.
+    \item $F_1$ score.
+    \item ROC and ROC AUC.
+    \item TPR, FPR, TNR, FNR.
+\end{itemize}
 
 
 

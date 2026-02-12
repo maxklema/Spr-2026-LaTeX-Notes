@@ -27,6 +27,10 @@
 \lhead{\textbf{Maxwell Klema}}
 \cfoot{\thepage}
 
+\newcommand{\vs}[]{
+    \vspace{11pt}
+}
+
 \newcommand{\myeq}[1]{
     \vspace{11pt}
     \begin{center}
@@ -2290,17 +2294,506 @@ FROM students s, TABLE(s.math_majors) m, TABLE(s.chem_majors) c, TABLE(s.physics
 \vspace{11pt}
 
 Many ORDBMSs provide \textbf{specialized SQL functions} for LOBs (e.g., searching text, accessing portions of images or videos).
+\vspace{11pt}
 
+\topsec{Lecture 5 --- Physical File Organization and Indexing}
 
+\subsec{From Logical Concepts to Physical Constructs}
 
+\textbf{Internal data model} (a.k.a physical data model) is about how a database is realized as a set of physical files and other constructs.
 
+\textbf{Physical Database Design} translates the logical data model into the physical data model.
 
+\img[0.6]{32.jpg}
 
+\boldsecbottom{Physical Database Design}
 
+Physical Database Design focuses on optimizing data access and update performance. The primary goal is to \textbf{minimize disk I/O}, especially random block access.
 
+Key inputs include:
+\begin{itemize}
+    \item \textbf{Data characteristics} (size, distribution, access frequency).
+    \item \textbf{Workload patterns} (search, insert, update, delete)
+    \item \textbf{Storage characteristics} (disk type, block size, access cost)
+\end{itemize}
+\vs
 
+The physical \textbf{design priorities frequent and time-critical operations}.
 
+\newpage
+\boldsec{Example: Conceptual, Logical, and Internal Data Model}
 
+\img[0.7]{33.jpg}
+
+\boldsecbottom{Corresponding Physical Concepts}
+
+\begin{table}[h!]
+\centering
+\renewcommand{\arraystretch}{1.5} % Adjusts row height for better readability
+\begin{tabular}{|p{4.5cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Logical data model (general terminology)} & \textbf{Logical data model (relational terminology)} & \textbf{Internal data model} \\ \hline
+Attribute type and attribute & Column name and (cell) value & Data item or field \\ \hline
+(Entity) record & Row or tuple & Stored record \\ \hline
+(Entity) record type & Table or relation & Physical file or data set \\ \hline
+Set of (entity) record types & Set of tables or relations & Physical database or stored database \\ \hline
+Logical data structures & Foreign keys & Physical storage structures \\ \hline
+\end{tabular}
+\caption*{Table. Corresponding logical (relational) and physical concepts}
+\end{table}
+\vs
+
+We focus on the physical organization of structured, relational data!
+
+\boldsec{Physical Concepts}
+
+A \textbf{data item (or field)} is a collection of bits or characters representing a single value on storage medium. A \textbf{stored record} is the physical representation of a tuple in a relational table.
+
+A \textbf{physical file} implements a relational table by storing its records. In most cases, all records in a file share the same structure. In some situations, however, records representing different real-world entities may be stored together.
+
+A \textbf{physical database} is an integrated collection of physical files.
+
+\newpage
+\subsection{Record Organization}
+\vs
+
+\textbf{Record Organization} defines how data items are arranged into physical records. Each \textbf{data item} is stored as a sequence of bits. The format depends on the attribute's data type (e.g., numeric, character, date/time, BLOB, CLOB).
+
+Common record organization techniques include
+\begin{itemize}
+    \item Relative Location
+    \item Embedded Identification
+    \item Pointers and Lists
+\end{itemize}
+\vs
+
+\boldsec{Record Organization --- Relative Location}
+
+\textbf{Relative location} is the simplest and most widely used record organization technique. Records store only attribute values, placed at \textbf{fixed, continuous locations}. Attributes of the same entity are stored at \textbf{physically adjacent addresses}.
+
+Attribute identifiers (types) and meanings are determined by their \textbf{fixed relative positions}.
+
+Example: \texttt{EMPLOYEE(SSN, name, address, \dots)}
+
+\img[0.7]{34.jpg}
+
+\boldsecbottom{Record Organization --- Embedded Identification}
+
+In \textbf{Embedded Identification}, each attribute value is \textbf{preceded by its attribute identifier (type)}. Attributes do \textbf{not need a fixed order} within a record. In fact, only non-empty attributes are stored.
+
+This option provides flexibility for \textbf{optional and variable-length attributes}. It is conceptually similar to XML and JSON representations.
+
+\img[.9]{35.jpg}
+
+\boldsecbottom{Record Organization --- Pointers and Lists}
+
+\textbf{Pointers and lists} support \textbf{variable-length and repeating attributes}. This is well-suited for: variable-length data types, multi-valued attributes, and optional attributes.
+
+Example: A person may have multiple addresses.
+
+\img[0.7]{36.jpg}
+
+This technique is commonly used for BLOB and CLOB attributes. Large objects are stored separately, with records containing \textbf{pointers} to their locations.
+
+\boldsec{Dealing with Variable-Length Records}
+
+Variable-length records can also be handled using \textbf{delimiters} between attributes. Delimiters explicitly mark \textbf{attribute boundaries}.
+
+This is common in text-based and semi-structured data formats (e.g., CSV, JSON, and XML). It is simple to implement, but it may incur parsing overhead.
+
+\img[0.7]{37.jpg}
+
+\boldsecbottom{Example: Oracle Physical Record Structure}
+
+\img[0.6]{38.jpg}
+
+Each row begins with a \textbf{row header}. The row header stores metadata such as:
+\begin{itemize}
+    \item \textbf{Row pieces} (row rows spanning multiple blocks).
+    \item \textbf{Chaining information} (for chained row pieces)
+    \item \textbf{Number of columns} in the row piece
+    \item \textbf{Cluster keys} (for clustered tables only)
+\end{itemize}
+\vs
+
+\boldsecbottom{Disk Block (Disk Page) and Blocking Factor}
+
+A \textbf{disk block} (also called a \textbf{disk page} or cluster) is the basic unit of data transfer between disk storage and main memory. Each disk block consists of \textbf{multiple contiguous disk sectors}.
+
+The \textbf{blocking factor (BF) } is the \textbf{number of records stored in a single block}. Since a DBMS reads and writes data \textbf{one block at a time}, the blocking factor determines how many records are retrieved per disk I/O operation.
+
+Blocking Factor Calculation, for fixed-length records: $BF = [\frac{BS}{RS}]$ where BS: block size (bytes), RS: record size (bytes).
+
+For \textbf{variable-length records}, BF represents the \textbf{average number of records per block}, rather than an exact value.
+
+\boldsec{Oracle Data Block Structure}
+
+\img[0.3]{39.jpg}
+
+\textbf{Header (Common and Variable)}: The header contains general block information, such as the block address and the type of segment (for example, data or index).
+
+\textbf{Table Directory}: This portion of the data block contains information about the table having rows in this block.
+
+\textbf{Row Directory}: This portion of the data block contains information about the actual rows in the block (including addresses for each row piece in the row data area). After the space has been allocated in the row directory of a data block's overhead, this space is not reclaimed when the row is deleted. Therefore, a block that is currently empty but had up to 50 rows at one time continues to have 100 bytes allocated in the header for the row directly. Oracle reuses this space only when new rows are inserted into the block.
+
+\textbf{Overhead}: The data block header, table directory, and row directory are referred to collectively as overhead. Some block overhead is fixed in size; the total block overhead size is variable. On average, the fixed and variable portions data block overhead total 84 to 107 bytes.
+
+\textbf{Row Data}: This portion of the data block contains table or index data. Rows can span blocks.
+
+\textbf{Free Space}: Free space is allocated for insertion of new rows and for updates to rows that require additional space (for example, when a trailing null is updated to a nonnull value). Whether issued insertions actually occur in a given data block is a function of current space in that data block and the value of the space management parameter \texttt{PCTFREE}. In data blocks allocated for the data segment of a table or cluster, or for the index segment of an index, free space can also hold transaction entries. A \textbf{transaction entry} is required in a block for each INSERT, UPDATE, DELETE, and SELECT...FOR UPDATE statement accesses one or more rows in the block. The space required for transaction entries is operating system dependent; however, transaction entries in most OS require approximately 23 bytes.
+
+\subsec{File Organization}
+
+\boldsecbottom{Search Key}
+
+A \textbf{search key} is one or more attributes used to \textbf{retrieve records}. It defines \textbf{selection criteria}, not uniqueness. A search key is \textbf{not necessarily a key} (i.e., it may not uniquely identify a record).
+
+Properties of a Search key include:
+\begin{itemize}
+    \item Can be: A \textbf{primary key}, an \textbf{alternative key}, or one or more \textbf{non-key attributes}.
+    \item Can be \textbf{composite}, e.g., (Country, Gender)
+    commonly used for \textbf{range queries} (e.g., YearOfBirth BETWEEN 1980 AND 1990)
+\end{itemize}
+
+\boldsec{Category of File Organization Methods}
+
+\textbf{Primary File Organization} Methods determine the physical placement of records on storage media. They define how records are initially stored. For example, Heap file organization, sequential file organization, and hash file organization.
+
+\textbf{Secondary File Organization} Methods provide \textbf{efficient access paths} for retrieval. They use a \textbf{search key} not used in the primary organization. Secondary File Organization is typically implemented using \textbf{secondary indexes}.
+
+\boldsec{Primary File Organization Methods --- Heap File Organization}
+
+\textbf{Heap file} is the simplest \textbf{primary file organization}. New records are \textbf{appended to the end of the file}. There is \textbf{no relationship} between record values and physical storage location.
+
+In Heap File Organization, \textbf{insertion} is efficient, but \textbf{retrieval} requires linear search.
+
+The Retrieval Performance for a file with $NBLK$ blocks, the average block accesses for a\textbf{ unique search}:
+
+\myeq{\frac{NBLK}{2}}
+
+For a non-unique search key, \textbf{the entire file (NBLK) must be scanned}.
+
+\boldsec{Example: Oracle Heap-Organized Table}
+
+In Oracle, the default file organization is a heap file. In a heap organized table, rows are stored in no particular order on disk. Additionally, new rows are paced wherever space is available.
+
+By default, \texttt{CREATE TABLE} creates a heap-organized table
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE t1 (c1 NUMBER, c2 VARCHAR2(30));
+
+-- The heap organization can also be specified explicitly:
+
+CREATE TABLE t1 (c1 NUMBER, c2 VARCHAR2(30)) ORGANIZATION HEAP;
+\end{lstlisting}
+\vs
+
+\boldsec{Primary File Organizations Methods -- Sequential File Organization}
+
+In Sequential File Organizations, records are stored in sorted order (ascending or descending based on a search key). The search key is often the primary key, but may also be a non-key attribute, or a composite attribute.
+
+The advantage of this method is the high efficiency for ordered retrieval and range queries.
+
+\img[0.3]{40.png}
+
+Records can be retrieved using linear search ($O(n)$) or Binary Search ($O(nlogn)$) (on the ordered file). Binary search repeatedly halves the search interval. The retrieval performance (expected block accesses) of a linear search is
+
+\myeq{\frac{NBLK}{2} * sba}
+
+where sba is sequential block access and NBLK is the number of blocks in a file. For Binary Search:
+
+\myeq{log_2(NBLK) * rba}
+
+where rba is random block access.
+
+\newpage
+
+\boldsecbottom{Example - Sequential File Organization}
+
+Blocking factor: $BF=[BS/RS] = [2048/100] = 20$ records per block.
+
+Number of blocks in data: $NBLK=30000/20=1500$ blocks.
+
+If a single record is retrieved according to primary key using linear search, expected number of required block accesses is $1500/2=750$ sba (sequential block access).
+
+If binary search is used, the expected number of block accesses is $log_2(1500) \approx 11$ rba (random block access).
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{|c|c|}
+        \hline
+        Number of records (NR) & 30000 \\ \hline
+        Block Size (BS) & 2048 bytes \\ \hline 
+        Records Size (RS) & 100 bytes \\ \hline
+    \end{tabular}
+\end{table}
+
+\boldsec{Primary File Organization Methods --- Random File Organization}
+
+Hash file organization establishes a direct relationship between a search key value and a record's physical location. A hash function maps a key value to a storage address. Records are accessed using \textbf{random (direct) access}, not ordering.
+
+The insertion process applies a hash function to the record's key and then stores the record at the resulting physical address. The retrieval process applies the same hash function to the search key and then directly accesses the block where the record is stored.
+
+\boldsec{Key-to-Address Transformation}
+
+\img[0.6]{41.png}
+
+\boldsecbottom{Key-to-Address Transformation}
+
+The search key value (numeric or alphanumeric) is first converted into an integer. A hashing algorithm it then applied to compute an address. A common hashing algorithm is the division method:
+
+\myeq{address(key_i)=key_i\mod M}
+
+where $M$ is typically a prime number, slightly larger than the number of available addresses. The hash value identifies a \textbf{bucket} (a continuous area of record addresses). The bucket address is translated into a physical disk block address.
+
+\boldsec{Illustration: Record Retrieving Using Hashing}
+
+A query specifies a search key value (e.g., \texttt{department\_id} = 20). The DBMS applies the same hash function used during insertion and the hash value maps the key to a specific bucket. The bucket then corresponds to a physical disk block. The DBMS directly access the block to retrieve the record(s).
+
+\img[0.7]{42.png}
+
+The key idea is applying the \textbf{same hash transformation} to the search key yields the storage address of the record.
+
+\boldsec{Hashing and Collisions}
+
+The purpose of hashing is to \textbf{evenly distribute} all keys across the available address space. However, multiple records with the same hash value may be assigned to the \textbf{same bucket}, leading to a \textbf{collision}.
+
+When this happens, the bucket is said to be in overflow.
+
+\img[0.7]{43.png}
+
+\boldsecbottom{Hash File Organization Performance}
+
+For a non-overflow record retrieval, 1 rba (random block access) is added to the bucket's first block. This can possibly be followed by 1 or more sba (sequential block accesses) within the bucket.
+
+Hash file organization is \textbf{highly efficient} for \textbf{equality-based searches} on the search key.
+
+\textbf{Overflow records} may require additional block accesses, which depends on: percentage of overflow records and the overflow handling technique used.
+
+\boldsec{Indexed Sequential File Organization}
+
+Indexed Sequential File Organization is where records are stored in stored (sequential) order based on a search key. One or more indexes are built on the search key. 
+
+This method supports:
+\begin{itemize}
+    \item Equally search (via index).
+    \item Range search (via sequential order).
+\end{itemize}
+\vs
+
+This method also combines the strengths of \textbf{sequential files} and \textbf{index-based access}.
+
+\img[0.9]{44.png}
+
+\boldsecbottom{Index Entry Structure}
+
+An \textbf{index entry} stores the \textbf{search key value} of the first record in the interval, as well as a \textbf{pointer} to the physical location of that record.
+
+The index entry format:
+
+\texttt{Index Entry = <search key value, block pointer or record pointer>}
+
+Examples: \texttt{<7788,pointer>,<(1980,M), pointer>}
+
+\vs
+Index entries are \textbf{much smaller than data records}, enabling efficient searching.
+
+\newpage
+\boldsecbottom{Primary Index --- Index Type}
+
+With a primary index, the data file is ordered on a unique key (usually the Primary key or another candidate key). The index contains \textbf{one entry per data block}, not per record.
+
+As a result, the index is smaller than many other index structures.
+\vs
+
+The retrieval process:
+\begin{itemize}
+    \item Search the primary index.
+    \item Access the corresponding data block.
+    \item The record is either found in that data block or does not exist.
+\end{itemize}
+\vs
+
+\img[0.8]{45.png}
+
+\boldsecbottom{Clustered Index --- Index Type}
+
+A clustered index is similar to a primary index, but the search key is not unique --- based on a non-key attribute or a set of attributes.
+
+Records are physically ordered on disk according to the search key.
+\vs
+
+The retrieval process:
+\begin{itemize}
+    \item Access the first matching data block.
+    \item Perform sequential block accesses to retrieve all records with the same search key value.
+\end{itemize}
+\vs
+
+\img[0.8]{46.png}
+
+\boldsecbottom{Secondary Index --- Index Type}
+
+Unlike a primary or clustered indexes, a secondary index is based on an attribute type or set of attribute types \textbf{not used for ordering the actual data file}. This does not affect the physical order of records in the data file. This type of indexing can speed up retrieval based on criteria other than the primary file organization.
+
+Multiple secondary indexes \textbf{can exist} for the same data file.
+
+The figure below depicts a \textbf{Secondary Index with a Unique Search Key}:
+
+\img[0.8]{47.png}
+
+The figure below depicts a \textbf{Secondary Index with No Unique Search Key}:
+
+\img[0.8]{48.png}
+
+Here, physical records are sorted by \texttt{CustomerID}. But the search key for the secondary index is Country with non unique values. Here, there is one index entry per key value and hence each entry may refer to multiple records with that same key value. An \textbf{inverted file} can be used for an index over a non-unique, non-ordering search key of a dataset.
+
+\boldsec{Multicolumn Index}
+
+An index over a composite search key is called a multicolumn index. \textbf{A composite search key can be applied to primary, clustered, and secondary indexes}.
+\vs
+
+Examples include:
+\begin{itemize}
+    \item Multicolumn primary index,
+    \item Multicolumn clustered index,
+    \item Multicolumn secondary index
+\end{itemize}
+\vs
+
+\vs
+Example: Multicolumn Secondary Index
+
+\img[0.8]{49.png}
+
+\boldsecbottom{Multilevel Indexing}
+
+In a single-level index, as the data size increases, the index itself may become too large to be searched efficiently. To improve search efficiency, an index-to-the-index is introduced. \textbf{Multilevel indexes} help optimize indexing by \textbf{organizing index entries hierarchically}, making searches more efficient.
+
+A \textbf{search tree} is used to locate a record based on the value of one of its fields. A \textbf{multilevel index} structures the index entries using a search tree. The performance improvement achieved with high-level indexes comes from the fact that each index level is searched efficiently using a search tree retrieval technique.
+
+\vs
+Example: Multilevel Index
+
+\img[0.8]{50.png}
+
+Each \textbf{index block} represents a node in the tree. Each \textbf{index entry} in an \textbf{internal node} consists of a \textbf{search key value and a reference} to the corresponding block (node) in the lower-level index. 
+
+Each access to the index leads to navigation down a sub tree, thereby narrowing the search interval. The \textbf{lowest-level index entries}, located in the leaf node, \textbf{contain pointers to disk blocks or individual records}.
+
+\boldsec{Types of Multilevel Index (Tree Index)}
+
+There are various types of multi-leveled indexes, including:
+\begin{itemize}
+    \item B-Tree
+    \item B+Tree
+    \item B*Tree
+    \item Quadtree
+    \item R-Tree
+    \item R+tree, etc.
+\end{itemize}
+\vs
+
+Among these, \textbf{B-tree} and \textbf{B+tree} index structures are widely used for traditional data types (such as char, VARCHAR, date, and number) in many commercial database products.
+
+\boldsec{B-Tree}
+
+\textbf{B-Tree} is a variation of search trees, where each node corresponds to a disk block and nodes are kept between half fill and full to cater for accommodating changes in the data file without the need for too extensive rearrangements of the index.
+
+Every node contains a set of search key values, a set of tree pointers that refer to child nodes, and a set of data points that refer to data records or blocks with data records, that correspond to the search key values.
+
+A B-tree is a \textbf{balanced tree}; all leaf nodes are at the same level in the tree.
+\vs
+
+Example of B-Tree:
+
+\img[0.8]{51.png}
+
+\boldsec{B+-Trees}
+
+Most DBMS implementations use indexes based on B+-trees rather than B-trees.
+
+In a B+-tree, only the leaf nodes contain data points. All key values that exist in the non-leaf nodes are repeated in the leaf nodes, such that every key value occurs in a leaf node, along with a corresponding data pointers. Every leaf node also has one tree pointer, pointing to its next sibling or two tree pointers, pointing to its previous and next siblings.
+
+\newpage
+Example of B+-Trees
+
+\img[0.8]{52.png}
+
+\vs
+Example: B+Tree Index with Data File
+
+\img[0.8]{53.png}
+
+\boldsecbottom{B+Tree: Search}
+
+A B+-tree is searched starting from the root. A tree pointer is followed to the subtree that contains the appropriate range of key values. The same procedure is repeated for this subtree until a leaf node is reached. By accessing several leaf nodes consecutively, a range of multiple search key values can be retrieved.
+
+\newpage
+Example of B+ Tree Search
+
+\img[0.8]{54.png}
+
+Find 5*, 29*. Fin All > 15* and < 30*.
+
+\boldsec{Characteristics of B+ Trees}
+
+B+ Trees are the most widely used tree index. They are more flexible and have a dynamic structure that adjusts inserts and deletes. The height of B+-tree is often smaller, resulting in less block accesses to search. Additionally, Non-leaf nodes do not contain data points.
+
+Leaf nodes have an entry for every value of the search field. The tree is always balanced (height-balanced). Leaf nodes are linked using (tree) page pointers. Lastly, B+Trees support equality and range-searches efficiently.
+
+\boldsec{Search Performance of Various File Organization}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|l|l|}
+\hline
+\textbf{Linear search} & \textbf{NBLK} sba (Sequential search across all blocks) \\ \hline
+\textbf{Binary search} & \textbf{$\log_2$(NBLK)} rba (Recursive having of search space) \\ \hline
+\textbf{\begin{tabular}[c]{@{}l@{}}Single-level index\\ based search\end{tabular}} & \textbf{$\log_2$(NBLKI) + 1} rba, \\ 
+ & (1 extra block access for actual data file) \\ \hline
+\textbf{\begin{tabular}[c]{@{}l@{}}Multilevel index\\ based search\end{tabular}} & \textbf{$\log_{BFI}$(NBLKI) + 1 + 1} rba, \\ 
+ & (1 for root index, 1 for data file access) \\ \hline
+\end{tabular}
+\end{table}
+
+Note:
+\begin{itemize}
+    \item NBLK is the number of blocks in the data file.
+    \item NBLKI is the number of blocks in the index file ($NBLKI << NBLK$)
+    \item BFI (Blocking Factor of Index, also called the fan-out of index): The search interval reduces by a factor BFI with each index level, typically $BFI >> 2$.
+\end{itemize}
+\vs
+
+The index file occupies fewer disk blocks than the data file and can be searched much faster. Since BFI is typically much higher than two, \textbf{using a multilevel index is more efficient than a binary search on a single level index}.
+
+\newpage
+\boldsecbottom{Hash Indexes}
+
+Hash indexes provide a secondary file organization method that combines hashing with indexed retrieval. The index entries have the same format as in a normal index, \texttt{<key value, pointer>} pairs.
+
+\textbf{The index is organized not as a sequential file, but a hash file}. Applying the hash function to the search key yields the index block (called a \textbf{bucket}) where the corresponding index entry can be found. Based on the pointer in this entry, the actual record(s) can be retrieved.
+\vs
+
+Example of Hash-based Index:
+
+\img[0.8]{55.png}
+
+\boldsecbottom{Bitmap Index}
+
+Bitmap index are mostly efficient for \textbf{attribute types with only limited sets of values}. Instead of these values, bitmap indexes \textbf{contain a row ID and a series of bits} --- one bit for each possible value of an indexed attribute type.
+
+For each entry, the bit position that corresponds to the actual value for the row at hand is set to 1. The row IDs can be mapped to record pointers.
+
+By applying Boolean operations to bit vectors from multiple bitmap indexes, it becomes very efficient to identify records that satisfy certain criteria.
+
+\newpage
+Example: Bitmap Indexes
+
+\img[0.8]{56.png}
+
+In reach table, each column can be considered as a bitmap or bit vector indicating which tuples have the values indicated by the column. By applying boolean operations to bit vectors from multiple bitmap indexes, we can efficiently identify records such as female customers whole live in the U.S.: $\to $ \textbf{Record 1,7,11}.
 
 
 
