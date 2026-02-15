@@ -77,7 +77,7 @@
     \vspace{11pt}
 }
 
-\newcommand{\vs}[]{
+\newcommand{\vs}{
     \vspace{11pt}
 }
 
@@ -1582,6 +1582,647 @@ For Binary Classification, it is important to understand
     \item TPR, FPR, TNR, FNR.
 \end{itemize}
 
+\vs
+\topsec{Lecture 7 --- End-to-End Classification Examples}
 
+\ssec{Setup}
+
+\begin{lstlisting}[language=python, breaklines=true]
+import sys # Python version >= 3.7
+from packaging import version
+import sklearn # scikit-learn
+import matplotlib.pyplot as plt
+
+# just like in the last chapter, let's define the default sizes to make the figures prettier
+
+plt.rc('font', size=14)
+plt.rc('axes', labelsize=14, titlesize=14)
+plt.rc('legend', fontsize=14)
+plt.rc('xtick', labelsize=10)
+plt.rc('ytick', labelsize=10)
+\end{lstlisting}
+\vs
+
+Finally, let's create the images/classification folder (if it doesn't already exist) and define the \texttt{save\_fig()} function, which is used throughout this notebook to save figures at high resolution for the book.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from pathlib import Path
+
+IMAGES_PATH = Path() / "images" / "classification"
+IMAGES_PATH.mkdir(parents=True, exist_ok=True)
+
+def save_fig(fig_id, tight_layout=True, fig_extension="png", resolution=300):
+    path = IMAGES_PATH / f"{fig_id}.{fig_extension}"
+    if tight_layout:
+        plt.tight_layout()
+    plt.savefig(path, format=fig_extension, dpi=resolution)
+\end{lstlisting}
+\vs
+
+\ssec{MNIST}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.datasets import fetch_openml
+
+mnist = fetch_openml('mnist_784', as_frame=False)
+print(mnist.DESCR) # prints description of dataset
+
+mnist.keys() # Prints all keys to call on the mnist object
+# => dict_keys(['data', 'target', 'frame', 'categories', 'feature_names', 'target_names', 'DESCR', 'details', 'url'])
+
+X, y = mnist.data, mnist.target
+X.shape => (70000, 784)
+y.shape => (70000,)
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+import matplotlib.pyplot as plt
+
+def plot_digit(image_data):
+    image = image_data.reshape(28,28)
+    plt.imshow(image, cmap="binary")
+    plot.axis("off")
+
+some_digit = X[0]
+plot_digit(some_digit)
+save_fig("some_digit_plot")
+
+y[0] => '5'
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+# extra code - this cell generates and saves figures
+plt.figure(figsize=(9,9))
+for idx, image_data in enumerate(X[:100]):
+    plt.subplot(10,10,idx+1)
+    plot_digit(image_data)
+plt.subplots_adjust(wspace=0, hspace=0)
+save_fig("more_digits_plot", tight_layout=False)
+plt.show()
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+X_train, X_test, y_train, y_test = X[:60000], X[60000:], y[:60000], y[60000:] # split up testing and training data
+\end{lstlisting}
+\vs
+
+\ssec{Training a Binary Classifier}
+
+The digit is either 5 or not 5.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+y_train_5 = (y_train == '5')  # True for all 5s, False for all other digits
+y_test_5 = (y_test == '5')
+
+from sklearn.linear_model import SGDClassifier
+
+sgd_clf = SGDClassifier(random_state=42)
+sgd_clf.fit(X_train, y_train_5) # train model
+
+# test
+sgd_clf.predict([some_digit]) => array([ True]) # model predicts image (which is a 5) is a 5.
+\end{lstlisting}
+\vs
+
+\subsubsection{Performance Measures}
+\vs
+
+\boldsec{Measuring Accuracy using Cross-Validation}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.model_selection import cross_val_score
+
+cross_val_score(sgd_clf, X_train, y_train_5, cv=3, scoring="accuracy") # 3 folds
+# => array([0.95035, 0.96035, 0.9604 ])
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.model_selection import StratifiedKFold
+from sklearn.base import clone
+
+skfolds = StratifiedKFold(n_splits=3)  # add shuffle=True if the dataset is not
+                                       # already shuffled
+for train_index, test_index in skfolds.split(X_train, y_train_5):
+    clone_clf = clone(sgd_clf)
+    X_train_folds = X_train[train_index]
+    y_train_folds = y_train_5[train_index]
+    X_test_fold = X_train[test_index]
+    y_test_fold = y_train_5[test_index]
+
+    clone_clf.fit(X_train_folds, y_train_folds)
+    y_pred = clone_clf.predict(X_test_fold)
+    n_correct = sum(y_pred == y_test_fold)
+    print(n_correct / len(y_pred))
+
+# => 0.95035
+# => 0.96035
+# => 0.9604
+\end{lstlisting}
+\vs
+
+Dummy Classifier --- A very simple \textbf{baseline} model that makes predictions using fixed rules and ignores all input features.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.dummy import DummyClassifier
+
+dummy_clf = DummyClassifier()
+dummy_clf.fit(X_train, y_train_5)
+print(any(dummy_clf.predict(X_train)))
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+cross_val_score(dummy_clf, X_train, y_train_5, cv=3, scoring="accuracy")
+# => array([0.90965, 0.90965, 0.90965]) # baseline performances
+\end{lstlisting}
+\vs
+
+\boldsec{Confusion Matrix}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.model_selection import cross_val_predict
+y_train_pred = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3)
+
+from sklearn.metrics import confusion_matrix
+
+cm = confusion_matrix(y_train_5, y_train_pred)
+print(cm) # => array([[53892,   687], [ 1891,  3530]])
+
+# Pretend we reached perfection
+y_train_perfect_predictions = y_train_5  # pretend we reached perfection
+confusion_matrix(y_train_5, y_train_perfect_predictions) # => array([[54579,0],[0,  5421]])
+\end{lstlisting}
+\vs
+
+\boldsec{Precision and Recall}
+
+Precision and Recall
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import precision_score, recall_score
+
+precision_score(y_train_5, y_train_pred)  # = 3530 / (687 + 3530) = 0.8370879772350012
+cm [1,1] / (cm[0,1] + cm[1,1]) # => 0.8370879772350012
+
+recall_score(y_train_5, y_train_pred) # = 3530 / (1891 + 3530) = 0.6511713705958311
+cm[1,1] / (cm[1,0] + cm[1,1]) # => 0.6511713705958311
+\end{lstlisting}
+\vs
+
+$F_1$ Score
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import f1_score
+
+f1_score(y_train_5, y_train_pred) # => 0.7325171197343847
+cm [1,1] / (cm[1, 1] + (cm[1, 0] + cm[0, 1]) / 2) # TP / (TP + (FN + FP) / 2 )
+\end{lstlisting}
+\vs
+
+\boldsec{Precision and Recall Tradeoff}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+y_scores = sgd_clf.decision_function([some_digit])
+y_scores # => array([2164.22030239])
+
+threshold = 0
+y_some_digit_pred = (y_scores > threshold) # True since 2164 > 0
+\end{lstlisting}
+\vs
+
+Note: 2164.22030239 is a positive magnitude for how strongly the model believes the 'some\_digit' image is a 5.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+threshold = 3000
+y_some_digit_pred = (y_scores > threshold)
+y_some_digit_pred # False since 2164 < 3000
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import precision_recall_curve
+
+y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3,
+                             method="decision_function") # note decision_function
+
+precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
+
+plt.figure(figsize=(8, 4))  # extra code
+plt.plot(thresholds, precisions[:-1], "b--", label="Precision", linewidth=2)
+plt.plot(thresholds, recalls[:-1], "g-", label="Recall", linewidth=2)
+plt.vlines(threshold, 0, 1.0, "k", "dotted", label="threshold")
+
+# extra code
+idx = (thresholds >= threshold).argmax()  # first index >= threshold
+plt.plot(thresholds[idx], precisions[idx], "bo")
+plt.plot(thresholds[idx], recalls[idx], "go")
+plt.axis([-50000, 50000, 0, 1])
+plt.grid()
+plt.xlabel("Threshold")
+plt.legend(loc="center right")
+save_fig("precision_recall_vs_threshold_plot")
+
+plt.show()
+\end{lstlisting}
+
+\img[0.8]{31.jpg}
+
+\vs
+\begin{aside}
+This chart shows how precision and recall change as the threshold value is varied. In this notebook, \texttt{sgd\_clf} outputs a continuous score for each image (via \texttt{decision\_function}). You then choose a threshold (in this case, 3000). If the score is above the threshold, then the model predicts the image is a 5. Otherwise, it predicts it is not a 5.
+
+For a high threshold, there is a high precision rate and a low recall rate. When $T$ is large, you only predict "5" for digits with very high scores. Almost no non-5s reach that score, so there are very few false positives.
+
+Meanwhile, for a low threshold, there is a high recall rate and a low precision rate. When $T$ is small, lots of images are "5". You catch almost all true 5s, because nearly any 5 gets a score $\geq T$. However, lots of non-5s clear that low threshold bar, becoming false positives.
+\end{aside}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+import matplotlib.patches as patches # extra code for curved arrow
+
+plt.figure(figsize=(6,5)) # just formatting
+
+plt.plot(recalls, precisions, linewidth=2, label="Precision/Recall curve")
+
+# rest of code makes graph look pretty
+\end{lstlisting}
+\vs
+
+\img[0.7]{32.jpg}
+
+Statistics
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+idx_for_90_precision = (precisions >= 0.90).argmax()
+threshold_for_90_precision = thresholds[idx_for_90_precision]
+threshold_for_90_precision # => np.float64(3370.0194991439557) # threshold at which precision is >= 0.90
+
+y_train_pred_90 = (y_scores >= threshold_for_90_precision)
+
+y_train_pred_90 = (y_scores >= threshold_for_90_precision)
+precision_score(y_train_5, y_train_pred_90) # => 0.90, as expected, where y_train_5 is the true label vector and y_train_red_90 are predictions with more than 90% threshold
+
+recall_at_90_precision = recall_score(y_train_5, y_train_pred_90)
+recall_at_90_precision # => 0.4799852425751706
+
+\end{lstlisting}
+\vs
+
+\boldsec{The ROC Curve}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import roc_curve
+
+fpr, tpr, thresholds = roc_curve(y_train_5, y_scores) # true positive rate, false positive rate
+# note => y_scores are real-valued confidence scores, while y_train_5 are boolean ground truth labels (y_train_5 = (y_train == '5'))
+
+# roc curve works by sweeping a threshold over those numeric scores. For a given threshold t, it conceptually does y_pred_at_t = (y_scores >= t). It uses this to compare y_train_5 to y_pred_at_t. This process repeats for many thresholds, building up the ROC curve.
+\end{lstlisting}
+\vs
+
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+idx_for_threshold_at_90 = (thresholds <= threshold_for_90_prediction).argmax()
+tpr_90, fpr_90 = tpr[idx_for_threshold_at_90], fpr[idx_for_threshold_at_90]
+
+# thresholds, tpr, and fpr from the above cell show different tpr and fpr at different thresholds. idx_for_threshold_at_90 creates a boolean array where any threshold in thresholds is <= threshold_for_90_prediction, which we calculated earlier to be about 3300. argmax() returns the first index of the first True value. This is effectively the first threshold or closest ROC point at or just "past" your chosen scorre threshold.
+
+plt.figure(figsize=(6, 5))  # extra code
+plt.plot(fpr, tpr, linewidth=2, label="ROC curve")
+plt.plot([0, 1], [0, 1], 'k:', label="Random classifier's ROC curve")
+plt.plot([fpr_90], [tpr_90], "ko", label="Threshold for 90% precision")
+\end{lstlisting}
+\vs
+
+\img[0.7]{33.jpg}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import roc_auc_score
+
+roc_auc_score(y_train_5, y_scores) # => np.float64(0.9604938554008616) (area under curve)
+\end{lstlisting}
+\vs
+
+\boldsec{Random Forest Classifier for Binary Classification}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.ensemble import RandomForestClassifier
+
+forest_clf = RandomForestClassifier(random_state=42)
+y_probas_forest = cross_val_predict(forest_clf, X_train, y_train_5, cv=3,
+                                    method="predict_proba")
+
+y_probas_forest[:2] => array([[0.11, 0.89],[0.99, 0.01]]), this is the matrix of predicted probabilities from a Random Forest Classifier. The shape is (n_samples,2) since thiss is a binary problem. Column 0 is the estimated probability of class 0 (not 5) and column 1 is the estimated probability class 1 (is 5).
+\end{lstlisting}
+\vs
+
+The following are estimated probabilities. Among the images that the model classified as positive with a probability between 50\% and 60\%, there are actually about 94\% positive images.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+# Not in the code
+idx_50_to_60 = (y_probas_forest[:, 1] > 0.50) & (y_probas_forest[:, 1] < 0.60) # => True if the image was predicted with probability between 50% and 60% of being a 5.
+print(f"{(y_train_5[idx_50_to_60]).sum() / idx_50_to_60.sum():.1%}") => 94.0%
+# => y_train_5[idx_50_to_60] is the true label array (True if the digit is actually 5, false otherwise) and indexing with the mask keeps only those images whose predicted proba is [0.5,0.6].
+
+# => how many images with predicted confidence of being a 5 between 50% and 60% are actually 5s?
+
+y_scores_forest = y_probas_forest[:, 1]
+precisions_forest, recalls_forest, thresholds_forest = precision_recall_curve(
+    y_train_5, y_scores_forest)
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+plt.figure(figsize=(6, 5))  # extra code
+
+plt.plot(recalls_forest, precisions_forest, "b-", linewidth=2,
+         label="Random Forest")
+plt.plot(recalls, precisions, "--", linewidth=2, label="SGD")
+\end{lstlisting}
+\vs
+
+\img[0.7]{34.jpg}
+
+We could use \texttt{cross\_val\_predict(forest\_clf, X\_train, y\_train\_5, cv=3)} to compute
+
+\texttt{y\_train\_pred\_forest}, but since we already have the estimated probabilities, we can just use the default threshold of 50\% probability to get the predictions must faster.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+y_train_pred_forest = y_probas_forest[:, 1] >= 0.5  # positive proba >= 50%
+f1_score(y_train_5, y_train_pred_forest) # => 0.9274509803921569
+
+roc_auc_score(y_train_5, y_scores_forest) => np.float64(0.9983436731328145)
+
+precision_score(y_train_5, y_train_pred_forest) => 0.9897468089558485
+
+recall_score(y_train_5, y_train_pred_forest) => 0.8725327430363402
+\end{lstlisting}
+\vs
+
+\ssec{Multiclass Classification}
+
+SVMs do not scale well to large datasets, so let's only train on the first 2,000 instances, or else this section will take a very long time to run:
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.svm import SVC
+
+svm_clf = SVC(random_state=42)
+svm_clf.fit(X_train[:2000], y_train[:2000])  # y_train, not y_train_5
+
+svm_clf.predict([some_digit]) => array(['5'], dtype=object)
+
+some_digit_scores = svm_clf.decision_function([some_digit])
+some_digit_scores.round(2) => array([[ 3.79,  0.73,  6.06,  8.3 , -0.29,  9.3 ,  1.75,  2.77,  7.21,
+         4.82]]), see that 9.3 (5) is the highest, so it is likely 5.
+
+class_id = some_digit_scores.argmax() # => 5
+
+svm_clf.classes_ => array(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'], dtype=object) (all of the possible classes)
+
+svm_clf.classes_[class_id] => 5
+\end{lstlisting}
+\vs
+
+If you want \texttt{decision\_function()} to return all 45 scores, you can set the \texttt{decision\_function\_shape} hyperparameter to "ovo". The default value is "ovr" (one vs. rest), but don't let this confuse you: \texttt{SVC} \textbf{always uses OvO for training}. This hyperparameter only affects whether or not the 45 scores are aggregated (whether you see 10 or 45 scores.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+# extra code - shows how to get all 45 OvO scores if needed
+
+svm_clf.decision_function_shape = "ovo"
+some_digit_scores_ovo = svm_clf.decision_function([some_digit])
+some_digit_scores_ovo.round(2)
+
+# => array([[ 0.11, -0.21, -0.97,  0.51, -1.01,  0.19,  0.09, -0.31, -0.04,
+        -0.45, -1.28,  0.25, -1.01, -0.13, -0.32, -0.9 , -0.36, -0.93,
+         0.79, -1.  ,  0.45,  0.24, -0.24,  0.25,  1.54, -0.77,  1.11,
+         1.13,  1.04,  1.2 , -1.42, -0.53, -0.45, -0.99, -0.95,  1.21,
+         1.  ,  1.  ,  1.08, -0.02, -0.67, -0.14, -0.3 , -0.13,  0.25]])
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.multiclass import OneVsRestClassifier
+
+ovr_clf = OneVsRestClassifier(SVC(random_state=42))
+ovr_clf.fit(X_train[:2000], y_train[:2000])
+
+ovr_clf.predict([some_digit]) => 5
+
+len(ovr_clf.estimators_) => 10 (10 binary classifiers)
+
+sgd_clf = SGDClassifier(random_state=42)
+sgd_clf.fit(X_train, y_train)
+sgd_clf.predict([some_digit]) # => 3
+
+sgd_clf.decision_function([some_digit]).round() 
+# => array([[-31893., -34420.,  -9531.,   1824., -22320.,  -1386., -26189.,
+        -16148.,  -4604., -12051.]])
+
+cross_val_score(sgd_clf, X_train, y_train, cv=3, scoring="accuracy") => array([0.87365, 0.85835, 0.8689 ])
+
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train.astype("float64"))
+cross_val_score(sgd_clf, X_train_scaled, y_train, cv=3, scoring="accuracy") # => array([0.8983, 0.891 , 0.9018]) (a little better)
+\end{lstlisting}
+\vs
+
+\vs
+\subsubsection{Error Analysis}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.metrics import COnfusionMatrixDisplay
+
+y_train_pred = cross_val_predict(sgd_clf, X_train_scaled, y_train, cv=3)
+plt.rc('font', size=9)
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred)
+plt.show()
+\end{lstlisting}
+\vs
+
+\img[0.6]{38.jpg}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+plt.rc('font', size=10) # extra code
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, normalize="true", value_format=".0%")
+
+plt.show()
+\end{lstlisting}
+\vs
+
+\img[0.6]{35.jpg}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+sample_weight = (y_train_pred != y_train)
+plt.rc('font', size=10)  # extra code
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred,
+                                        sample_weight=sample_weight,
+                                        normalize="true", values_format=".0%")
+plt.show()
+\end{lstlisting}
+\vs
+
+\img[0.6]{36.jpg}
+
+Let us put all plots in a couple of figures for the book:
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+# extra code
+fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(9, 4))
+plt.rc('font', size=9)
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, ax=axs[0])
+axs[0].set_title("Confusion matrix")
+plt.rc('font', size=10)
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, ax=axs[1],
+                                        normalize="true", values_format=".0%")
+axs[1].set_title("CM normalized by row")
+save_fig("confusion_matrix_plot_1")
+plt.show()
+\end{lstlisting}
+\vs
+
+\img[0.8]{37.jpg}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+# extra code
+fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(9, 4))
+plt.rc('font', size=10)
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, ax=axs[0],
+                                        sample_weight=sample_weight,
+                                        normalize="true", values_format=".0%")
+axs[0].set_title("Errors normalized by row")
+ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, ax=axs[1],
+                                        sample_weight=sample_weight,
+                                        normalize="pred", values_format=".0%")
+axs[1].set_title("Errors normalized by column")
+save_fig("confusion_matrix_plot_2")
+plt.show()
+plt.rc('font', size=14)  # make fonts great again
+\end{lstlisting}
+\vs
+
+\img[0.8]{39.jpg}
+
+\vs
+\subsection{Multilabel Classification}
+\vs
+
+In multilabel classification, a input value, $X$, can have multiple binary output labels.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+import numpy as np
+from sklearn.neighbors import KNeighborsClassifier
+
+y_train_large = (y_train >= '7')
+y_train_odd = (y_train.astype('int8') % 2 == 1)
+y_multilabel = np.c_[y_train_large, y_train_odd]
+
+knn_clf = KNeighborsClassifier()
+knn_clf.fit(X_train, y_multilabel)
+\end{lstlisting}
+\vs
+
+Note, in the cell below, average tells the F1\_score how to combine per-label F1 scores into one number for a multi-label problem. For "macro", each label counts equally and the mean of both labels are takin. For "weighted", F1 weights each label by its support (how many times that label appears in y\_multilabel". F1 then takes the weighted average of these two labels.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+knn_clf.predict([some_digit]) => [False, True], so '5' is not a large number but it is odd, which is correct!
+
+y_train_knn_pred = cross_val_predict(knn_clf, X_train, y_multilabel, cv=3)
+f1_score(y_multilabel, y_train_knn_pred, average="macro") # => 0.9764102655606048 (pretty good)
+
+# extra code
+f1_score(y_multilabel, y_train_knn_pred, average="weighted") # => 0.9778357403921755
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from sklearn.multioutput import ClassifierChain
+
+chain_clf = ClassifierChain(SVC(), cv=3, random_state=42)
+chain_clf.fit(X_train[:2000], y_multilabel[:2000])
+
+chain_clf.predict([some_digit]) => [0., 1.]
+\end{lstlisting}
+\vs
+
+\ssec{Multioutput Classification}
+
+In a Multioutput classifier, each label can be multiclass (have more than two possible values). It is seen as the generalization of multilabel classification.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+np.random.seed(42)  # to make this code example reproducible
+noise = np.random.randint(0, 100, (len(X_train), 784)) # each pixel noise value between 0 and 99
+X_train_mod = X_train + noise # adds the noise pixel wise which gives a noisy version of every image
+noise = np.random.randint(0, 100, (len(X_test), 784))
+X_test_mod = X_test + noise
+y_train_mod = X_train # original clean image
+y_test_mod = X_test
+\end{lstlisting}
+\vs
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+plt.subplot(121); plot_digit(X_test_mod[0])
+plt.subplot(122); plot_digit(y_test_mod[0])
+plt.show()
+\end{lstlisting}
+\vs
+
+\img[0.6]{40.jpg}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+knn_clf = KNeighborsClassifier()
+knn_clf.fit(X_train_mod, y_train_mod)
+clean_digit = knn_clf.predict([X_test_mod[0]])
+plot_digit(clean_digit)
+plt.show()
+\end{lstlisting}
+\vs
+
+\img[0.25]{./41.jpg}
 
 \end{document}
