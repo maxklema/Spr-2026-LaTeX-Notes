@@ -1,27 +1,4 @@
-\documentclass[11pt]{article}
-\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
-\usepackage[english]{babel}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage{geometry}
-\usepackage{fancyhdr} % Headings
-\usepackage{listings} % Code
-\usepackage{parskip} % Spacing for Paragraphs
-\usepackage{mdframed} % Asides
-\usepackage{caption}
-\usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage{hyperref}
-
-% Asides
-\newenvironment{aside}
-  {\begin{mdframed}[style=0,%
-      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
-          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
-      skipabove=7pt,skipbelow=7pt]\small}
-  {\end{mdframed}}
-
-\renewcommand{\headrulewidth}{.2mm} % header line width
+der line width
 
 \rhead{\today}
 \lhead{\textbf{Maxwell Klema}}
@@ -66,7 +43,30 @@
 }
 
 \newcommand{\boldsec}[1]{
-    \vspace{11pt}
+    \vspace{11p\documentclass[11pt]{article}
+\usepackage[a4paper,left=2.5cm,right=2.5cm,top=\dimexpr15mm+1.5\baselineskip,bottom=2cm]{geometry}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{fancyhdr} % Headings
+\usepackage{listings} % Code
+\usepackage{parskip} % Spacing for Paragraphs
+\usepackage{mdframed} % Asides
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+% Asides
+\newenvironment{aside}
+  {\begin{mdframed}[style=0,%
+      leftline=false,rightline=false,leftmargin=2em,rightmargin=2em,%
+          innerleftmargin=0pt,innerrightmargin=0pt,linewidth=0.75pt,%
+      skipabove=7pt,skipbelow=7pt]\small}
+  {\end{mdframed}}
+
+\renewcommand{\headrulewidth}{.2mm} % het}
     \textbf{#1}
     \vspace{11pt}
 }
@@ -77,7 +77,7 @@
     \vspace{11pt}
 }
 
-\newcommand{\vs}{
+\newcommand{\vs}[]{
     \vspace{11pt}
 }
 
@@ -1827,13 +1827,13 @@ y_scores = cross_val_predict(sgd_clf, X_train, y_train_5, cv=3,
 
 precisions, recalls, thresholds = precision_recall_curve(y_train_5, y_scores)
 
-plt.figure(figsize=(8, 4))  # extra code
+plt.figure(figsize=(8, 4))  # extra code – it's not needed, just formatting
 plt.plot(thresholds, precisions[:-1], "b--", label="Precision", linewidth=2)
 plt.plot(thresholds, recalls[:-1], "g-", label="Recall", linewidth=2)
 plt.vlines(threshold, 0, 1.0, "k", "dotted", label="threshold")
 
-# extra code
-idx = (thresholds >= threshold).argmax()  # first index >= threshold
+# extra code – this section just beautifies and saves Figure 3–5
+idx = (thresholds >= threshold).argmax()  # first index ≥ threshold
 plt.plot(thresholds[idx], precisions[idx], "bo")
 plt.plot(thresholds[idx], recalls[idx], "go")
 plt.axis([-50000, 50000, 0, 1])
@@ -1911,7 +1911,7 @@ tpr_90, fpr_90 = tpr[idx_for_threshold_at_90], fpr[idx_for_threshold_at_90]
 
 # thresholds, tpr, and fpr from the above cell show different tpr and fpr at different thresholds. idx_for_threshold_at_90 creates a boolean array where any threshold in thresholds is <= threshold_for_90_prediction, which we calculated earlier to be about 3300. argmax() returns the first index of the first True value. This is effectively the first threshold or closest ROC point at or just "past" your chosen scorre threshold.
 
-plt.figure(figsize=(6, 5))  # extra code
+plt.figure(figsize=(6, 5))  # extra code – not needed, just formatting
 plt.plot(fpr, tpr, linewidth=2, label="ROC curve")
 plt.plot([0, 1], [0, 1], 'k:', label="Random classifier's ROC curve")
 plt.plot([fpr_90], [tpr_90], "ko", label="Threshold for 90% precision")
@@ -1961,7 +1961,7 @@ precisions_forest, recalls_forest, thresholds_forest = precision_recall_curve(
 
 \vs
 \begin{lstlisting}[language=python, breaklines=true]
-plt.figure(figsize=(6, 5))  # extra code
+plt.figure(figsize=(6, 5))  # extra code – not needed, just formatting
 
 plt.plot(recalls_forest, precisions_forest, "b-", linewidth=2,
          label="Random Forest")
@@ -2069,7 +2069,7 @@ cross_val_score(sgd_clf, X_train_scaled, y_train, cv=3, scoring="accuracy") # =>
 from sklearn.metrics import COnfusionMatrixDisplay
 
 y_train_pred = cross_val_predict(sgd_clf, X_train_scaled, y_train, cv=3)
-plt.rc('font', size=9)
+plt.rc('font', size=9)  # extra code – make the text smaller
 ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred)
 plt.show()
 \end{lstlisting}
@@ -2105,7 +2105,7 @@ Let us put all plots in a couple of figures for the book:
 
 \vs
 \begin{lstlisting}[language=python, breaklines=true]
-# extra code
+# extra code – this cell generates and saves Figure 3–9
 fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(9, 4))
 plt.rc('font', size=9)
 ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, ax=axs[0])
@@ -2123,7 +2123,7 @@ plt.show()
 
 \vs
 \begin{lstlisting}[language=python, breaklines=true]
-# extra code
+# extra code – this cell generates and saves Figure 3–10
 fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(9, 4))
 plt.rc('font', size=10)
 ConfusionMatrixDisplay.from_predictions(y_train, y_train_pred, ax=axs[0],
@@ -2171,7 +2171,7 @@ knn_clf.predict([some_digit]) => [False, True], so '5' is not a large number but
 y_train_knn_pred = cross_val_predict(knn_clf, X_train, y_multilabel, cv=3)
 f1_score(y_multilabel, y_train_knn_pred, average="macro") # => 0.9764102655606048 (pretty good)
 
-# extra code
+# extra code – shows that we get a negligible performance improvement when we set average="weighted" because the classes are already pretty well balanced.
 f1_score(y_multilabel, y_train_knn_pred, average="weighted") # => 0.9778357403921755
 \end{lstlisting}
 \vs
@@ -2223,6 +2223,590 @@ plt.show()
 \end{lstlisting}
 \vs
 
-\img[0.25]{./41.jpg}
+\img[0.25]{41.jpg}
+
+\topsec{Lecture 8 --- Deep Learning}
+
+\vs
+\subsection{Deep Learning: Why and How}
+\vs
+
+\boldsecbottom{Why Deep Learning?}
+
+In ML, what makes DL different? It achieves better performance for many problems, and it completely automates what used to be the most crucial step in ML (Feature Engineering).
+
+It allows a model to learn all layers of representation jointly at the same time, rather than in succession (greedily).
+
+\boldsec{How does Deep Learning Work?}
+
+A reminder from ML (three main components)
+\begin{itemize}
+    \item Weights or parameters
+    \item Loss function or objective function or cost function
+    \item Optimizer (Gradient Descent)
+\end{itemize}
+\vs
+
+\img[0.6]{42.jpg}
+
+\img[0.6]{43.jpg}
+
+\boldsecbottom{Perceptron}
+
+Invented in 1957 by Frank Rosenblatt, it is one of the simplest artificial neural network (ANN) architectures. It is based on a \textbf{linear threshold unit (LTU)}. The inputs and outputs are numbers (instead of binary on/off values,) and each input connection is associated with a weight.
+
+\boldsec{Linear Threshold Unit (LTU)}
+
+Output: $h_w(x)=step(w^T*x)$
+
+\img[0.6]{44.jpg}
+
+\boldsecbottom{Common Step Functions Used in Perceptrons}
+
+\text{heaviside}(z) = \begin{cases} 
+0 & \text{if } z < 0 \\ 
+1 & \text{if } z \geq 0 
+\end{cases}
+
+\text{sgn}(z) = \begin{cases} 
+-1 & \text{if } z < 0 \\ 
+0 & \text{if } z = 0 \\ 
++1 & \text{if } z > 0 
+\end{cases}
+
+\newpage
+\boldsecbottom{Perceptron}
+
+\img[0.65]{45.jpg}
+
+\boldsecbottom{Computation Equation}
+
+$h_{W,b}(X)=\phi(XW+b)$
+\begin{itemize}
+    \item \textbf{X}: Matrix of input features. One row per instance and one column per feature.
+    \item \textbf{W (Weight Matrix)}: Contains all the connection weights except for the ones from the bias neuron. One row per input neuron and one column per artificial neuron in the layer.
+    \item \textbf{b (Bias Vector)}: Contains all the connection weights between the bias neuron and the artificial neurons. One bias per artificial neuron.
+    \item \textbf{$\phi$}: Activation Function.
+\end{itemize}
+\vs
+
+The Input Matrix ($X$) is the "data table". Each row is a different observation, and each column is a feature of that observation. The dimensions are $m *n$ where $m$ is the number of instances (batch size) and $n$ is the number of features $(x_1,x_2,\dots,x_n)$.
+
+The Weight Matrix (W) contains the strength of every connection between your input layer and output layer. The dimensions are $n * k$ where $n$ is the number of input features and $k$ is the number of neurons in the output layer.
+
+The operation is when you multiply $X(m*n)$ by $W(n*K)$, the inner dimensions ($n$) must match. The result is a $m*k$ matrix.
+
+The Bias vector (b) acts as an offset, allowing the activation function to shift left or right. In the diagram, it is represented by the "Bias Neuron" that always outputs 1.
+
+The dimensions are $1*k$. Even though $XW$ is $(m*k)$ and $b$ is $1*k$, Python libraries like NumPy will "stretch" (broadcast) b across all $m$ rows so it can be added to every instance.
+
+The activation function $(\phi)$ is applied element wise to the resulting $m*k$ matrix. In the context of Heaviside or Signum function, this "squashes" the raw sums into the final outputs (0/1 or -1/0/+1).
+
+
+\img[0.6]{48.jpg}
+
+\boldsecbottom{Activation Functions and Their Derivatives}
+
+\img[0.7]{46.jpg}
+
+\boldsecbottom{Multilayer Perceptron}
+
+\img[0.6]{47.jpg}
+
+\textbf{DNN}: When an ANN contains a deep stack of hidden layers, it is called a \textbf{deep neural network}.
+
+\img[0.6]{49.jpg}
+
+\vs
+\subsection{"Hello World" Example}
+\vs
+
+The MNIST Dataset contains a collection of grayscale images of handwritten digits (28 x 28 pixels). There are 60,000 training images and 10,000 test images. The goal is to classify images into their 10 categories (0 through 9).
+
+\img[0.5]{50.jpg}
+
+\boldsecbottom{Terminology}
+
+A class is a category in a classification problem
+
+A sample is a collection of data points.
+
+A label is the class associated with a specific sample.
+
+\boldsec{Steps}
+
+\begin{itemize}
+    \item Obtain the data.
+    \item Build the DL Model.
+    \item Prepare the data.
+    \item Train / fit the model.
+    \item Evaluate the model on new data or test data.
+\end{itemize}
+\vs
+
+\newpage
+\subsection{MNIST DL Model Example End-to-End}
+\vs
+
+\boldsec{Loading the MNIST Dataset from Keras}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from tensorflow.keras.datasets import mnist
+(train_images, train_labels), (test_images, test_labels) = mnist.load_data()
+\end{lstlisting}
+\vs
+
+\begin{aside}
+    \textbf{Keras} is a high-level API built on TensorFlow, whereas PyTorch is a lower-level deep learning framework with a more "raw" yet flexible feel. In Keras, you describe models with layers (Sequential or Functional API), and TensorFlow handles the lower-level execution, graph building, and deployment. It emphasizes:
+    \begin{itemize}
+        \item \textbf{Simplicity and speed of prototyping} (very few lines of code to get model training).
+        \item \textbf{Abstraction}
+        \item \textbf{Tight integration with the TensorFlow ecosystem} (data pipelines, distributed training, TensorFlow Serving, etc.).
+    \end{itemize}
+
+    Meanwhile, \textbf{PyTorch} is a full end-to-end ML framework with a Pythonic, imperative style. You define \texttt{nn.Module} classes and write the forward pass as plain Python; autograd traces operations dynamically. It emphasizes:
+    \begin{itemize}
+        \item \textbf{Dynamic computation graphs}: The graph is built on the flow as code runs, which makes control flow, debugging, and "weird" research architectures very natural.
+        \item \textbf{Fine-grained control}: you can manage training loops, logging, etc., more explicitly (though higher-level wrappers exist).
+        \item \textbf{Strong production story }via TorchScript, TorchServe, C++ frontend, mobile runtimes, ONNX export, and cloud integrations.
+    \end{itemize}
+    \vs
+\end{aside}
+\vs
+
+\begin{lstlisting}[language=python, breaklines=true]
+train_images.shape => (60000,28,28) # 3D (Rank 3)
+len(train_labels) => 60000
+train_labels => array([5, 0, 4, ..., 5, 6, 8], dtype=uint8)
+
+test_images.shape() => (10000,28,28) # 3D (Rank 3)
+len(test_labels) => 10000
+test_labels => array([7, 2, 1, ..., 4, 5, 6], dtype=uint8)
+\end{lstlisting}
+\vs
+
+\boldsecbottom{The Network Architecture}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+from tensorflow import keras
+from tensorflow.keras import layers
+model = keras.Sequential([
+    layers.Dense(512, activation="relu"),
+    layers.Dense(10, activation="softmax")
+])
+\end{lstlisting}
+\vs
+
+This code defines a single Keras Sequential model with an implicit input layer (Keras infers this from the shape of the data later passed). There is a hidden dense layer with 512 artificial neurons, each with ReLU activation. It learns a 512-dimensional representation of the input. Finally, there is an output dense layer that has 10 neurons, one per class (0-9). Softmax turns the raw scores into a probability distribution.
+
+\boldsec{The Compilation Step}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+model.compile(
+                optimizer="rmsprop",
+                loss="sparse_categorical_crossentropy",
+                metrics=["accuracy"]
+            )
+\end{lstlisting}
+\vs
+
+The code below tells Keras how to train the MNIST network. RMSprop is an optimization algorithm to update weights. Sparse Categorical Cross-Entropy is the loss function (good for multi-class problems where labels are integers like 0-9). Finally, "accuracy" mentions that during training, the accuracy is computed to see how many predictions are correct.
+
+\boldsec{Preparing the Image Data}
+
+\begin{lstlisting}[language=python, breaklines=true]
+train_images = train_images.reshape((60000,28*28))
+train_images = train_images.astype("float32") / 255
+test_images = test_images.reshape((10000, 28*28))
+test_images = test_images.astype("float32") / 255
+\end{lstlisting}
+\vs
+
+The \texttt{reshape()} method flattens the Rank 3 matrices into a Rank 2 matrix. Each sample is a float vector of 784 features (columns), one feature per pixel.
+
+The \texttt{astype("float32") / 255} converts each pixel to between $[0,1]$ from $[0,255]$. \texttt{float32} converts the integers into floating point values.
+
+\boldsec{"Fitting the Model"}
+
+\begin{lstlisting}[language=python, breaklines=true]
+model.fit(train_images, train_labels, epoch=5, batch_size=128)
+
+# =>
+
+Epoch 1/5
+469/469 ━━━━━━━━━━━━━━━━━━━━ 4s 5ms/step - accuracy: 0.1784 - loss: 2.2823
+Epoch 2/5
+469/469 ━━━━━━━━━━━━━━━━━━━━ 1s 2ms/step - accuracy: 0.5380 - loss: 1.8912
+Epoch 3/5
+469/469 ━━━━━━━━━━━━━━━━━━━━ 1s 2ms/step - accuracy: 0.7258 - loss: 1.1644
+Epoch 4/5
+469/469 ━━━━━━━━━━━━━━━━━━━━ 1s 2ms/step - accuracy: 0.8013 - loss: 0.8009
+Epoch 5/5
+469/469 ━━━━━━━━━━━━━━━━━━━━ 1s 2ms/step - accuracy: 0.8334 - loss: 0.6374
+\end{lstlisting}
+\vs
+
+In this snippet above, the model goes over the training data five times, updating weights using mini-batches of 128 images at a time.
+
+An \textbf{epoch} is one full pass over the entire training dataset. Since MNIST has over 60,000 training images and a batch size of 128, each epoch is split into mini-batches of 128 samples, so $60,000/128 \approx469$ steps per epoch, which matches the logs.
+
+5 epochs = $469*5=2,345$ gradient updates.
+
+When there are too few epochs, the model has not seen the data enough, and the training and validation accuracy are both relatively low \textbf{(underfitting)}.
+
+With too many epochs, the model memorizes training data, and training accuracy keeps improving, but validation accuracy plateaus or gets worse \textbf{(overfitting)}.
+
+With a \textbf{small batch size}, the loss function updates quickly, and there is more "randomness" (noise) to help generalization. The model has a harder time perfectly fitting every training point, and it tends to end up in a flatter minima. However, with a \textbf{larger batch size}, the loss function updates more slowly but is able to calculate the gradient descent more quickly to converge to a minimum point (fits training data extremely well).
+
+\textbf{Underfitting} $\to$ Increase epochs. Possibly increase batch size.
+
+\textbf{Overfitting} $\to$ Decrease epochs. Reduce batch size.
+
+\boldsec{Using the Model to Make Predictions}
+
+\begin{lstlisting}[language=python, breaklines=true]
+test_digits = test_images[0:10]
+predictions = model.predict(test_digits)
+predictions[0]
+
+# => array([3.2120061e-04, 2.5093392e-05, 7.2200048e-05, 1.0108891e-03,
+       5.2631675e-04, 8.7492837e-04, 2.7242165e-06, 9.8284817e-01,
+       1.3638313e-04, 1.4182076e-02], dtype=float32)
+\end{lstlisting}
+\vs
+
+The above snippet, for the first image in the test images, outputs a probability distribution via softmax of the likely number. In this case, \texttt{7} is the most probable.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+predictions[0].argmax() # => np.int64(7)
+predictions[0][7] # => np.float32(0.98284817)
+test_labels[0] # => 7 np.uint8(7)
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Evaluating the Model on new Data}
+
+\begin{lstlisting}[language=python, breaklines=true]
+test_loss, test_acc = model.evaluate(test_images, test_labels)
+print(f"test_acc: {test_acc}")
+
+# => test_acc: 0.9789999723434448
+\end{lstlisting}
+\vs
+
+\subsection{Building Blocks of Neural Networks}
+\vs
+
+\boldsecbottom{Tensors}
+
+In general, all current machine learning systems use \textbf{tensors} as their basic data structure. A tensor is a container for data --- usually numerical data. Tensors are a generalization of matrices to an arbitrary number of dimensions/ranks. \textbf{Tensors are stored in multi-dimensional NumPy arrays}.
+
+\begin{itemize}
+    \item Scalars (rank-0 tensors).
+    \item Vectors (rank-1 tensors).
+    \item Matrices (rank-2 tensors).
+    \item Rank-3 and higher-rank tensors.
+\end{itemize}
+\vs
+
+\boldsecbottom{Real World Example of Data Tensors}
+
+\textbf{Vector Data} are rank-2 tensors of shape (samples, features), where each sample is a vector of numerical attributes ("features").
+
+\textbf{Timeseries} data or sequence data are rank-3 tensors of shape (samples, timesteps, features), where each sample is a sequence (of length timesteps) of feature vectors.
+
+\img[0.5]{51.jpg}
+
+\textbf{Images} are rank-4 tensors of shape (samples, height, width, channels), where each sample is a 2D grid of pixels, and each pixel is represented by a vector of values ("channels").
+
+\img[0.5]{52.jpg}
+
+\textbf{Videos} are rank-5 tensors of shape (samples, frames, width, height, channels), where each sample is a sequence (of length frames) of images.
+
+\boldsec{Rank-0 Tensors (Scalars) [Practice]}
+
+\begin{lstlisting}[language=python, breaklines=true]
+import numpy as np
+x = np.array(12)
+print(x) => array(12)
+
+x.ndim => 0 (12 is a scalar)
+x.shape => ()
+x.dtype => dtype('int64')
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Rank-1 Tensors (Vectors) [Practice]}
+
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.array([12,3,6,14,7])
+print(x) => array([12,  3,  6, 14,  7])
+
+x.ndim => 1 (vector)
+x.shape => (5,)
+x.dtype => dtype('int64')s
+\end{lstlisting}
+\vs
+
+\begin{aside}
+    \textbf{Note: do NOT confuse 5D Vector with a 5D Tensor!}
+
+    A 5D Vector has only one axis and has five dimensions along its axis. Meanwhile, a 5D tensor has five axes (and may have any number of dimensions along each axis).
+
+    Dimensionality can denote either the number of entries along a specific axis (as in the case of a 5D vector) or the number of axes in a tensor (such as a 5D tensor), which can be confusing at times.
+
+    In the example above, 5D Vector is a 1D tensor (tensor of rank 1).
+\end{aside}
+\vs
+
+\boldsecbottom{Rank-2 Tensors (Matrices) [Practice]}
+
+An array of vectors. Two axes: rows and columns
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.array([[5, 78, 2, 34, 0],
+              [6, 79, 3, 35, 1],
+              [7, 80, 4, 36, 2]])
+
+print(x) => 
+array([[ 5, 78,  2, 34,  0],
+       [ 6, 79,  3, 35,  1],
+       [ 7, 80,  4, 36,  2]])
+
+x.ndim => 2 (matrix)
+x.shape => (3,5) # => 3 rows * 5 columns
+x.dtype => dtype('int64')
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Rank-3 and Higher Rank Tensors [Practice]}
+
+
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.array([[[5, 78, 2, 34, 0],
+              [6, 79, 3, 35, 1],
+              [7, 80, 4, 36, 2]],
+              [[5, 78, 2, 34, 0],
+              [6, 79, 3, 35, 1],
+              [7, 80, 4, 36, 2]],
+              [[5, 78, 2, 34, 0],
+              [6, 79, 3, 35, 1],
+              [7, 80, 4, 36, 2]]]
+             )
+print(x) =>
+array([[[ 5, 78,  2, 34,  0],
+        [ 6, 79,  3, 35,  1],
+        [ 7, 80,  4, 36,  2]],
+
+       [[ 5, 78,  2, 34,  0],
+        [ 6, 79,  3, 35,  1],
+        [ 7, 80,  4, 36,  2]],
+
+       [[ 5, 78,  2, 34,  0],
+        [ 6, 79,  3, 35,  1],
+        [ 7, 80,  4, 36,  2]]])
+
+x.ndim => 3
+x.shape (3,3,5) (3 samples of 3 rows * 5 columns each)
+x.type => dtype('int64')
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Tensor Operations or Tensor Functions}
+
+These Tensor Operations are applied to tensors of numeric data. For example, the equation for a layer in neural networks is
+
+\myeq{\text{output} = \text{relu}(/text{dot}(input,W)+b)}
+
+A \textbf{dot product} (dot) between the input tensor and a tensor named $W$. An \textbf{addition} ($+$) between the resulting matrix and a vector $b$.
+
+A \textbf{relu operation}: $relu(x)$ is $max(0,x)$. Relu stands for Reflect Linear Unit.
+
+\boldsec{Element-Wise Operations}
+
+Operations that are applied independently to each entry in the tensor being considered.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+import numpy as np
+
+x = np.array([1, 2, 3, 4, 5])
+y = np.array([-5, 4, -3, 2, 1])
+
+z = x + y
+print(z) => array([-4,  6,  0,  6,  6])
+
+z = np.maximum(z,0)
+print(z) => array([0, 6, 0, 6, 6])
+\end{lstlisting}
+
+\boldsec{Broadcasting}
+
+When possible, and if there is no ambiguity, the smaller tensor will be broadcast to match the shape of a larger tensor. Broadcasting consists of two steps:
+\begin{itemize}
+    \item Axes (called the broadcast axes) are added to the smaller tensor to match the \texttt{ndim} of the larger tensor.
+    \item The smaller tensor is repeated alongside these new axes to match the full shape of the larger tensor.
+\end{itemize}
+\vs
+
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.random.random((2,5))
+print(x) =>
+array([[0.29188082, 0.64576952, 0.34785613, 0.21139763, 0.03958458],
+       [0.07425423, 0.6191208 , 0.97663695, 0.38851281, 0.50640003]])
+
+y = np.ones((5,))
+y => array([1., 1., 1., 1., 1.])
+y.shape() => (5,)
+
+z = x + y
+z => 
+array([[1.29188082, 1.64576952, 1.34785613, 1.21139763, 1.03958458],
+       [1.07425423, 1.6191208 , 1.97663695, 1.38851281, 1.50640003]])
+\end{lstlisting}
+\vs
+
+\textbf{Note}: the implementation of broadcasting can be shown in the following detailed step:
+\begin{itemize}
+    \item Change the vector to a matrix.
+    \item Repeat the row twice to form the targeted matrix.
+\end{itemize}
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+z = np.expand_dims(y,axis=0)
+z => array([[1., 1., 1., 1., 1.]])
+z.shape => (1,5)
+
+z = np.concatenate([z] * 2, axis = 0)
+z => 
+array([[1., 1., 1., 1., 1.],
+       [1., 1., 1., 1., 1.]])
+\end{lstlisting}
+\vs
+
+Note: With broadcasting, you can generally perform element-wise operations that take two input tensors if one tensor has shape ${a,b,\dots,n,n+1,\dots,m}$ and the other has shape $(n,n+1,\dots,m)$. The broadcasting will then automatically happen for axes $a$ through $n-1$.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.random.random((3, 2, 3))
+x => 
+
+array([[[0.56648734, 0.26776329, 0.39464063],
+        [0.01962086, 0.75768943, 0.18855561]],
+
+       [[0.12627963, 0.87459904, 0.00175637],
+        [0.83797425, 0.43238169, 0.46509498]],
+
+       [[0.62163761, 0.52036472, 0.57904954],
+        [0.89672146, 0.40444219, 0.00583278]]])
+
+y = np.random.random((2,3))
+y =>
+
+array([[0.75979061, 0.76421643, 0.75994235],
+       [0.22177348, 0.4605287 , 0.13133306]])
+
+z = np.maximum(x,y)
+z =>
+
+array([[[0.75979061, 0.76421643, 0.75994235],
+        [0.22177348, 0.75768943, 0.18855561]],
+
+       [[0.75979061, 0.87459904, 0.75994235],
+        [0.83797425, 0.4605287 , 0.46509498]],
+
+       [[0.75979061, 0.76421643, 0.75994235],
+        [0.89672146, 0.4605287 , 0.13133306]]])
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Tensor Product}
+
+The tensor product, or the dot product (not to be confused with an element-wise product, the * operator), is one of the most common, most useful tensor operations.
+
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.array([1, 2, 3])
+y = np.array([1, 1, 1]) 
+z = np.dot(x,y) # => ((1*1) + (2*1) + (3*1) = 6)
+z => np.int64(6)
+
+z = np.dot(y,x)
+z => np.int64(6) 
+
+# 2D
+
+x = np.array([[1, 2], [3, 4]])
+y = np.array([[1], [1]])
+z = np.dot(x, y)
+z => array([[3],
+       [7]])
+
+y = np.array([[1,1]])
+z = np.dot(y,x)
+z => array([[4,6]])
+
+y = np.array([1,1])
+z = np.dot(x,y)
+z => array([3, 7])
+
+y = np.array([1,1])
+z = np.dot(y,x)
+z => array([4,6])
+\end{lstlisting}
+\vs
+
+More generally, you can take the dot product between higher-dimensional tensors, following the same rules for shape compatibility as outlined earlier for the 2D case:
+
+$(a,b,c,d)*(d,) \to (a,b,c)$
+
+$(a,b,c,d)*(d,e) \to (a,b,c,e)$
+
+\boldsec{Tensor Reshaping}
+
+Reshaping a tensor means rearranging its rows and columns to match a target shape. Naturally, the reshaped tensor has the same total number of coefficients as the initial tensor.
+
+\vs
+\begin{lstlisting}[language=python, breaklines=true]
+x = np.array([[0., 1.],
+              [2., 3.],
+              [4., 5.]])
+x.shape => (3,2)
+
+x.reshape((6,1)) 
+x =>
+array([[0.],
+       [1.],
+       [2.],
+       [3.],
+       [4.],
+       [5.]])
+
+x = x.reshape((2,3))
+x => 
+array([[0., 1., 2.],
+       [3., 4., 5.]])
+
+x = np.transpose(x)
+print(x) => 
+array([[0., 3.],
+       [1., 4.],
+       [2., 5.]])
+
+x.shape => (3,2)
+\end{lstlisting}
+\vs
+
+
+
+
+
+
+
 
 \end{document}
