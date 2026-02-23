@@ -2793,12 +2793,500 @@ Example: Bitmap Indexes
 
 \img[0.8]{56.png}
 
-In reach table, each column can be considered as a bitmap or bit vector indicating which tuples have the values indicated by the column. By applying boolean operations to bit vectors from multiple bitmap indexes, we can efficiently identify records such as female customers whole live in the U.S.: $\to $ \textbf{Record 1,7,11}.
+In the reach table, each column can be considered as a bitmap or bit vector indicating which tuples have the values indicated by the column. By applying boolean operations to bit vectors from multiple bitmap indexes, we can efficiently identify records such as female customers whole live in the U.S.: $\to $ \textbf{Record 1,7,11}.
 
+\topsec{Lecture 6 --- Physical Database and Index Design}
 
+\subsec{Physical Database Organization}
 
+\boldsecbottom{Physical Database Design}
 
+The purpose of the physical database design is to translate a logical data model into an internal data model (the logical description of data into technical specifications for storing and retrieving data) and design indexes to speed up data access.
 
+This is a joint responsibility of the database designer and the DBA. Here, we focus on the generic file organization principles are implemented in particularly a relational DBMS.
+
+\vs
+\begin{aside}
+    \textbf{Note:} SQL does not impose any standardization on the internal data model or on the way in which a logical relational data model is implemented physically. Different DBMS vendors all have their own approaches.
+\end{aside}
+\vs
+
+\boldsecbottom{Databases}
+
+User databases have a physical structure that is determined by the database designer and contain data that represents an organization's state. A \textbf{physical user database} is a collection of index files and data files, organized according to the principles of record organization and file organization.
+
+In system databases, the system database's structure is predefined by the database vendor and holds the catalog tables that support the DBMS's exploitation.
+
+\newpage
+\boldsecbottom{From Database to Tablespace}
+
+Many DBMS implementations introduce an additional level of indirection between a logical database and the physical data files, called a \textbf{tablespace}.
+
+A tablespace can be considered as a physical container of database objects. It consists of one or more physical files, possibly distributed over multiple storage devices. Every logical table is assigned to a tablespace to be persisted physically a (stored table). A stored table occupies one or more disk blocks or pages in the tablespace.
+
+A tablespace can contain indexes as well (index spaces are used for this purpose).
+
+\img[0.5]{57.jpg}
+
+\boldsecbottom{Decisions}
+
+There is a wide choice of storage devices. On the chosen storage devices, files are created that form the tablespaces (and index spaces). Tables then belong to a tablespace. If desired, tables can be distributed over multiple physical files.
+
+Indexes are assigned to tablespaces or to separate indexed spaces. A primary or clustered index determines the physical ordering of the data records in a file. So creation or deletion of such an index deserves particular consideration.
+
+\boldsec{Oracle: Tablespaces and Physical Data Files}
+
+\img[0.7]{58.jpg}
+
+\boldsecbottom{Data Storage in Oracle 11g Environment}
+
+\img[0.6]{59.jpg}
+
+\boldsecbottom{Data Blocks, Extents, and Segments}
+
+\img[0.35]{60.jpg}
+
+Oracle Database allocates logical database space for all data in a database. The units of database space allocation are \textbf{data blocks, extents, and segments}.
+
+At the finest level of granularity, Oracle Database stores data in data blocks (also called logical blocks, Oracle blocks, or pages. One data block corresponds to a specific number of bytes of physical database space on disk.
+
+The next level of logical database space is an extent. An extent is a specific number of contiguous data blocks allocated for storing a specific type of information. 
+
+The level of logical database storage greater than an extent is called a segment. A segment is a set of extents, each of which has been allocated for a specific data structure and all of which are stored in the same tablespace. For example, each table's data is stored in its own \textbf{data segment}, and each index's data is stored in its own \textbf{index segment}. If the table or index is partitioned, each partition is stored in its own segment. When the existing extents of a segment are full, the DBMS allocates another extent for that segment. The extents of a segment may or may not be continuous on disk.
+
+\boldsec{Storage Parameters in Oracle}
+
+\begin{itemize}
+    \item \texttt{INITIAL}: The size, in bytes, of the first extent allocated when a segment is created. This parameter cannot be specified in an ALTER statement.
+    \item \texttt{MINEXTENTS}: The total number of extents to be allocated when the segment is created. This allows for a large allocation of space at creation time, even if contiguous space is not available.
+    \item \texttt{EXTENTS}: The total number of extents, including the first, that can ever be allocated for the segment.
+\end{itemize}
+\vs
+
+\boldsecbottom{Storage Parameters in Oracle (Continued)}
+
+\begin{itemize}
+    \item \texttt{NEXT}: The size, in bytes, of the next incremental extent to be allocated for a segment. The second extent is equal to the original setting for NEXT. From there forward, NEXT is set to the previous size of NEXT multiplied by (1 + PCTINCREASE/100).
+    \item \texttt{PCTINCREASE}: The percentage by which each incremental extent grows over the last incremental extent allocated for a segment. If 0, then all incremental extents are the same size. If greater than zero, then each time NEXT is calculated, it grows by PCTINCREASE. The new NEXT is rounded up to the next multiple of a block size.
+\end{itemize}
+\vs
+
+\boldsecbottom{Example: Specifying Table Storage}
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE divisions (
+div_no NUMBER(2),
+div_name VARCHAR2(14),
+location VARCHAR2(13)
+)
+STORAGE (INITIAL 100k NEXT 50K MINEXTENTS 1 MAXEXTENTS 50 PCTINCREASE 5)
+\end{lstlisting}
+\vs
+
+Note that each additional NEXT extent is ~5\% larger than the previous.
+
+\boldsec{Free Space Management of Data Block in Oracle}
+
+\img[0.8]{61.jpg}
+
+\begin{itemize}
+    \item \texttt{PCTFREE}: Set the minimum percentage of a data block to be reserved as free space for possible updates to rows that already exist in that block.
+    \item \texttt{PCTUSED}: Set the minimum percentage of a data block that can be used for the row data plus overhead before new rows are added to the block.
+\end{itemize}
+
+\boldsec{How PCTFREE and PCTUSED Work Together}
+
+\img[0.5]{62.jpg}
+
+\boldsecbottom{Example: Specifying Table Storage}
+
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE TABLE players
+( code      NUMBER(10) PRIMARY KEY,
+  lastname  VARCHAR2(20),
+  firstname VARCHAR2(15),
+  position  VARCHAR2(20),
+  team      VARCHAR2(20)
+)
+PCTFREE 10
+PCTUSED 40
+STORAGE ( INITIAL 25K
+          NEXT 10K
+          MAXEXTENTS 10
+          MINEXTENTS 3 );
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Storage Parameters}
+
+Even though most DBMSs provide ample auto-configuring and self-tuning features, you (DBA) can set storage parameters for various data structures, such as
+\begin{itemize}
+    \item Tablespace (used as storage parameter defaults for all segments).
+    \item Tables, partitions, clusters, materialized views, and materialized view logs (data segments).
+    \item Indexes (index segments).
+    \item Rollback segments.
+\end{itemize}
+\vs
+
+\newpage
+\boldsecbottom{CASE Example}
+
+\textbf{Case 1}: Common activity includes UPDATE statements that increase the size of the rows. Settings: \texttt{PCTFREE=20,PCTUSED=40}. PCTFREE is set to 20 to allow enough room for rows that increase in size as a result of updates. PCTUSED is set to 50 so that less processing is done during high update activity, thus improving performance.
+
+\textbf{Case 2}: Most activity includes INSERT and DELETE statements, and UPDATE statements that do not increase the size of affected rows. Settings: \texttt{PCTFREE=5,PCTUSED=60}. PCTFREE is set to 5 because most UPDATE statements do not increase row sizes. PCTUSED is set to 60 so that space freed by DELETE statements is used soon, yet processing is minimized.
+
+Case 3: The table is very large, and storage is a primary concern. Most activity includes read-only transactions. Settings: \texttt{PCTFREE=5, PCTUSED=40}. PCTFREE is set to 5 because this is a large table, and you want to completely fill each block.
+
+\subsec{Index Design}
+
+\boldsecbottom{Index}
+
+Indexes are one of the most important performance-tuning tools available to database designers and administrators. An index provides an efficient path to table data by reducing the number of disk I/O operations required. 
+
+The presence (or absence) of indexes directly influences the query optimizer's choice of execution plan. Proper index design is a critical component of physical database design.
+
+\boldsec{Index Design}
+
+\begin{itemize}
+    \item \textbf{What indexes} should we create? Which relations (tabes) should have indexes? What attribute(s) should be used as search keys? Should we create multiple indexes on the same table?
+    \item \textbf{What kind of index} should each be? Clustered or non-clustered? Tree or hash? Unique or non-unique? Single attribute or composite?
+\end{itemize}
+\vs
+
+\boldsecbottom{Index Creation}
+
+There is no fully standardized SQL syntax for index creation. However, most DBMSs support a similar general syntax.
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE [UNIQUE] INDEX index_name
+ON table_name (column_name [ASC/DESC] {, column_name[ASC|DESC]})
+\end{lstlisting}
+\vs
+
+Examples:
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE UNIQUE INDEX prodnr_index
+ON product(prodnr ASC);
+
+CREATE INDEX productdata_index
+ON product(prodprive DESC, prodtype ASC);
+
+CREATE INDEX prodname_index
+ON product(prodname ASC)
+CLUSTER; -- Index for cluster key data in Oracle
+\end{lstlisting}
+\vs
+
+\boldsecbottom{[Note] Index Syntax is DBMS-Specific}
+
+SQL syntax for index creation is similar across systems, but many options are vendor-specific. In particular, clustered index syntax differs significantly among DBMSs. Always check the specific DBMS documentation when designing an index.
+
+Examples:
+
+SQL Server
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE CLUSTERED INDEX index_name
+ON table_name (column_name);
+\end{lstlisting}
+\vs
+
+Oracle does not use \texttt{CREATE CLUSTERED INDEX}. Instead, it supports Index-Organized Tables (IOT), Cluster objects, and storage and tablespace options.
+
+PostgreSQL uses \texttt{CLUSTER table\_name USING index\_name}
+
+MySQL(InnoDB - a storage engine used by MySQL) --- The primary key is clustered automatically, and the secondary indexes are non-clustered.
+
+\boldsec{Reasons for Index Creation}
+
+Index creation enables efficient retrieval of rows based on specific queries or selection criteria. It also enables efficient execution of join queries and enforces uniqueness on a column value or on a combination of column values.
+
+Index creation allows logical ordering of rows in a table and physical ordering of rows in a table.
+
+\boldsec{Reasons for Index Creation --- Efficient Retrieval}
+
+Indexes improve query performance by providing efficient access paths to rows that satisfy selection conditions.
+
+Retrieval is significantly faster when search attributes are indexed. Selection criteria targeting a unique tuple can be supported by a primary index or a unique secondary index on a candidate key. Selection criteria targeting a set of tuples can be supported by a clustered index (efficient for range retrieval) or a secondary index on a non-key attribute type of composite attributes.
+
+Composite indexes can improve performance when query predicates match the index's leading attributes.
+
+\boldsec{[Note]: Query with a Composite Index}
+
+For B+ tree composite indexes, the leftmost prefix rule applies.
+
+Examples:
+\begin{itemize}
+    \item An index on $(A,B,C)$ supports the select conditions with $A$, $(A,B)$, and $(A,B,C)$.
+    \item It does NOT efficient support $B$ alone, $C$ alone, or $(B,C)$.
+\end{itemize}
+\vs
+
+So performance improvement depends on \textbf{predicate alignment with index order}.
+
+\boldsec{Reasons for Index Creation: Efficient Join}
+
+Indexes improve the \textbf{performance of join} operations.
+
+Join processing is often one of the most expensive operations in query execution. Indexes can accelerate joins by enabling efficient lookup of matching tuples in one or both participating tables. Indexes may reduce join cost from $O(N*M)$ to $O(NlogM)$ depending on join algorithm and selectivity.
+
+Index are particularly useful for Nested-loop joins (index lookup on inner relation) and foreign key - primary key joins.
+
+\textbf{Foreign key attributes are often indexed} to improve join performance and maintain referential integrity.
+
+\boldsec{Reasons for Index Creation: Enforcing Uniqueness}
+
+An index can be created to enforce uniqueness on a column or combination of columns. When a uniqueness constraint exists, the DBMS uses a unique index to efficiently enforce the constraint by checking only the index entries for duplicate values (i.e. if the value is already in the index, the DBMS rejects the operation with a uniqueness/constraint violation. On the other side, if the value is not in the index, it is safe to insert, and the index is updated).
+
+A unique index is automatically created for every primary key. A unique index is also automatically created for attributes declared with a UNIQUE constraint in CREATE TABLE. The database designer may explicitly create a UNIQUE INDEX on other candidate keys to enforce uniqueness.
+
+\boldsec{Reasons for Index Creation: Logical Ordering}
+
+Indexes provide logical ordering of rows. Every index maintains entries in a defined order (ACS or DESC). This ordering supports efficient processing of GROUP BY, ORDER BY, and Range Queries.
+
+Secondary indexes allow multiple logical orderings on the same table, even if the table itself is not physically ordered on those attributes. Only a \textbf{clustered index} (or index-organized table) affects the physical ordering of the table data.
+
+\boldsec{Reasons for Index Creation: Physical Ordering}
+
+Physical ordering of rows in a table can be determined by a clustered index. The ordering of the index entries may determine the physical storage order of table rows. When the index defines the physical layout of the table, it is called a \textbf{clustered index} (modern terminology).
+
+\textbf{Only one index for each table} can determine the physical ordering of rows. Range queries on the clustered keys are highly efficient because matching rows are stored close together. The choice of clustering attribute(s) must be made carefully, based on expected query workload.
+
+\newpage
+\boldsecbottom{Summary of Indexes}
+
+\img[0.7]{63.jpg}
+
+\vs
+\boldsecbottom{Dense vs. Sparse Index}
+
+A \textbf{Dense Index} contains an index entry for every search key value (or every value). Each index entry points directly to the corresponding record. This provides fast lookup due to direct access but requires more storage space. This is commonly used for secondary indexes.
+
+A \textbf{Sparse Index }contains index entries for only some search key values. Typically, one index entry per data block (points to first record in the block). This requires teh data file to be physically ordered on the search key. This uses less storage space, but lookup may require additional sequential scanning with a block.
+
+\boldsec{More about Index}
+
+Only one clustered index (and primary index with physical ordering) can exist per table. A table may have multiple secondary (non-clustered) indexes. Secondary indexes can be created or dropped without modifying the actual table data.
+
+This illustrates \textbf{physical data independence}: Indexes can be added or removed without changing the logical schema or application programs.
+
+\boldsec{Cost of Indexes}
+
+Index consumes additional storage capacity. Index maintenance also adds overhead to data modification operations such as INSERT, UPDATE, and DELETE. Every modification of indexed attributes requires corresponding updates to the index structure. However, indexes can improve the row-selection phase of UPDATE and DELETE statements.
+
+\subsec{General Index Design Guidelines}
+
+\textbf{Good candidates for indexing} include primary keys and other candidate keys (to enforce uniqueness). Foreign keys (to improve join performance) are also good candidates. Finally, attributes that are frequently used in join conditions, in WHERE clauses, and in ORDER BY or GROUP BY clauses.
+
+\textbf{Attributes to avoid} include large or variable-length attributes (e.g., long VARCHAR, large text fields). Low-selectivity attributes (few distinct values). Finally, attributes in very small tables (full scan may be cheaper).
+
+As for \textbf{Workload consideration}, indexes improve retrieval performance but can increase overhead for INSERT, DELETE, and UPDATE operations. Index design must balance read frequency vs. write frequency.
+
+\boldsec{Guide for Index Design and Tuning}
+
+\begin{itemize}
+    \item Guideline 1: \textbf{Whether to Index}: Do not build an index unless a query can benefit from it. Avoid unnecessary indexes --- They increase storage and maintenance overhead. Index decisions should be workload-driven.
+    \item Guideline 2: \textbf{Choice of Search Key}: Index attributes that frequently appear in WHERE clauses, Join conditions, and ORDER BY or GROUP BY clauses. Consider selectivity and query frequency.
+    \item Guideline 3: \textbf{Primary Keys and Foreign Keys}. Index every primary key (usually created automatically), and index most foreign keys to improve join performance. Most joins occur between primary key and foreign key attributes. Finally, for very small tables, a full table scan may be cheaper than using an index.
+\end{itemize}
+\vs
+
+\boldsecbottom{Multi-Attribute Search Keys [Guideline 4]}
+
+More than one attribute of a relation in WHERE. It is an Index-only strategy. Avoid retrieving tuples from relations. For example, suppose \texttt{D.dno} has an index and \texttt{E.dno} has an index. There is no need to access the employee data file.
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT D.mgr
+FROM Emp E, Dept D
+WHERE E.dno = D.dno
+\end{lstlisting}
+\vs
+
+No attributes of Employee are retained, compared with
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT D.mgr, E.eid
+FROM Emp E, Dept D
+WHERE E.dno = D.dno
+\end{lstlisting}
+\vs
+
+\textbf{E.g., No need to access both Employee and Dept data files}. While this is very useful, do not overuse with making many extremely query-specific indexes.
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+SELECT D.dno
+FROM Emp E, Dept D
+WHERE D.dno = D.dno
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Avoid Index with Value Distribution that are Extremely Skewed [Guideline 5]}
+
+Don't allow just a few index values to have much higher levels of frequency than other values. When index values have a highly uneven frequency distribution, the index becomes less effective.
+
+For example, if an index were created on a gender column in a database where the number of males is vastly greater than females, the index would be inefficient.
+
+\boldsec{Hash vs. Tree Index [Guideline 6]}
+
+A \textbf{tree index} (B+ Tree) is usually preferable because it supports range query as well as equality query. It is used for column comparisons in expressions that use the $=,>,\geq, <,\leq$, BETWEEN AND, or LIKE.
+
+A \textbf{hash index} is better for a very important equality ($=$), no range queries. It is used only for equality comparisons that use the $=$.
+
+\boldsec{Whether to Cluster [Guideline 7]}
+
+Choose carefully the clustered index for each table. A cluster index dictates how data is to be physically stored for a specific table. Any other index on that table cannot be a clustered. index.
+
+Create a clustered index on the most important query. This is particularly efficient on columns that are often searched for ranges of values (BETWEEN, <, >) since data in table is physically sorted on that column. It is good to build a clustered index on a primary key with range searches.
+
+In MS SQL Server or Sybase case, a PRIMARY KEY constraint creates a \textbf{clustered indexes by default} if no clustered index already exists on the table. If a clustered index already exists, the primary key is created as non clustered. 
+
+Example: Non clustered primary key in MS SQL Server
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+Create Table Customer (
+    CustID number primary key nonclustered,
+    ...
+);
+\end{lstlisting}
+\vs
+
+\boldsec{Balancing the Cost of Index Maintenance [Guideline 8]}
+
+Use attributes for indexes with caution when they are frequently updated. maintaining an index can slow down frequent update operations. Kep in mind, however, index may speed up an update or delete operation.
+
+E.g., Increase the salary of a given employee id when id has an index.
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+UPDATE employee
+SET salary = salary * 1.1
+WHERE id = '7788';
+\end{lstlisting}
+\vs
+
+Avoid or remove redundant indexes.
+
+\boldsec{Perform Regular Index Maintenance [Guideline 9]}
+
+Index structures require maintenance as tables undergo INSERT, DELETE, and UPDATE. Frequent modifications may cause fragmentation, page splits, and reduced performance. Maintenance Operations may rebuild indexes, reorganize indexes (de-fragment), and update index statistics. \textbf{Indexes can be dropped and rebuilt when necessary}.
+
+\subsec{Supplementary Guidelines for Application-Specific Indexes in Oracle}
+
+In Oracle, you create the indexes after inserting table data. At that point, you can index the correct tables and columns.
+
+As a rule of thumb, create an index if you frequently want to retrieve less than 15\% of the rows in a large table. Index columns are used for joins to improve performance on joins of multiple tables. \textbf{Primary and unique keys automatically have indexes, but you might want to create an index on a foreign key}. Finally, small tables do not require indexes.
+
+Some columns are strong candidates for indexing.
+\begin{itemize}
+    \item Values are relatively unique in the column.
+    \item There is a wide range of values (good for regular indexes).
+    \item There is a small range of values (good for bitmap indexes).
+    \item The column contains many nulls, but queries often select all rows having a value.
+\end{itemize}
+\vs
+
+Columns with the following characteristics are less suitable for indexing:
+\begin{itemize}
+    \item There are many nulls in the column and you do not search on the non-null values.
+\end{itemize}
+\vs 
+
+It is also important to limit the number of indexes for each table. The more indexes, the more overhead is incurred as the table is altered. Finally, you should choose the order of columns in composite indexes. The order of columns in the CREATE INDEX statement can affect query performance. In general, put the column expected to be used most often \textbf{first} in the index.
+
+\boldsec{Gather Statistics to Make Index Usage More Accurate}
+
+In Oracle, collect statistics (related to the data distribution, number of rows and others) on the 'EMPLOYEE' table that belongs to the 'SCOTT' schema.
+
+\vs
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+DMBS_STATS.GATHER_TABLE_STATS(USER,'EMPLOYEE',CASCADE=>TRUE);
+
+-- or
+
+DBMS_STATS.GATHER_TABLE_STATS('SCOTT', 'EMPLOTEE');
+\end{lstlisting}
+\vs
+
+Also, Drop Indexes that are no longer required.
+
+\subsec{Table Clustering}
+
+\textbf{Table clustering} in a relational database system refers to \textbf{the storage of related data from multiple tables in the same database blocks}. This technique is used to improve the efficiency of data retrieval operations, especially when performing joins on tables that are often accessed together.
+
+\newpage
+\boldsecbottom{Unclustered vs. Clustered Tables}
+
+\img[0.6]{64.jpg}
+
+\boldsecbottom{Key Concepts in Table Clustering}
+
+\begin{itemize}
+    \item \textbf{Cluster}: A cluster is a schema object that contains data from one or more tables that are related based on common columns. These common columns are typically the columns on which tables are joined.
+    \item \textbf{Cluster Key}: The cluster key is the column or set of columns that the tables in the cluster have in common. Rows with the same cluster key value from all the clustered tables are stored together in the same blocks.
+    \item \textbf{Hash Clusters}: RDBMS such as Oracle also supports hash clusters, where a hash function is used to determine the database block in which the rows are stored. This can provide very efficient retrieval for equality searches based on the hash key.
+\end{itemize}
+
+\boldsec{Advantages of Table Clustering}
+
+\begin{itemize}
+    \item \textbf{Improved Disk I/O}: Clustering related rows reduces the number of disk reads required to fetch the data.
+    \item \textbf{Join Efficiency}: Since related rows from different tables are stored close together, joins on clustered tables can be faster.
+    \item \textbf{Data Cohesion}: Clustering maintains the logical cohesion or related data, which can make application development more intuitive.
+    \item \textbf{Less Storage}: Less storage is required to store related table and index data because the cluster key value is not stored repeatedly for each row.
+\end{itemize}
+\vs
+
+\boldsecbottom{Example: Table Clustering in Oracle}
+
+Here are the steps:
+
+\vs
+\begin{itemize}
+    \item \textbf{Define a Cluster}: Use the \texttt{CREATE CLUSTER} statement to define a cluster by specifying its name, the cluster key, and its storage characteristics.
+    \item \textbf{Add Tables to Cluster}: Use the \texttt{CREATE TABLE} statement with the CLUSTER clause to create tables within the defined cluster.
+    \item \textbf{Load Data}: Insert data into the clustered tables. Oracle will automatically store rows with the same cluster key value together.
+    \item \textbf{Gather Statistics}: Use Oracle's \texttt{DBMS\_STATS} package to gather statistics on the cluster for the optimizer.
+    \item \textbf{Monitor Performance}: Regularly monitor the performance to ensure that clustering is providing the desired benefits.
+\end{itemize}
+\vs
+
+\begin{lstlisting}[language=sql, breaklines=true, showstringspaces=false]
+CREATE CLUSTER employee_cluster (department_id NUMBER) STORAGE (INITIAL 10K NEXT 10K);
+
+CREATE TABLE employee (
+    employee_id NUMBER,
+    department_id NUMBER,
+    name VARCHAR2(100)
+) CLUSTER employee_cluster (department_id);
+
+CREATE TABLE departments (
+    department_id NUMBER,
+    department_name VARCHAR2(100)
+) CLUSTER employee_cluster (department_id);
+
+EXEC DBMS_STATS.gather_table_stats('SCOTT', 'employees', 'employee_cluster');
+\end{lstlisting}
+\vs
+
+\boldsecbottom{Considerations for Implementation}
+
+\textbf{Access Patterns}: Clustering is beneficial when tables are often joined on the cluster key. It's less useful if tables are typically accessed independently. \textbf{Cluster Key Choice} is also important since the columns chosen as the cluster key should be such that \textbf{the related rows actually need to be retrieved frequently together}. Finally, clusters can require more \textbf{maintenance} than non-clustered tables, as updates to the cluster key may necessitate moving data between blocks.
+
+\boldsec{When Not to Use Table Clustering}
+
+If tables are \textbf{frequently updated}, clustering can decrease performance because it may necessitate moving rows to maintain cluster integrity. 
+
+If tables require frequent \textbf{full table scans}, clustering can lead to less efficient table scans since it groups row based on the cluster key.
+
+Finally, \textbf{tables that require truncating} where truncating a table usually means quickly removing all rows. In clustered table, because rows are grouped by with related data from other tables, truncating operations may become complex or restricted.
 
 
 
@@ -2808,3 +3296,4 @@ In reach table, each column can be considered as a bitmap or bit vector indicati
 
 
 \end{document}
+
